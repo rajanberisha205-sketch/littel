@@ -1,0 +1,456 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0c">
+  
+  <!-- SEO Meta Tags -->
+  <title>Fast & Free Internet Speed Test | Fasqoo Lite</title>
+  <meta name="description" content="Test your internet speed instantly with Fasqoo Lite. Accurate download, upload, ping, and jitter measurements powered by Cloudflare edge network.">
+  <meta name="keywords" content="internet speed test, broadband speed test, wifi speed test, check internet speed, fasqoo lite, ping test">
+  <link rel="canonical" href="https://lite.fasqoo.com/">
+
+  <!-- Open Graph / Social Media SEO -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://lite.fasqoo.com/">
+  <meta property="og:title" content="Fast & Free Internet Speed Test | Fasqoo Lite">
+  <meta property="og:description" content="Check your download speed, upload speed, and latency instantly with our lightweight internet speed test.">
+  <meta property="og:image" content="https://lite.fasqoo.com/fasqoologo.png">
+
+  <!-- Twitter Card SEO -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Fast & Free Internet Speed Test | Fasqoo Lite">
+  <meta name="twitter:description" content="Check your download speed, upload speed, and latency instantly with our lightweight internet speed test.">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg: #09090b;
+  --card: rgba(24, 24, 27, 0.7);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --line: #27272a;
+  --accent: #ef4444;
+  --accent-glow: rgba(239, 68, 68, 0.15);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Plus Jakarta Sans', sans-serif;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  overflow-x: hidden;
+}
+
+/* Background Ambient Glow */
+body::before {
+  content: '';
+  position: absolute;
+  top: -10vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, rgba(9, 9, 11, 0) 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.wrap{width:min(900px, calc(100% - 40px));margin:auto;}
+
+header{
+  padding:24px 0;
+}
+
+.nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+}
+
+.brandmark{
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(239, 68, 68, 0.2));
+}
+
+.brandname{
+  font-weight:700;
+  font-size:22px;
+  letter-spacing:-0.5px;
+  color:var(--text);
+}
+
+main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:30px 0;
+}
+
+.speed-container{
+  margin-bottom:10px;
+  position: relative;
+  padding: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+}
+
+.speed-number{
+  font-size:clamp(80px, 18vw, 160px);
+  font-weight:700;
+  line-height:1;
+  letter-spacing:-4px;
+  color:var(--text);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.speed-unit{
+  font-size:clamp(18px, 3vw, 24px);
+  color:var(--accent);
+  font-weight:600;
+  margin-top:10px;
+  text-transform:uppercase;
+  letter-spacing:3px;
+}
+
+.status-text{
+  font-size:14px;
+  color:var(--muted);
+  margin-top:12px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  font-weight: 500;
+}
+
+.details-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:16px;
+  width:100%;
+  margin-top:50px;
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events:none;
+}
+
+.details-grid.visible{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.detail-box{
+  background:var(--card);
+  backdrop-filter: blur(12px);
+  border:1px solid var(--card-border);
+  padding:22px 16px;
+  border-radius:12px;
+  text-align:center;
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.detail-box:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.detail-label{
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  margin-bottom:8px;
+  font-weight: 600;
+}
+
+.detail-value{
+  font-size:22px;
+  font-weight:600;
+  color:var(--text);
+  letter-spacing: -0.5px;
+}
+
+.detail-value span{
+  font-size:12px;
+  color:var(--muted);
+  margin-left:3px;
+  font-weight: 400;
+}
+
+.controls{
+  margin-top:35px;
+}
+
+.restart-btn{
+  background: var(--text);
+  border: none;
+  color: var(--bg);
+  padding: 14px 36px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  border-radius:50px;
+  cursor:pointer;
+  transition:all 0.25s ease;
+  display:none;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+}
+
+.restart-btn:hover{
+  background: #ffffff;
+  transform: scale(1.03);
+  box-shadow: 0 6px 25px rgba(255, 255, 255, 0.25);
+}
+
+.restart-btn:active {
+  transform: scale(0.98);
+}
+
+footer{
+  padding:30px 0;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  border-top:1px solid var(--line);
+  line-height:1.8;
+  background: rgba(9, 9, 11, 0.5);
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 12px;
+}
+
+.footer-links a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+
+.footer-links a:hover {
+  color: var(--text);
+}
+
+@media(max-width:768px){
+  .details-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="https://fasqoo.com" class="brand">
+      <img src="fasqoologo.png" alt="Fasqoo Logo" class="brandmark">
+      <div class="brandname">Fasqoo</div>
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">Internet Speed Test Lite</h1>
+    
+    <div class="speed-container">
+      <div id="speed" class="speed-number">0</div>
+      <div id="unit" class="speed-unit">Mbps</div>
+      <div id="status" class="status-text">Initializing connection...</div>
+    </div>
+
+    <div class="controls">
+      <button id="restartBtn" class="restart-btn" onclick="startSpeedTest()">Test Again</button>
+    </div>
+
+    <div id="detailsGrid" class="details-grid">
+      <div class="detail-box">
+        <div class="detail-label">Latency (Ping)</div>
+        <div class="detail-value" id="pingVal">-<span>ms</span></div>
+      </div>
+      <div class="detail-box">
+        <div class="detail-label">Jitter</div>
+        <div class="detail-value" id="jitterVal">-<span>ms</span></div>
+      </div>
+      <div class="detail-box">
+        <div class="detail-label">Upload</div>
+        <div class="detail-value" id="upVal">-<span>Mbps</span></div>
+      </div>
+      <div class="detail-box">
+        <div class="detail-label">Server / IP</div>
+        <div class="detail-value" id="ipVal" style="font-size:15px; padding-top:4px;">Loading...</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 Fasqoo. All Rights Reserved.</div>
+    <div style="margin-top: 4px;">Fasqoo and Fasqoo Speed Test are trademarks of Fasqoo. • Powered by Cloudflare Edge</div>
+  
+  </div>
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const SPEED_BASE = "https://speed.cloudflare.com";
+let isRunning = false;
+
+window.addEventListener("DOMContentLoaded", () => {
+  startSpeedTest();
+  fetchIpInfo();
+});
+
+async function fetchIpInfo(){
+  try{
+    const res = await fetch("https://ipwho.is/");
+    const data = await res.json();
+    if(data.success){
+      $("ipVal").textContent = data.ip;
+    }
+  }catch(e){
+    $("ipVal").textContent = "Cloudflare";
+  }
+}
+
+function testTimeout(ms){
+  const c = new AbortController();
+  const t = setTimeout(() => c.abort(), ms);
+  return { signal: c.signal, clear: () => clearTimeout(t) };
+}
+
+async function startSpeedTest(){
+  if(isRunning) return;
+  isRunning = true;
+  
+  $("restartBtn").style.display = "none";
+  $("detailsGrid").classList.remove("visible");
+  $("speed").textContent = "0";
+  $("unit").textContent = "Mbps";
+  $("status").textContent = "Measuring ping...";
+
+  try{
+    const pings = [];
+    for(let i=0; i<5; i++){
+      const start = performance.now();
+      const timer = testTimeout(3000);
+      try{
+        const res = await fetch(SPEED_BASE + "/__down?bytes=0&r=" + Math.random(), { signal: timer.signal, cache: "no-store" });
+        await res.arrayBuffer();
+        pings.push(performance.now() - start);
+      }catch(e){}
+      timer.clear();
+    }
+    const avgPing = pings.length ? pings.reduce((a,b)=>a+b,0)/pings.length : 0;
+    let jitter = 0;
+    if(pings.length > 1){
+      for(let i=1; i<pings.length; i++) jitter += Math.abs(pings[i] - pings[i-1]);
+      jitter /= (pings.length - 1);
+    }
+
+    $("pingVal").innerHTML = avgPing.toFixed(0) + "<span>ms</span>";
+    $("jitterVal").innerHTML = jitter.toFixed(0) + "<span>ms</span>";
+
+    $("status").textContent = "Measuring download...";
+    const sizes = [1e6, 2e6, 5e6, 10e6, 20e6, 40e6, 80e6];
+    let totalBytes = 0;
+    let totalSeconds = 0;
+    let lastSpeed = 0;
+
+    for(const size of sizes){
+      if(!isRunning) break;
+      const timer = testTimeout(10000);
+      const start = performance.now();
+      try{
+        const res = await fetch(SPEED_BASE + "/__down?bytes=" + size + "&r=" + Math.random(), { signal: timer.signal, cache: "no-store" });
+        const buf = await res.arrayBuffer();
+        const seconds = (performance.now() - start) / 1000;
+        const speed = (buf.byteLength * 8) / seconds / 1e6;
+        
+        totalBytes += buf.byteLength;
+        totalSeconds += seconds;
+        lastSpeed = speed;
+
+        $("speed").textContent = speed < 10 ? speed.toFixed(1) : Math.round(speed);
+      }catch(e){}
+      timer.clear();
+    }
+
+    const finalDownload = totalSeconds > 0 ? (totalBytes * 8 / totalSeconds / 1e6) : lastSpeed;
+    $("speed").textContent = finalDownload < 10 ? finalDownload.toFixed(1) : Math.round(finalDownload);
+
+    $("status").textContent = "Measuring upload...";
+    const upSizes = [500000, 1000000, 2500000, 5000000];
+    let upBytes = 0;
+    let upSeconds = 0;
+    let lastUpSpeed = 0;
+
+    for(const size of upSizes){
+      const data = new Uint8Array(size);
+      const timer = testTimeout(10000);
+      const start = performance.now();
+      try{
+        const res = await fetch(SPEED_BASE + "/__up?r=" + Math.random(), { method: "POST", body: data, signal: timer.signal, cache: "no-store" });
+        await res.arrayBuffer();
+        const seconds = (performance.now() - start) / 1000;
+        const speed = (size * 8) / seconds / 1e6;
+        upBytes += size;
+        upSeconds += seconds;
+        lastUpSpeed = speed;
+      }catch(e){}
+      timer.clear();
+    }
+
+    const finalUpload = upSeconds > 0 ? (upBytes * 8 / upSeconds / 1e6) : lastUpSpeed;
+    $("upVal").innerHTML = (finalUpload < 10 ? finalUpload.toFixed(1) : Math.round(finalUpload)) + "<span>Mbps</span>";
+
+    $("status").textContent = "Test complete";
+    $("detailsGrid").classList.add("visible");
+    $("restartBtn").style.display = "inline-block";
+
+  }catch(err){
+    $("status").textContent = "Error during test.";
+    $("restartBtn").style.display = "inline-block";
+  }
+
+  isRunning = false;
+}
+</script>
+
+</body>
+</html>
