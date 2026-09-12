@@ -486,6 +486,13 @@ window.addEventListener("DOMContentLoaded", () => {
   
   startSpeedTest();
   fetchIpInfo();
+  if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(() => console.log('PWA Service Worker active'))
+      .catch((err) => console.log('SW registration failed', err));
+  });
+}
 });
 
 async function fetchIpInfo(){
