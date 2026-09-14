@@ -32,10 +32,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#09090b">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
 
   
 <style>
@@ -850,6 +846,22 @@ async function startSpeedTest(){
 window.addEventListener("beforeunload", () => {
   if(abortTest) abortTest.abort();
 });</script>
+
+
+<script>
+/* Fasqoo Lite PWA — Service Worker registration */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js", { scope: "/" })
+      .then(registration => {
+        console.log("Fasqoo Lite Service Worker:", registration.scope);
+      })
+      .catch(error => {
+        console.error("Fasqoo Lite Service Worker registration failed:", error);
+      });
+  });
+}
+</script>
 
 </body>
 </html>
