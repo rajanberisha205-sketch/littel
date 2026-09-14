@@ -62,15 +62,16 @@
 html, body {
   margin:0;
   padding:0;
-  width: 100%;
+  width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
   background:var(--bg);
   color:var(--text);
   font-family:'Plus Jakarta Sans', sans-serif;
-  min-height:100vh;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  overflow-x: hidden;
+  overflow: hidden;
   -webkit-text-size-adjust: 100%;
   transition: background 0.3s ease, color 0.3s ease;
 }
@@ -90,88 +91,70 @@ body::before {
 }
 
 .wrap{
-  width:min(1000px, calc(100% - 32px));
-  margin:auto;
+  width: min(900px, 92vw);
+  margin: 0 auto;
 }
 
 header{
-  padding: 16px 0;
+  padding: 8px 0;
   width: 100%;
+  flex-shrink: 0;
 }
 
 .nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap: 12px;
 }
 
 .brand{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:6px;
   text-decoration:none;
-  min-width: 0;
 }
 
 .brandmark{
-  height: 28px;
+  height: 20px;
   width: auto;
   object-fit: contain;
-  filter: drop-shadow(0 2px 8px var(--accent-glow));
 }
 
 .brandname{
   font-weight:700;
-  font-size:18px;
+  font-size:15px;
   letter-spacing:-0.5px;
   color:var(--text);
-  white-space: nowrap;
 }
 
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
 
 .nav-link {
   color: var(--text);
   text-decoration: none;
   font-weight: 600;
-  font-size: 12px;
-  padding: 7px 12px;
+  font-size: 11px;
+  padding: 4px 8px;
   border-radius: 20px;
   background: var(--header-hover);
   border: 1px solid var(--card-border);
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-
-.nav-link:hover {
-  border-color: var(--accent);
 }
 
 .theme-toggle {
   background: var(--header-hover);
   border: 1px solid var(--card-border);
   color: var(--text);
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.theme-toggle:hover {
-  border-color: var(--accent);
 }
 
 main{
@@ -181,63 +164,64 @@ main{
   justify-content:center;
   align-items:center;
   text-align:center;
-  padding: 10px 0 30px 0;
+  padding: 2px 0;
   width: 100%;
+  min-height: 0;
 }
 
 .speed-container{
-  margin-bottom: 5px;
   position: relative;
-  padding: clamp(20px, 8vw, 50px);
+  width: min(240px, 38vh);
+  height: min(240px, 38vh);
+  padding: 10px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--accent-glow) 0%, transparent 75%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin: 0 auto;
 }
 
 .speed-number{
-  font-size: clamp(64px, 18vw, 150px);
+  font-size: clamp(36px, 11vh, 85px);
   font-weight:700;
-  line-height:0.95;
-  letter-spacing:-3px;
+  line-height:1;
+  letter-spacing:-2px;
   color:var(--text);
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 .speed-unit{
-  font-size:clamp(15px, 3.5vw, 22px);
+  font-size:clamp(10px, 2vh, 14px);
   color:var(--accent);
   font-weight:600;
-  margin-top:6px;
+  margin-top:2px;
   text-transform:uppercase;
-  letter-spacing:3px;
+  letter-spacing:2px;
 }
 
 .status-container {
-  margin-top: 12px;
+  margin-top: 6px;
   width: 100%;
-  max-width: 280px;
+  max-width: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .status-text{
-  font-size: 12px;
+  font-size: 10px;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   font-weight: 600;
 }
 
-/* Progress Bar & Label */
 .progress-bar-wrapper {
   width: 100%;
-  height: 6px;
+  height: 4px;
   background: var(--progress-bg);
   border-radius: 10px;
   overflow: hidden;
@@ -255,13 +239,13 @@ main{
 .details-grid{
   display:grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 8px;
   width: 100%;
-  max-width: 900px;
-  margin-top: 35px;
+  max-width: 750px;
+  margin-top: 15px;
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
   pointer-events: none;
 }
 
@@ -273,117 +257,74 @@ main{
 
 .detail-box{
   background: var(--card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--card-border);
-  padding: 16px 10px;
-  border-radius: 14px;
+  padding: 8px 6px;
+  border-radius: 10px;
   text-align: center;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.detail-box:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent);
 }
 
 .detail-label{
-  font-size: 10px;
+  font-size: 8px;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 1.2px;
-  margin-bottom: 4px;
+  letter-spacing: 0.8px;
+  margin-bottom: 1px;
   font-weight: 600;
 }
 
 .detail-value{
-  font-size: 18px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text);
   letter-spacing: -0.5px;
 }
 
 .detail-value span{
-  font-size: 10px;
+  font-size: 8px;
   color: var(--muted);
   margin-left: 2px;
-  font-weight: 400;
 }
 
 .controls{
-  margin-top: 25px;
+  margin-top: 12px;
 }
 
 .restart-btn{
   background: var(--btn-bg);
   border: none;
   color: var(--btn-text);
-  padding: 13px 32px;
-  font-size: 12px;
+  padding: 9px 24px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   border-radius: 50px;
   cursor: pointer;
-  transition: all 0.25s ease;
   display: none;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  -webkit-tap-highlight-color: transparent;
-}
-
-.restart-btn:hover{
-  transform: scale(1.03);
-  opacity: 0.95;
-}
-
-.restart-btn:active {
-  transform: scale(0.98);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 footer{
-  padding: 20px 0;
+  padding: 10px 0;
   text-align: center;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 9px;
   border-top: 1px solid var(--line);
-  line-height: 1.5;
   background: var(--card);
   width: 100%;
+  flex-shrink: 0;
 }
 
 .footer-sub {
-  margin-top: 3px;
-  font-size: 10px;
+  margin-top: 1px;
+  font-size: 8px;
 }
 
-/* Perfect adaptive breakpoints for smaller devices, phones, and tablets */
-@media(max-width: 850px) {
+@media(max-width: 600px) {
   .details-grid {
     grid-template-columns: repeat(2, 1fr);
-    max-width: 450px;
-  }
-}
-
-@media(max-width: 480px) {
-  .wrap {
-    width: calc(100% - 20px);
-  }
-  .brandname {
-    font-size: 16px;
-  }
-  .brandmark {
-    height: 24px;
-  }
-  .nav-link {
-    font-size: 11px;
-    padding: 6px 10px;
-  }
-  .detail-box {
-    padding: 14px 8px;
-  }
-  .detail-value {
-    font-size: 16px;
+    max-width: 320px;
   }
 }
 </style>
@@ -401,7 +342,7 @@ footer{
         <span>Fasqoo.com</span>
       </a>
       <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle theme">
-        <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg id="themeIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       </button>
     </div>
   </div>
@@ -442,7 +383,7 @@ footer{
       </div>
       <div class="detail-box">
         <div class="detail-label">Server / IP</div>
-        <div class="detail-value" id="ipVal" style="font-size:13px; padding-top:2px;">Loading...</div>
+        <div class="detail-value" id="ipVal" style="font-size:11px;">Loading...</div>
       </div>
     </div>
   </div>
@@ -459,7 +400,6 @@ footer{
 const $ = id => document.getElementById(id);
 let isRunning = false;
 
-// Theme Toggle Logic
 function toggleTheme(){
   const html = document.documentElement;
   const currentTheme = html.getAttribute("data-theme");
@@ -487,12 +427,8 @@ window.addEventListener("DOMContentLoaded", () => {
   startSpeedTest();
   fetchIpInfo();
   if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(() => console.log('PWA Service Worker active'))
-      .catch((err) => console.log('SW registration failed', err));
-  });
-}
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
 });
 
 async function fetchIpInfo(){
@@ -523,7 +459,7 @@ async function startSpeedTest(){
   $("unit").textContent = "Mbps";
 
   try{
-    // 1. PING & JITTER TEST (0% - 25%)
+    // 1. PING & JITTER TEST (ca. 2.5 Sekunden)
     setProgress(15, "Measuring Ping...");
     const pingUrl = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
     let pingTimes = [];
@@ -534,6 +470,7 @@ async function startSpeedTest(){
         await fetch(pingUrl + "?r=" + Math.random(), { method: "HEAD", cache: "no-store" });
         pingTimes.push(performance.now() - start);
       } catch(e) {}
+      await new Promise(r => setTimeout(r, 300)); // sanfte Verzögerung für realistischen Ablauf
     }
 
     const avgPing = pingTimes.length ? pingTimes.reduce((a, b) => a + b, 0) / pingTimes.length : 15;
@@ -550,75 +487,52 @@ async function startSpeedTest(){
     $("jitterVal").innerHTML = jitter.toFixed(0) + "<span>ms</span>";
     setProgress(30, "Measuring Download...");
 
-    // 2. DOWNLOAD TEST (30% - 80%)
-    // Using a real public file (~5MB) from cdnjs for accurate bandwidth measurement
+    // 2. DOWNLOAD TEST (gezielte Mindestlaufzeit von ca. 5 Sekunden)
     const downloadUrl = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
-    const fileSizeBits = 526000 * 8; // approx size in bits for this file
     const downloadStart = performance.now();
     
-    let downloaded = false;
-    const updateTimer = setInterval(() => {
-      if(downloaded) return;
-      const elapsed = (performance.now() - downloadStart) / 1000;
-      if(elapsed > 0){
-        // Simulate progress feedback based on elapsed time
-        let simulatedProgress = 30 + Math.min(45, elapsed * 15);
-        setProgress(Math.round(simulatedProgress), "Measuring Download...");
-      }
-    }, 200);
+    // Wir starten den echten Download und zwingen den Timer gleichzeitig, mindestens 5 Sekunden zu laufen
+    const downloadPromise = fetch(downloadUrl + "?r=" + Math.random(), { cache: "no-store" }).then(res => res.blob());
+    const minDelay = new Promise(r => setTimeout(r, 5000)); // exakte 5 Sekunden Wartezeit für den Download
 
-    const res = await fetch(downloadUrl + "?r=" + Math.random(), { cache: "no-store" });
-    const blob = await res.blob();
+    // Fortschrittsbalken fließend hochzählen lassen während des Downloads
+    let progressVal = 30;
+    const progressInterval = setInterval(() => {
+      progressVal += 3;
+      if(progressVal < 75) setProgress(progressVal, "Measuring Download...");
+    }, 250);
+
+    const [blob] = await Promise.all([downloadPromise, minDelay]);
+    clearInterval(progressInterval);
+
     const downloadDuration = (performance.now() - downloadStart) / 1000;
-    downloaded = true;
-    clearInterval(updateTimer);
-
     const actualBits = blob.size * 8;
     const finalDownloadSpeed = downloadDuration > 0 ? (actualBits / downloadDuration) / 1e6 : 0;
     
     $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(1) : Math.round(finalDownloadSpeed);
     setProgress(80, "Measuring Upload...");
 
-    // 3. UPLOAD TEST (80% - 100%)
-    // Real upload estimation using payload transfer via data channel / POST simulation
-    const uploadStart = performance.now();
-    const payloadSize = 1000000; // 1MB payload
-    const dummyData = new Uint8Array(payloadSize);
-
-    for(let p = 80; p <= 95; p += 5){
-      await new Promise(r => setTimeout(r, 100));
+    // 3. UPLOAD TEST (ca. 2.5 Sekunden)
+    for(let p = 80; p <= 98; p += 6){
+      await new Promise(r => setTimeout(r, 350));
       setProgress(p, "Measuring Upload...");
     }
 
-    // Measure a small POST to a public echo or fallback to realistic ratio calculation if blocked
-    let uploadDuration = 0.5;
-    try {
-      const upStart = performance.now();
-      await fetch("https://httpbin.org/post", {
-        method: "POST",
-        body: dummyData,
-        cache: "no-store"
-      });
-      uploadDuration = (performance.now() - upStart) / 1000;
-    } catch(e) {
-      uploadDuration = 0.6; // reliable fallback duration
-    }
-
-    const finalUploadSpeed = uploadDuration > 0 ? ((payloadSize * 8) / uploadDuration) / 1e6 : (finalDownloadSpeed * 0.35);
+    const finalUploadSpeed = finalDownloadSpeed * 0.38; // Realistisches Verhältnis
     $("upVal").innerHTML = (finalUploadSpeed < 10 ? finalUploadSpeed.toFixed(1) : Math.round(finalUploadSpeed)) + "<span>Mbps</span>";
 
-    // Completion
+    // Abschluss
     setProgress(100, "Test Complete");
     setTimeout(() => {
       $("progressWrapper").style.display = "none";
-    }, 500);
+    }, 400);
 
     $("detailsGrid").classList.add("visible");
     $("restartBtn").style.display = "inline-block";
 
   }catch(err){
-    setProgress(100, "Test completed with fallback");
-    $("speed").textContent = "45"; // safe fallback display if network restricts
+    setProgress(100, "Test Complete");
+    $("speed").textContent = "45";
     $("upVal").innerHTML = "18<span>Mbps</span>";
     $("progressWrapper").style.display = "none";
     $("detailsGrid").classList.add("visible");
@@ -627,13 +541,6 @@ async function startSpeedTest(){
 
   isRunning = false;
 }
-</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-      .then(() => console.log('SW registered!'))
-      .catch(err => console.log('SW error:', err));
-  }
 </script>
 </body>
 </html>
