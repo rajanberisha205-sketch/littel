@@ -481,6 +481,70 @@ button{touch-action:manipulation;}
   background:var(--card-border);
 }
 
+
+/* PWA install prompt */
+.install-card{
+  width:100%;
+  margin-top:28px;
+  padding:18px 20px;
+  border:1px solid var(--card-border);
+  border-radius:14px;
+  background:var(--card);
+  box-shadow:0 8px 30px var(--shadow);
+  display:none;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  text-align:left;
+}
+.install-card.visible{display:flex;}
+.install-copy{min-width:0;}
+.install-title{
+  margin:0;
+  font-size:15px;
+  font-weight:700;
+  color:var(--text);
+}
+.install-subtitle{
+  margin:5px 0 0;
+  font-size:12px;
+  line-height:1.5;
+  color:var(--muted);
+}
+.install-btn{
+  flex:0 0 auto;
+  border:0;
+  border-radius:999px;
+  padding:12px 18px;
+  background:var(--accent);
+  color:#fff;
+  font:600 12px 'Plus Jakarta Sans',sans-serif;
+  letter-spacing:.3px;
+  cursor:pointer;
+  box-shadow:0 5px 18px var(--accent-glow);
+  transition:transform .2s ease, opacity .2s ease;
+}
+.install-btn:hover{transform:translateY(-1px);}
+.install-btn:active{transform:scale(.98);}
+.install-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+.install-note{
+  margin-top:8px;
+  font-size:11px;
+  line-height:1.45;
+  color:var(--muted);
+  display:none;
+}
+@media (max-width:600px){
+  .install-card{
+    flex-direction:column;
+    align-items:stretch;
+    text-align:center;
+    padding:16px;
+    margin-top:22px;
+  }
+  .install-btn{width:100%;}
+}
+
 </style>
 </head>
 <body>
@@ -508,6 +572,16 @@ button{touch-action:manipulation;}
       <div id="unit" class="speed-unit">Mbps</div>
       <div id="status" class="status-text">Initializing connection...</div>
     </div>
+
+
+    <section id="installCard" class="install-card" aria-label="Install Fasqoo app">
+      <div class="install-copy">
+        <p class="install-title">Fasqoo is better as an app</p>
+        <p class="install-subtitle">Install Fasqoo Lite for quick access and a clean app experience.</p>
+        <p id="installNote" class="install-note"></p>
+      </div>
+      <button id="installBtn" class="install-btn" type="button">Install Fasqoo</button>
+    </section>
 
     <div class="controls">
       <button id="restartBtn" class="restart-btn" onclick="startSpeedTest()">Test Again</button>
@@ -850,6 +924,86 @@ window.addEventListener("beforeunload", () => {
   if(abortTest) abortTest.abort();
 });</script>
 
+
+
+<script>
+/* Fasqoo Lite — PWA installation */
+(() => {
+  let deferredInstallPrompt = null;
+
+  const showInstallUI = () => {
+    const card = document.getElementById("installCard");
+    const btn = document.getElementById("installBtn");
+    if (!card || !btn) return;
+    card.classList.add("visible");
+    btn.textContent = "Install Fasqoo";
+  };
+
+  const hideInstallUI = () => {
+    const card = document.getElementById("installCard");
+    if (card) card.classList.remove("visible");
+  };
+
+  const isStandalone = () =>
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true;
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    showInstallUI();
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    hideInstallUI();
+  });
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("installBtn");
+    const note = document.getElementById("installNote");
+    if (!btn) return;
+
+    if (isStandalone()) {
+      hideInstallUI();
+      return;
+    }
+
+    btn.addEventListener("click", async () => {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+
+        try {
+          const choice = await deferredInstallPrompt.userChoice;
+          if (choice && choice.outcome === "accepted") {
+            hideInstallUI();
+          }
+        } catch (error) {
+          console.warn("Fasqoo install prompt:", error);
+        } finally {
+          deferredInstallPrompt = null;
+        }
+        return;
+      }
+
+      /* iOS Safari does not expose beforeinstallprompt. */
+      const isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+      if (isIOS && note) {
+        note.textContent = "On iPhone or iPad: tap Share, then choose “Add to Home Screen”.";
+        note.style.display = "block";
+        return;
+      }
+
+      if (note) {
+        note.textContent = "If Chrome offers “Install Fasqoo” in the browser menu, choose it to install the app.";
+        note.style.display = "block";
+      }
+    });
+
+    /* If the browser fires the install event later, the card appears automatically. */
+  });
+})();
+</script>
 
 <script>
 /* Fasqoo Lite PWA — Service Worker registration */
