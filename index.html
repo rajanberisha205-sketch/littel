@@ -640,8 +640,8 @@ async function startSpeedTest(){
       $("speed").textContent = "0";
     } else {
       setProgress(100, "Test completed with fallback");
-      $("speed").textContent = "45"; 
-      $("upVal").innerHTML = "18<span>Mbps</span>";
+      $("speed").textContent = "0"; // Hier auf 0 gesetzt
+      $("upVal").innerHTML = "0<span>Mbps</span>";
     }
     $("progressWrapper").style.display = "none";
     $("detailsGrid").classList.add("visible");
