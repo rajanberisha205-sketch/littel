@@ -352,7 +352,7 @@ footer{
   border-top: 1px solid var(--line);
   line-height: 1.4;
   background: var(--card);
-  width: 100%
+  width: 100%;
   flex-shrink: 0;
 }
 
@@ -559,7 +559,7 @@ async function startSpeedTest(){
     $("jitterVal").innerHTML = jitter.toFixed(0) + "<span>ms</span>";
     setProgress(30, "Measuring Download...");
 
-    // 2. ECHTER ECHTMEI-DOWNLOAD TEST MIT STREAM (30% - 80%)
+    // 2. ECHTER DOWNLOAD TEST MIT GEDROSSELTEM UPDATE (30% - 80%)
     const downloadUrl = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
     const downloadStart = performance.now();
     
@@ -568,14 +568,19 @@ async function startSpeedTest(){
     const totalLength = Number(response.headers.get('Content-Length')) || 120000;
     let receivedLength = 0;
     let finalDownloadSpeed = 0;
+    let lastUpdate = performance.now();
 
     while(true) {
       const { done, value } = await reader.read();
       if (done) break;
       receivedLength += value.length;
       
-      const elapsed = (performance.now() - downloadStart) / 1000;
-      if (elapsed > 0) {
+      const now = performance.now();
+      const elapsed = (now - downloadStart) / 1000;
+      
+      // Update alle 60ms drosseln, damit das Auge flüssig mitkommt
+      if (now - lastUpdate > 60 && elapsed > 0) {
+        lastUpdate = now;
         finalDownloadSpeed = ((receivedLength * 8) / elapsed) / 1e6;
         $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(1) : Math.round(finalDownloadSpeed);
         
@@ -601,7 +606,6 @@ async function startSpeedTest(){
         cache: "no-store"
       });
       uploadDuration = (performance.now() - upStart) / 1000;
-      // Zeige Live/Zwischenschritt an
       const liveUpSpeed = ((payloadSize * 8) / uploadDuration) / 1e6;
       $("speed").textContent = liveUpSpeed < 10 ? liveUpSpeed.toFixed(1) : Math.round(liveUpSpeed);
     } catch(e) {
@@ -639,4 +643,3 @@ async function startSpeedTest(){
 
 </body>
 </html>
-``` [cite: 2]
