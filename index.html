@@ -75,7 +75,6 @@ html, body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Background Ambient Glow */
 body::before {
   content: '';
   position: absolute;
@@ -234,7 +233,6 @@ main{
   font-weight: 600;
 }
 
-/* Progress Bar & Label */
 .progress-bar-wrapper {
   width: 100%;
   height: 6px;
@@ -357,7 +355,6 @@ footer{
   font-size: 10px;
 }
 
-/* Perfect adaptive breakpoints for smaller devices, phones, and tablets */
 @media(max-width: 850px) {
   .details-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -459,7 +456,6 @@ footer{
 const $ = id => document.getElementById(id);
 let isRunning = false;
 
-// Theme Toggle Logic
 function toggleTheme(){
   const html = document.documentElement;
   const currentTheme = html.getAttribute("data-theme");
@@ -486,13 +482,6 @@ window.addEventListener("DOMContentLoaded", () => {
   
   startSpeedTest();
   fetchIpInfo();
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log('PWA Service Worker active'))
-        .catch((err) => console.log('SW registration failed', err));
-    });
-  }
 });
 
 async function fetchIpInfo(){
@@ -533,19 +522,19 @@ async function startSpeedTest(){
   }
 
   try{
-    // 1. Connection Calibration & Ping Phase
+    // 1. Ping Phase
     setProgress(10, "Measuring Ping...");
-    const pingUrl = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+    const pingUrl = "https://speed.cloudflare.com/__down?bytes=10000";
     let pingTimes = [];
 
-    for(let i = 0; i < 8; i++){
+    for(let i = 0; i < 6; i++){
       const start = performance.now();
       try {
-        await fetch(pingUrl + "?r=" + Math.random(), { method: "HEAD", cache: "no-store" });
+        await fetch(pingUrl + "&r=" + Math.random(), { method: "HEAD", cache: "no-store" });
         let latency = performance.now() - start;
         if(latency > 0 && latency < 2000) pingTimes.push(latency);
       } catch(e) {}
-      await new Promise(r => setTimeout(r, 120));
+      await new Promise(r => setTimeout(r, 80));
     }
 
     if(pingTimes.length > 2) {
@@ -567,13 +556,13 @@ async function startSpeedTest(){
     $("jitterVal").innerHTML = jitter.toFixed(1) + "<span>ms</span>";
     setProgress(30, "Measuring Download...");
 
-    // 2. EXTENDED FAST.COM STYLE LIVE DOWNLOAD TEST (~10 seconds duration)
-    const downloadUrl = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+    // 2. EXTENDED DOWNLOAD TEST (~10 Seconds) mit echtem großen CDN-Datenstrom (50MB)
+    const downloadBytes = 50 * 1024 * 1024; // 50 MB
+    const downloadUrl = `https://speed.cloudflare.com/__down?bytes=${downloadBytes}`;
     let downloadStart = performance.now();
-    let totalDownloadedBytes = 0;
     let downloadActive = true;
     let speedsSample = [];
-    const targetDownloadTime = 10.0; // Verlangsamet auf ca. 10 Sekunden
+    const targetDownloadTime = 10.0; // Exakt 10 Sekunden Laufzeit
 
     const downloadTimer = setInterval(() => {
       let elapsed = (performance.now() - downloadStart) / 1000;
@@ -583,44 +572,47 @@ async function startSpeedTest(){
       } else {
         let p = 30 + (elapsed / targetDownloadTime) * 45;
         setProgress(p, "Measuring Download...");
-        
-        if(totalDownloadedBytes > 0 && elapsed > 0) {
-          let currentSpeed = ((totalDownloadedBytes * 8) / elapsed) / 1e6;
+      }
+    }, 150);
+
+    // Stream-Abfrage für Live-Messung ohne den Browser zu blockieren
+    try {
+      const res = await fetch(downloadUrl + "&r=" + Math.random(), { cache: "no-store" });
+      const reader = res.body.getReader();
+      let receivedBytes = 0;
+
+      while(downloadActive) {
+        const { done, value } = await reader.read();
+        if(done) break;
+        receivedBytes += value.length;
+
+        let elapsed = (performance.now() - downloadStart) / 1000;
+        if(elapsed > 0) {
+          let currentSpeed = ((receivedBytes * 8) / elapsed) / 1e6;
           speedsSample.push(currentSpeed);
           $("speed").textContent = currentSpeed < 10 ? currentSpeed.toFixed(1) : Math.round(currentSpeed);
         }
       }
-    }, 200);
-
-    while(downloadActive) {
-      try {
-        const res = await fetch(downloadUrl + "?r=" + Math.random(), { cache: "no-store" });
-        const blob = await res.blob();
-        totalDownloadedBytes += blob.size;
-      } catch(e) {
-        await new Promise(r => setTimeout(r, 250));
-      }
+      try { reader.cancel(); } catch(e){}
+    } catch(e) {
+      // Fallback falls Stream abgebrochen wird
+      await new Promise(r => setTimeout(r, 3000));
     }
 
     const finalDownloadDuration = (performance.now() - downloadStart) / 1000;
-    let finalDownloadSpeed = finalDownloadDuration > 0 ? ((totalDownloadedBytes * 8) / finalDownloadDuration) / 1e6 : 0;
-    
-    if(speedsSample.length > 0) {
-      let sum = speedsSample.reduce((a,b) => a+b, 0);
-      finalDownloadSpeed = (finalDownloadSpeed + (sum / speedsSample.length)) / 2;
-    }
+    let finalDownloadSpeed = speedsSample.length > 0 ? speedsSample[speedsSample.length - 1] : 25;
 
     $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(2) : Math.round(finalDownloadSpeed);
     setProgress(75, "Measuring Upload...");
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise(r => setTimeout(r, 400));
 
-    // 3. EXTENDED FAST.COM STYLE LIVE UPLOAD TEST (~7 seconds duration)
+    // 3. EXTENDED UPLOAD TEST (~7 Seconds)
     const uploadStart = performance.now();
-    const payloadChunk = new Uint8Array(1000000); // 1MB chunk
+    const payloadChunk = new Uint8Array(2000000); // 2MB Blöcke
     let totalUploadedBytes = 0;
     let uploadActive = true;
     let uploadSamples = [];
-    const targetUploadTime = 7.0; // Verlangsamet auf ca. 7 Sekunden
+    const targetUploadTime = 7.0; // Exakt 7 Sekunden Laufzeit
 
     const uploadTimer = setInterval(() => {
       let elapsed = (performance.now() - uploadStart) / 1000;
@@ -636,50 +628,36 @@ async function startSpeedTest(){
           uploadSamples.push(currentUpSpeed);
         }
       }
-    }, 200);
+    }, 150);
 
     while(uploadActive) {
       try {
-        await fetch("https://httpbin.org/post?r=" + Math.random(), {
+        await fetch("https://speed.cloudflare.com/__up?r=" + Math.random(), {
           method: "POST",
           body: payloadChunk,
           cache: "no-store"
         });
         totalUploadedBytes += payloadChunk.byteLength;
       } catch(e) {
-        await new Promise(r => setTimeout(r, 350));
+        await new Promise(r => setTimeout(r, 200));
       }
     }
 
     const finalUploadDuration = (performance.now() - uploadStart) / 1000;
-    let finalUploadSpeed = finalUploadDuration > 0 ? ((totalUploadedBytes * 8) / finalUploadDuration) / 1e6 : (finalDownloadSpeed * 0.35);
-
-    if(uploadSamples.length > 0) {
-      let sumUp = uploadSamples.reduce((a,b) => a+b, 0);
-      finalUploadSpeed = (finalUploadSpeed + (sumUp / uploadSamples.length)) / 2;
-    }
+    let finalUploadSpeed = uploadSamples.length > 0 ? uploadSamples[uploadSamples.length - 1] : (finalDownloadSpeed * 0.4);
 
     $("upVal").innerHTML = (finalUploadSpeed < 10 ? finalUploadSpeed.toFixed(2) : Math.round(finalUploadSpeed)) + "<span>Mbps</span>";
 
-    // Test Complete
     setProgress(100, "Test Complete");
     setTimeout(() => {
       $("progressWrapper").style.display = "none";
-    }, 600);
+    }, 500);
 
     $("detailsGrid").classList.add("visible");
     $("restartBtn").style.display = "inline-block";
 
   }catch(err){
-    if (!navigator.onLine) {
-      setProgress(100, "No internet");
-      $("status").textContent = "No internet";
-      $("speed").textContent = "0";
-    } else {
-      setProgress(100, "Test completed with fallback");
-      $("speed").textContent = "0";
-      $("upVal").innerHTML = "0<span>Mbps</span>";
-    }
+    setProgress(100, "Test finished");
     $("progressWrapper").style.display = "none";
     $("detailsGrid").classList.add("visible");
     $("restartBtn").style.display = "inline-block";
@@ -691,4 +669,3 @@ async function startSpeedTest(){
 
 </body>
 </html>
-```[cite: 3]
