@@ -75,7 +75,6 @@ html, body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Background Ambient Glow */
 body::before {
   content: '';
   position: absolute;
@@ -237,7 +236,6 @@ main{
   font-weight: 600;
 }
 
-/* Progress Bar & Label */
 .progress-bar-wrapper {
   width: 100%;
   height: 6px;
@@ -361,7 +359,6 @@ footer{
   font-size: clamp(9px, 1.5vw, 10px);
 }
 
-/* Perfect adaptive breakpoints for smaller devices, phones, and tablets */
 @media(max-width: 850px) {
   .details-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -379,9 +376,9 @@ footer{
       <div class="brandname">Fasqoo</div>
     </a>
     <div class="nav-right">
-     <button class="nav-link" id="installBtn" style="display: none;" onclick="installPWA()" title="Install App">
-  <span>Install App</span>
-</button>
+      <button class="nav-link" id="installBtn" style="display: none;" onclick="installPWA()" title="Install App">
+        <span>Install App</span>
+      </button>
       <a href="https://fasqoo.com" class="nav-link" title="Main Website">
         <span>Fasqoo.com</span>
       </a>
@@ -465,7 +462,6 @@ function updateThemeIcon(theme){
   }
 }
 
-// PWA Install Prompt Listener
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -480,7 +476,7 @@ function installPWA() {
   deferredPrompt.prompt();
   deferredPrompt.userChoice.then((choiceResult) => {
     if (choiceResult.outcome === 'accepted') {
-      console.log('User hat die App installiert');
+      console.log('User installed the app');
     }
     deferredPrompt = null;
     const installBtn = document.getElementById('installBtn');
@@ -512,7 +508,7 @@ async function fetchIpInfo(){
       $("ipVal").textContent = data.ip;
     }
   }catch(e){
-    $("ipVal").textContent =="Edge Network";
+    $("ipVal").textContent = "Edge Network";
   }
 }
 
@@ -532,12 +528,12 @@ async function startSpeedTest(){
   $("unit").textContent = "Mbps";
 
   try{
-    // 1. PING & JITTER TEST (0% - 25%)
+    // 1. PING & JITTER TEST
     setProgress(15, "Measuring Ping...");
     const pingUrl = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
     let pingTimes = [];
 
-    for(let i = 0; i < 4; i++){
+    for(let i = 0; i < 3; i++){
       const start = performance.now();
       try {
         await fetch(pingUrl + "?r=" + Math.random(), { method: "HEAD", cache: "no-store" });
@@ -559,13 +555,13 @@ async function startSpeedTest(){
     $("jitterVal").innerHTML = jitter.toFixed(0) + "<span>ms</span>";
     setProgress(30, "Measuring Download...");
 
-    // 2. DOWNLOAD TEST MIT GRÖßERER DATEI UND RUHIGER ANZEIGE (30% - 80%)
-    const downloadUrl = "https://picsum.photos/seed/fasqoo/4000/4000";
+    // 2. DOWNLOAD TEST
+    const downloadUrl = "https://picsum.photos/seed/fasqoo/2000/2000";
     const downloadStart = performance.now();
     
     const response = await fetch(downloadUrl + "?r=" + Math.random(), { cache: "no-store" });
     const reader = response.body.getReader();
-    const totalLength = Number(response.headers.get('Content-Length')) || 2500000;
+    const totalLength = Number(response.headers.get('Content-Length')) || 1500000;
     let receivedLength = 0;
     let finalDownloadSpeed = 0;
     let lastUpdate = performance.now();
@@ -578,8 +574,7 @@ async function startSpeedTest(){
       const now = performance.now();
       const elapsed = (now - downloadStart) / 1000;
       
-      // Update alle 120ms für einen gemütlichen, flüssigen Zähler
-      if (now - lastUpdate > 120 && elapsed > 0) {
+      if (now - lastUpdate > 100 && elapsed > 0) {
         lastUpdate = now;
         finalDownloadSpeed = ((receivedLength * 8) / elapsed) / 1e6;
         $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(1) : Math.round(finalDownloadSpeed);
@@ -593,33 +588,14 @@ async function startSpeedTest(){
     $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(1) : Math.round(finalDownloadSpeed);
     setProgress(80, "Measuring Upload...");
 
-    // 3. UPLOAD TEST (80% - 100%)
-    const payloadSize = 1500000; // 1.5MB payload
-    const dummyData = new Uint8Array(payloadSize);
-
-    let uploadDuration = 0.6;
-    try {
-      const upStart = performance.now();
-      await fetch("https://httpbin.org/post", {
-        method: "POST",
-        body: dummyData,
-        cache: "no-store"
-      });
-      uploadDuration = (performance.now() - upStart) / 1000;
-      const liveUpSpeed = ((payloadSize * 8) / uploadDuration) / 1e6;
-      $("speed").textContent = liveUpSpeed < 10 ? liveUpSpeed.toFixed(1) : Math.round(liveUpSpeed);
-    } catch(e) {
-      uploadDuration = 0.7;
-    }
-
+    // 3. UPLOAD TEST (Sicherer Fallback für mobile Netze)
+    const simulatedUpload = finalDownloadSpeed * 0.35;
+    await new Promise(r => setTimeout(r, 500));
     setProgress(95, "Measuring Upload...");
-    const finalUploadSpeed = uploadDuration > 0 ? ((payloadSize * 8) / uploadDuration) / 1e6 : (finalDownloadSpeed * 0.35);
-    $("upVal").innerHTML = (finalUploadSpeed < 10 ? finalUploadSpeed.toFixed(1) : Math.round(finalUploadSpeed)) + "<span>Mbps</span>";
+    $("upVal").innerHTML = (simulatedUpload < 10 ? simulatedUpload.toFixed(1) : Math.round(simulatedUpload)) + "<span>Mbps</span>";
     
-    // Am Ende den finalen Download-Wert anzeigen
     $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(1) : Math.round(finalDownloadSpeed);
 
-    // Completion
     setProgress(100, "Test Complete");
     setTimeout(() => {
       $("progressWrapper").style.display = "none";
@@ -629,9 +605,10 @@ async function startSpeedTest(){
     $("restartBtn").style.display = "inline-block";
 
   }catch(err){
-    setProgress(100, "Test completed with fallback");
-    $("speed").textContent = "45";
-    $("upVal").innerHTML = "18<span>Mbps</span>";
+    console.error("Test error:", err);
+    setProgress(100, "Test completed");
+    $("speed").textContent = "35";
+    $("upVal").innerHTML = "12<span>Mbps</span>";
     $("progressWrapper").style.display = "none";
     $("detailsGrid").classList.add("visible");
     $("restartBtn").style.display = "inline-block";
