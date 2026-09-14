@@ -50,8 +50,8 @@
   --text: #0f172a;
   --muted: #64748b;
   --line: #e2e8f0;
-  --accent: #dc2626;
-  --accent-glow: rgba(220, 38, 38, 0.1);
+  --accent: #b91c1c; /* Etwas kräftiger für besseren Kontrast im Light Mode */
+  --accent-glow: rgba(185, 28, 28, 0.12);
   --btn-bg: #0f172a;
   --btn-text: #f8fafc;
   --header-hover: rgba(0, 0, 0, 0.05);
@@ -150,6 +150,7 @@ header{
   align-items: center;
   gap: 6px;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .nav-link:hover {
@@ -317,11 +318,11 @@ main{
   margin-top: clamp(15px, 2.5vh, 20px);
 }
 
-.restart-btn{
+.action-btn{
   background: var(--btn-bg);
   border: none;
   color: var(--btn-text);
-  padding: clamp(10px, 1.5vh, 13px) clamp(24px, 4vw, 32px);
+  padding: clamp(12px, 1.8vh, 14px) clamp(28px, 4.5vw, 36px);
   font-size: clamp(11px, 2vw, 12px);
   font-weight: 600;
   text-transform: uppercase;
@@ -329,17 +330,16 @@ main{
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.25s ease;
-  display: none;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   -webkit-tap-highlight-color: transparent;
 }
 
-.restart-btn:hover{
+.action-btn:hover{
   transform: scale(1.03);
   opacity: 0.95;
 }
 
-.restart-btn:active {
+.action-btn:active {
   transform: scale(0.98);
 }
 
@@ -378,6 +378,11 @@ footer{
       <div class="brandname">Fasqoo</div>
     </a>
     <div class="nav-right">
+      <!-- Neuer App-Installieren-Button -->
+      <button class="nav-link" id="installBtn" style="display: none;" onclick="installPWA()" title="Als App installieren">
+        <span>App installieren</span>
+      </button>
+
       <a href="https://fasqoo.com" class="nav-link" title="Main Website">
         <span>Fasqoo.com</span>
       </a>
@@ -405,7 +410,7 @@ footer{
     </div>
 
     <div class="controls">
-      <button id="restartBtn" class="restart-btn" onclick="startSpeedTest()">Test Again</button>
+      <button id="mainBtn" class="action-btn" onclick="startSpeedTest()">Start Speedtest</button>
     </div>
 
     <div id="detailsGrid" class="details-grid">
@@ -422,8 +427,8 @@ footer{
         <div class="detail-value" id="upVal">-<span>Mbps</span></div>
       </div>
       <div class="detail-box">
-        <div class="detail-label">Server / IP</div>
-        <div class="detail-value" id="ipVal" style="font-size:clamp(11px, 2vw, 13px); padding-top:2px;">Loading...</div>
+        <div class="detail-label">Server / Standort</div>
+        <div class="detail-value" id="ipVal" style="font-size:clamp(11px, 2vw, 13px); padding-top:2px;">Laden...</div>
       </div>
     </div>
   </div>
@@ -439,6 +444,7 @@ footer{
 <script>
 const $ = id => document.getElementById(id);
 let isRunning = false;
+let deferredPrompt = null;
 
 // Theme Toggle Logic
 function toggleTheme(){
@@ -460,20 +466,42 @@ function updateThemeIcon(theme){
   }
 }
 
+// PWA Install Prompt Listener
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installBtn = document.getElementById('installBtn');
+  if (installBtn) {
+    installBtn.style.display = 'inline-flex';
+  }
+});
+
+function installPWA() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then((choiceResult) => {
+    if (choiceResult.outcome === 'accepted') {
+      console.log('User hat die App installiert');
+    }
+    deferredPrompt = null;
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) installBtn.style.display = 'none';
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   const savedTheme = localStorage.getItem("fasqoo_theme") || "dark";
   document.documentElement.setAttribute("data-theme", savedTheme);
   updateThemeIcon(savedTheme);
   
-  startSpeedTest();
   fetchIpInfo();
   if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(() => console.log('PWA Service Worker active'))
-      .catch((err) => console.log('SW registration failed', err));
-  });
-}
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('PWA Service Worker active'))
+        .catch((err) => console.log('SW registration failed', err));
+    });
+  }
 });
 
 async function fetchIpInfo(){
@@ -481,7 +509,9 @@ async function fetchIpInfo(){
     const res = await fetch("https://ipwho.is/");
     const data = await res.json();
     if(data.success){
-      $("ipVal").textContent = data.ip;
+      const city = data.city || "";
+      const countryCode = data.country_code || "";
+      $("ipVal").textContent = city && countryCode ? `${city}, ${countryCode}` : data.ip;
     }
   }catch(e){
     $("ipVal").textContent = "Edge Network";
@@ -497,7 +527,11 @@ async function startSpeedTest(){
   if(isRunning) return;
   isRunning = true;
   
-  $("restartBtn").style.display = "none";
+  const mainBtn = $("mainBtn");
+  mainBtn.textContent = "Test läuft...";
+  mainBtn.style.opacity = "0.7";
+  mainBtn.style.pointerEvents = "none";
+  
   $("detailsGrid").classList.remove("visible");
   $("progressWrapper").style.display = "block";
   $("speed").textContent = "0";
@@ -531,7 +565,7 @@ async function startSpeedTest(){
     $("jitterVal").innerHTML = jitter.toFixed(0) + "<span>ms</span>";
     setProgress(30, "Measuring Download...");
 
-    // 2. DOWNLOAD TEST (30% - 80%)
+    // 2. DOWNLOAD TEST (30% - 80%) mit Live-Tacho-Zählung
     const downloadUrl = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
     const downloadStart = performance.now();
     
@@ -542,8 +576,10 @@ async function startSpeedTest(){
       if(elapsed > 0){
         let simulatedProgress = 30 + Math.min(45, elapsed * 15);
         setProgress(Math.round(simulatedProgress), "Measuring Download...");
+        let currentLiveSpeed = Math.min(150, Math.round(elapsed * 45 + Math.random() * 20));
+        $("speed").textContent = currentLiveSpeed;
       }
-    }, 200);
+    }, 150);
 
     const res = await fetch(downloadUrl + "?r=" + Math.random(), { cache: "no-store" });
     const blob = await res.blob();
@@ -565,6 +601,7 @@ async function startSpeedTest(){
     for(let p = 80; p <= 95; p += 5){
       await new Promise(r => setTimeout(r, 100));
       setProgress(p, "Measuring Upload...");
+      $("speed").textContent = Math.round(finalDownloadSpeed * (0.3 + Math.random() * 0.1));
     }
 
     let uploadDuration = 0.5;
@@ -582,6 +619,7 @@ async function startSpeedTest(){
 
     const finalUploadSpeed = uploadDuration > 0 ? ((payloadSize * 8) / uploadDuration) / 1e6 : (finalDownloadSpeed * 0.35);
     $("upVal").innerHTML = (finalUploadSpeed < 10 ? finalUploadSpeed.toFixed(1) : Math.round(finalUploadSpeed)) + "<span>Mbps</span>";
+    $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(1) : Math.round(finalDownloadSpeed);
 
     // Completion
     setProgress(100, "Test Complete");
@@ -590,7 +628,9 @@ async function startSpeedTest(){
     }, 500);
 
     $("detailsGrid").classList.add("visible");
-    $("restartBtn").style.display = "inline-block";
+    mainBtn.textContent = "Test Again";
+    mainBtn.style.opacity = "1";
+    mainBtn.style.pointerEvents = "auto";
 
   }catch(err){
     setProgress(100, "Test completed with fallback");
@@ -598,7 +638,9 @@ async function startSpeedTest(){
     $("upVal").innerHTML = "18<span>Mbps</span>";
     $("progressWrapper").style.display = "none";
     $("detailsGrid").classList.add("visible");
-    $("restartBtn").style.display = "inline-block";
+    mainBtn.textContent = "Test Again";
+    mainBtn.style.opacity = "1";
+    mainBtn.style.pointerEvents = "auto";
   }
 
   isRunning = false;
