@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
   <meta name="theme-color" content="#0a0a0c">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Fasqoo Lite">
@@ -547,6 +547,79 @@ button{touch-action:manipulation;}
   .install-btn{width:100%;}
 }
 
+
+/* ===== Fasqoo Lite: universal responsive/PWA layout ===== */
+html, body {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+body {
+  min-height: 100dvh;
+  min-height: 100vh;
+}
+.wrap {
+  width: min(900px, calc(100% - 32px));
+  max-width: 900px;
+}
+main {
+  width: 100%;
+  min-width: 0;
+  padding-left: max(0px, env(safe-area-inset-left));
+  padding-right: max(0px, env(safe-area-inset-right));
+}
+.speed-container,
+.details-grid,
+.install-card {
+  max-width: 100%;
+  min-width: 0;
+}
+.speed-number {
+  font-size: clamp(56px, 13vw, 160px);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.detail-box, .detail-value, .status-text, .install-copy {
+  min-width: 0;
+}
+img, svg, canvas, video {
+  max-width: 100%;
+}
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+@media (max-width: 700px) {
+  .wrap { width: min(100% - 24px, 600px); }
+  header { padding-top: max(14px, env(safe-area-inset-top)); }
+  main { padding-top: 18px; padding-bottom: 18px; }
+  .nav { gap: 8px; }
+  .fasqoo-link { min-height: 36px; padding-inline: 10px; }
+  .speed-number { font-size: clamp(52px, 18vw, 112px); letter-spacing: -3px; }
+  .details-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 420px) {
+  .wrap { width: calc(100% - 16px); }
+  .brand { gap: 6px; }
+  .brandname { font-size: clamp(16px, 5vw, 19px); }
+  .brandmark { height: 26px; }
+  .fasqoo-link { font-size: 10px; padding-inline: 8px; }
+  .theme-btn { width: 34px; height: 34px; }
+  .speed-container { padding: 8px 0 14px; }
+  .speed-number { font-size: clamp(48px, 22vw, 92px); }
+  .details-grid { gap: 7px; margin-top: 18px; }
+  .detail-box { padding: 13px 6px; }
+  .detail-value { font-size: clamp(15px, 5vw, 19px); }
+  footer { padding-bottom: max(18px, env(safe-area-inset-bottom)); }
+}
+@media (max-width: 340px) {
+  .wrap { width: calc(100% - 12px); }
+  .fasqoo-link { display: none; }
+  .speed-number { font-size: 46px; }
+}
+@media (min-width: 1200px) {
+  .wrap { width: min(980px, calc(100% - 64px)); max-width: 980px; }
+}
+
 </style>
 </head>
 <body>
@@ -929,83 +1002,70 @@ window.addEventListener("beforeunload", () => {
 
 
 <script>
-/* Fasqoo Lite — PWA installation */
+/* Fasqoo Lite — robust PWA installation */
 (() => {
   let deferredInstallPrompt = null;
+  const card = () => document.getElementById("installCard");
+  const btn = () => document.getElementById("installBtn");
+  const note = () => document.getElementById("installNote");
 
-  const showInstallUI = () => {
-    const card = document.getElementById("installCard");
-    const btn = document.getElementById("installBtn");
-    if (!card || !btn) return;
-    card.classList.add("visible");
-    btn.textContent = "Install Fasqoo";
-  };
-
-  const hideInstallUI = () => {
-    const card = document.getElementById("installCard");
-    if (card) card.classList.remove("visible");
-  };
-
-  const isStandalone = () =>
+  const standalone = () =>
     window.matchMedia("(display-mode: standalone)").matches ||
+    window.matchMedia("(display-mode: fullscreen)").matches ||
     window.navigator.standalone === true;
 
-  window.addEventListener("beforeinstallprompt", (event) => {
-    // Chrome fires this only when the browser considers the site installable.
+  function showInstall() {
+    if (standalone()) return;
+    if (card()) card().classList.add("visible");
+    if (btn()) btn().textContent = "Install Fasqoo";
+  }
+
+  function hideInstall() {
+    if (card()) card().classList.remove("visible");
+  }
+
+  window.addEventListener("beforeinstallprompt", event => {
     event.preventDefault();
     deferredInstallPrompt = event;
-    showInstallUI();
+    showInstall();
   });
 
   window.addEventListener("appinstalled", () => {
     deferredInstallPrompt = null;
-    hideInstallUI();
+    hideInstall();
   });
 
   window.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("installBtn");
-    const note = document.getElementById("installNote");
-    if (!btn) return;
-
-    if (isStandalone()) {
-      hideInstallUI();
+    const installButton = btn();
+    if (!installButton || standalone()) {
+      hideInstall();
       return;
     }
 
-    btn.addEventListener("click", async () => {
+    installButton.addEventListener("click", async () => {
       if (deferredInstallPrompt) {
-        deferredInstallPrompt.prompt();
-
+        const promptEvent = deferredInstallPrompt;
+        deferredInstallPrompt = null;
         try {
-          const choice = await deferredInstallPrompt.userChoice;
-          if (choice && choice.outcome === "accepted") {
-            hideInstallUI();
-          }
-        } catch (error) {
-          console.warn("Fasqoo install prompt:", error);
-        } finally {
-          deferredInstallPrompt = null;
+          await promptEvent.prompt();
+          const result = await promptEvent.userChoice;
+          if (result && result.outcome === "accepted") hideInstall();
+        } catch (e) {
+          console.warn("Fasqoo PWA install:", e);
         }
         return;
       }
 
-      /* iOS Safari does not expose beforeinstallprompt. */
-      const isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-      if (isIOS && note) {
-        note.textContent = "On iPhone or iPad: tap Share, then choose “Add to Home Screen”.";
-        note.style.display = "block";
-        return;
-      }
-
-      if (note) {
-        note.textContent = "If Chrome offers “Install Fasqoo” in the browser menu, choose it to install the app.";
-        note.style.display = "block";
+      const ua = navigator.userAgent.toLowerCase();
+      const isIOS = /iphone|ipad|ipod/.test(ua);
+      if (isIOS && note()) {
+        note().textContent = "On iPhone or iPad: tap Share, then Add to Home Screen.";
+        note().style.display = "block";
+      } else if (note()) {
+        note().textContent = "Open Chrome's ⋮ menu and choose Install app or Add to Home screen.";
+        note().style.display = "block";
       }
     });
-
-    /* If the browser fires the install event later, the card appears automatically. */
-    // Do not show a misleading "install" card when the browser has not made the
-    // page installable yet; the browser menu remains the fallback.
   });
 })();
 </script>
