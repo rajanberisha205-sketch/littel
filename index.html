@@ -343,7 +343,7 @@ main{
 }
 
 footer{
-  padding: clamp(12px, 2vh, 16px) 0;
+  padding: clamp(10px, 1.5vh, 14px) 0;
   text-align: center;
   color: var(--muted);
   font-size: clamp(10px, 1.8vw, 11px);
@@ -357,6 +357,16 @@ footer{
 .footer-sub {
   margin-top: 2px;
   font-size: clamp(9px, 1.5vw, 10px);
+}
+
+.footer-link {
+  color: var(--muted);
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: var(--accent);
 }
 
 @media(max-width: 850px) {
@@ -432,8 +442,9 @@ footer{
 
 <footer>
   <div class="wrap">
-    <div>© 2026 Fasqoo. All Rights Reserved.</div>
-    <div class="footer-sub">Fasqoo Speed Test • Global CDN Edge</div>
+    <div>© 2026 Fasqoo. Alle Rechte vorbehalten.</div>
+    <div class="footer-sub">Fasqoo und Fasqoo Speed Test sind Marken von Fasqoo.</div>
+    <div class="footer-sub"><a href="/privacy-policy" class="footer-link">Privacy Policy</a></div>
   </div>
 </footer>
 
