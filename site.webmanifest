@@ -1,13 +1,12 @@
 {
-  "id": "/",
+  "id": "https://lite.fasqoo.com/",
   "name": "Fasqoo Lite Internet Speed Test",
   "short_name": "Fasqoo Lite",
   "description": "Free browser-based internet speed test for download, upload, latency and jitter.",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "https://lite.fasqoo.com/",
+  "scope": "https://lite.fasqoo.com/",
   "display": "standalone",
   "display_override": [
-    "window-controls-overlay",
     "standalone",
     "minimal-ui"
   ],
