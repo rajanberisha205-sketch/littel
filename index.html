@@ -522,7 +522,7 @@ async function startSpeedTest(){
   }
 
   try{
-    // 1. Präzise Ping-Phase
+    // 1. Ping Phase
     setProgress(10, "Measuring Ping...");
     const pingUrl = "https://speed.cloudflare.com/__down?bytes=10000";
     let pingTimes = [];
@@ -556,11 +556,11 @@ async function startSpeedTest(){
     $("jitterVal").innerHTML = jitter.toFixed(1) + "<span>ms</span>";
     setProgress(30, "Measuring Download...");
 
-    // 2. EXAKTER FAST.COM DOWNLOAD ALGORITHMUS (12 Sekunden, 6 Streams, geglättet)
-    const downloadDuration = 12000; 
+    // 2. EXTREM LANGSAMER & PRÄZISER FAST.COM DOWNLOAD (16 Sekunden, schwerer gedämpft)
+    const downloadDuration = 16000; 
     const startTime = performance.now();
     let totalBytesReceived = 0;
-    let activeStreams = 6; 
+    let activeStreams = 4; 
     let testActive = true;
     let smoothedSpeed = 0;
 
@@ -593,16 +593,15 @@ async function startSpeedTest(){
         setProgress(Math.min(progressPercent, 75), "Measuring Download...");
 
         let elapsedSec = elapsed / 1000;
-        if(elapsedSec > 0.3 && totalBytesReceived > 0) {
-          // Reale rohe Geschwindigkeit in Mbps
+        if(elapsedSec > 0.5 && totalBytesReceived > 0) {
           let rawBps = (totalBytesReceived * 8) / elapsedSec;
           let rawMbps = rawBps / 1e6;
 
-          // Fast.com artige Glättung (Exponential Moving Average - sanftes Hochzählen)
+          // Noch stärkere Dämpfung (0.90 / 0.10), damit es ganz gemächlich hochklettert wie bei Netflix
           if(smoothedSpeed === 0) {
             smoothedSpeed = rawMbps;
           } else {
-            smoothedSpeed = smoothedSpeed * 0.75 + rawMbps * 0.25;
+            smoothedSpeed = smoothedSpeed * 0.90 + rawMbps * 0.10;
           }
 
           $("speed").textContent = smoothedSpeed < 10 ? smoothedSpeed.toFixed(1) : Math.round(smoothedSpeed);
@@ -613,7 +612,7 @@ async function startSpeedTest(){
           clearInterval(interval);
           resolve();
         }
-      }, 120);
+      }, 100);
     });
 
     testActive = false;
@@ -625,8 +624,8 @@ async function startSpeedTest(){
     setProgress(75, "Measuring Upload...");
     await new Promise(r => setTimeout(r, 400));
 
-    // 3. EXAKTER FAST.COM UPLOAD ALGORITHMUS (8 Sekunden, 3 Streams)
-    const uploadDuration = 8000;
+    // 3. EXTREM LANGSAMER UPLOAD (10 Sekunden)
+    const uploadDuration = 10000;
     const upStartTime = performance.now();
     let totalBytesUploaded = 0;
     let uploadActive = true;
@@ -649,7 +648,7 @@ async function startSpeedTest(){
     };
 
     let upStreams = [];
-    for(let s = 0; s < 3; s++) {
+    for(let s = 0; s < 2; s++) {
       upStreams.push(runUpStream());
     }
 
@@ -660,14 +659,14 @@ async function startSpeedTest(){
         setProgress(Math.min(progressPercent, 97), "Measuring Upload...");
 
         let elapsedSec = elapsed / 1000;
-        if(elapsedSec > 0.3 && totalBytesUploaded > 0) {
+        if(elapsedSec > 0.5 && totalBytesUploaded > 0) {
           let rawUpBps = (totalBytesUploaded * 8) / elapsedSec;
           let rawUpMbps = rawUpBps / 1e6;
 
           if(smoothedUpSpeed === 0) {
             smoothedUpSpeed = rawUpMbps;
           } else {
-            smoothedUpSpeed = smoothedUpSpeed * 0.75 + rawUpMbps * 0.25;
+            smoothedUpSpeed = smoothedUpSpeed * 0.90 + rawUpMbps * 0.10;
           }
         }
 
@@ -676,7 +675,7 @@ async function startSpeedTest(){
           clearInterval(upInterval);
           resolve();
         }
-      }, 120);
+      }, 100);
     });
 
     uploadActive = false;
