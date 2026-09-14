@@ -1,38 +1,20 @@
 {
-  "id": "https://lite.fasqoo.com/",
-  "name": "Fasqoo Lite Internet Speed Test",
+  "name": "Fasqoo Lite Speed Test",
   "short_name": "Fasqoo Lite",
-  "description": "Free browser-based internet speed test for download, upload, latency and jitter.",
-  "start_url": "https://lite.fasqoo.com/",
-  "scope": "https://lite.fasqoo.com/",
+  "start_url": "/",
   "display": "standalone",
-  "display_override": [
-    "standalone",
-    "minimal-ui"
-  ],
-  "orientation": "any",
-  "theme_color": "#0a0a0c",
   "background_color": "#09090b",
-  "lang": "en",
-  "dir": "ltr",
-  "categories": [
-    "utilities",
-    "internet",
-    "productivity"
-  ],
-  "prefer_related_applications": false,
+  "theme_color": "#0a0a0c",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
     },
     {
-      "src": "/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ]
 }
