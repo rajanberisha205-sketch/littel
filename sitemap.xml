@@ -1,8 +1,8 @@
 {
+  "id": "/",
   "name": "Fasqoo Lite Internet Speed Test",
   "short_name": "Fasqoo Lite",
   "description": "Free browser-based internet speed test for download, upload, latency and jitter.",
-  "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
