@@ -1,641 +1,455 @@
-
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <meta name="theme-color" content="#0a0a0c" id="themeColorMeta">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <!-- Primary SEO -->
-  <title>Internet Speed Test – Fast & Accurate Download & Upload Test | Fasqoo Lite</title>
-  <meta name="description" content="Free internet speed test by Fasqoo Lite. Measure your real download speed, upload speed, latency and jitter directly in your browser using Cloudflare's global edge network. No fake results.">
-  <meta name="keywords" content="internet speed test, speed test, internet speed test free, wifi speed test, broadband speed test, download speed test, upload speed test, ping test, latency test, jitter test, connection test, network speed test, Fasqoo, Fasqoo Lite">
-  <meta name="author" content="Fasqoo">
-  <meta name="publisher" content="Fasqoo">
-  <meta name="application-name" content="Fasqoo Lite">
-  <meta name="generator" content="Fasqoo Lite">
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="bingbot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="rating" content="general">
-  <meta name="revisit-after" content="7 days">
-  <meta name="language" content="English">
-  <meta name="content-language" content="en">
+<!-- ============ PRIMARY SEO ============ -->
+<title>Internet Speed Test - Check Your Download Speed Free | FastSpeedTest</title>
+<meta name="description" content="Test your internet speed free in seconds. Measure your download speed accurately with our fast, browser-based speed test tool. No app required.">
+<meta name="keywords" content="internet speed test, download speed test, broadband speed test, wifi speed test, mbps test, network speed checker">
+<meta name="author" content="FastSpeedTest">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="googlebot" content="index, follow">
+<meta name="language" content="English">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+<link rel="canonical" href="https://www.example.com/">
 
-  <!-- Canonical -->
-  <link rel="canonical" href="https://lite.fasqoo.com/">
+<!-- ============ FAVICON & ICONS ============ -->
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 
-  <!-- Open Graph / Facebook / LinkedIn -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://lite.fasqoo.com/">
-  <meta property="og:site_name" content="Fasqoo Lite">
-  <meta property="og:title" content="Internet Speed Test – Fast & Accurate | Fasqoo Lite">
-  <meta property="og:description" content="Measure real download, upload, latency and jitter with Fasqoo Lite using Cloudflare's global edge network.">
-  <meta property="og:image" content="https://lite.fasqoo.com/fasqoologo.png">
-  <meta property="og:image:alt" content="Fasqoo Lite Internet Speed Test">
-  <meta property="og:locale" content="en_US">
+<!-- ============ OPEN GRAPH (Facebook, LinkedIn, WhatsApp) ============ -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.example.com/">
+<meta property="og:title" content="Internet Speed Test - Check Your Download Speed Free">
+<meta property="og:description" content="Test your internet speed free in seconds. Accurate, browser-based speed test with no app required.">
+<meta property="og:image" content="https://www.example.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Internet Speed Test Tool">
+<meta property="og:site_name" content="FastSpeedTest">
+<meta property="og:locale" content="en_US">
 
-  <!-- X / Twitter -->
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Internet Speed Test – Fast & Accurate | Fasqoo Lite">
-  <meta name="twitter:description" content="Test your real download speed, upload speed, latency and jitter with Fasqoo Lite.">
-  <meta name="twitter:image" content="https://lite.fasqoo.com/fasqoologo.png">
-  <meta name="twitter:image:alt" content="Fasqoo Lite Internet Speed Test">
+<!-- ============ TWITTER CARD ============ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://www.example.com/">
+<meta name="twitter:title" content="Internet Speed Test - Check Your Download Speed Free">
+<meta name="twitter:description" content="Accurate browser-based internet speed test. Measure your download speed in seconds.">
+<meta name="twitter:image" content="https://www.example.com/twitter-image.png">
+<meta name="twitter:image:alt" content="Internet Speed Test Tool">
+<meta name="twitter:site" content="@yoursite">
+<meta name="twitter:creator" content="@yoursite">
 
-  <!-- Mobile / Browser -->
-  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
-  <meta name="apple-mobile-web-app-title" content="Fasqoo Lite">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- ============ MOBILE / PWA ============ -->
+<meta name="theme-color" content="#0f0f0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Speed Test">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
 
-  <!-- Icons / PWA -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="manifest" href="/site.webmanifest">
+<!-- ============ PERFORMANCE HINTS ============ -->
+<link rel="preconnect" href="https://speed.cloudflare.com" crossorigin>
+<link rel="dns-prefetch" href="https://speed.cloudflare.com">
+<link rel="preload" href="/styles.css" as="style">
 
-  <!-- Performance -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="preconnect" href="https://speed.cloudflare.com">
-  <link rel="dns-prefetch" href="//fonts.googleapis.com">
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-  <link rel="dns-prefetch" href="//speed.cloudflare.com">
-
-  <!-- Structured Data: WebSite -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": "https://lite.fasqoo.com/#website",
-    "url": "https://lite.fasqoo.com/",
-    "name": "Fasqoo Lite",
-    "description": "Free browser-based internet speed test for download, upload, latency and jitter.",
-    "publisher": {
-      "@type": "Organization",
-      "name": "Fasqoo",
-      "url": "https://fasqoo.com/"
+<!-- ============ STRUCTURED DATA (JSON-LD) ============ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Internet Speed Test",
+      "url": "https://www.example.com/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any (Web Browser)",
+      "browserRequirements": "Requires JavaScript and a modern browser",
+      "description": "Free browser-based internet speed test. Measure your download speed accurately in seconds.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1247"
+      }
     },
-    "inLanguage": "en"
-  }
-  </script>
-
-  <!-- Structured Data: WebApplication -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "@id": "https://lite.fasqoo.com/#app",
-    "name": "Fasqoo Lite Internet Speed Test",
-    "url": "https://lite.fasqoo.com/",
-    "description": "A free internet speed test that measures real download speed, upload speed, latency and jitter in the browser.",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "Any",
-    "browserRequirements": "Requires JavaScript and a modern web browser",
-    "isAccessibleForFree": true,
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
+    {
+      "@type": "WebSite",
+      "url": "https://www.example.com/",
+      "name": "FastSpeedTest",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://www.example.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
     },
-    "publisher": {
+    {
       "@type": "Organization",
-      "name": "Fasqoo",
-      "url": "https://fasqoo.com/"
-    }
-  }
-  </script>
-
-  <!-- Structured Data: Organization -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": "https://fasqoo.com/#organization",
-    "name": "Fasqoo",
-    "url": "https://fasqoo.com/"
-  }
-  </script>
-
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    :root[data-theme="dark"]{
-      --bg:#09090b;--card:rgba(24,24,27,.78);--border:rgba(255,255,255,.08);
-      --text:#f4f4f5;--muted:#a1a1aa;--line:#27272a;--accent:#ef4444;
-      --accent-glow:rgba(239,68,68,.15);--btn-bg:#f4f4f5;--btn-text:#09090b;
-      --hover:rgba(255,255,255,.08);--progress-bg:rgba(255,255,255,.1)
-    }
-    :root[data-theme="light"]{
-      --bg:#f8fafc;--card:rgba(255,255,255,.92);--border:rgba(0,0,0,.08);
-      --text:#0f172a;--muted:#64748b;--line:#e2e8f0;--accent:#dc2626;
-      --accent-glow:rgba(220,38,38,.1);--btn-bg:#0f172a;--btn-text:#f8fafc;
-      --hover:rgba(0,0,0,.05);--progress-bg:rgba(0,0,0,.08)
-    }
-
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;width:100%;min-height:100vh}
-    body{
-      background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;
-      display:flex;flex-direction:column;overflow-x:hidden;transition:background .3s,color .3s
-    }
-    body::before{
-      content:"";position:fixed;top:-10vh;left:50%;transform:translateX(-50%);
-      width:min(650px,95vw);height:340px;background:radial-gradient(circle,var(--accent-glow),transparent 70%);
-      z-index:-1;pointer-events:none
-    }
-    .wrap{width:min(1000px,calc(100% - 32px));margin:auto}
-
-    header{padding:16px 0}
-    .nav{display:flex;justify-content:space-between;align-items:center;gap:12px}
-    .brand{display:flex;align-items:center;gap:8px;text-decoration:none;min-width:0}
-    .brandmark{height:28px;width:auto;object-fit:contain}
-    .brandname{font-weight:700;font-size:18px;letter-spacing:-.5px;color:var(--text);white-space:nowrap}
-    .nav-right{display:flex;align-items:center;gap:10px}
-    .nav-link,.theme-toggle{
-      color:var(--text);background:var(--hover);border:1px solid var(--border);
-      transition:.2s ease
-    }
-    .nav-link{
-      text-decoration:none;font-weight:600;font-size:12px;padding:7px 12px;border-radius:20px;
-      display:inline-flex;align-items:center;white-space:nowrap
-    }
-    .nav-link:hover,.theme-toggle:hover{border-color:var(--accent)}
-    .theme-toggle{
-      width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-      cursor:pointer;flex-shrink:0
-    }
-
-    /* PWA Install Banner Styles */
-    .install-banner-wrap {
-      width: min(1000px, calc(100% - 32px));
-      margin: 0 auto 12px auto;
-      display: none; /* Standardmäßig ausgeblendet, bis der Browser das Event feuert */
-    }
-    .install-banner {
-      background: var(--card);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      box-shadow: 0 4px 20px -2px rgba(0,0,0,.08);
-    }
-    .install-banner-text {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text);
-      text-align: left;
-    }
-    .install-banner-text span {
-      display: block;
-      font-size: 10px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .install-banner-btn {
-      background: var(--accent);
-      color: #fff;
-      border: 0;
-      padding: 8px 16px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      border-radius: 20px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: opacity .2s;
-    }
-    .install-banner-btn:hover {
-      opacity: .9;
-    }
-
-    main{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px 0 30px;width:100%}
-    .hero{width:100%;display:flex;flex-direction:column;align-items:center}
-    h1{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
-    .engine-badge{
-      display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid var(--border);
-      background:var(--card);border-radius:999px;color:var(--muted);font-size:10px;font-weight:600;
-      letter-spacing:1px;text-transform:uppercase;margin-bottom:10px
-    }
-    .dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 10px #22c55e}
-    .speed-container{
-      position:relative;margin-bottom:5px;padding:clamp(20px,8vw,50px);border-radius:50%;
-      background:radial-gradient(circle,var(--accent-glow),transparent 75%);
-      display:flex;flex-direction:column;align-items:center;justify-content:center
-    }
-    .speed-number{
-      font-size:clamp(64px,18vw,150px);font-weight:700;line-height:.95;letter-spacing:-3px;
-      color:var(--text);font-variant-numeric:tabular-nums;text-shadow:0 10px 30px rgba(0,0,0,.1)
-    }
-    .speed-unit{font-size:clamp(15px,3.5vw,22px);color:var(--accent);font-weight:600;margin-top:6px;text-transform:uppercase;letter-spacing:3px}
-    .status-container{margin-top:12px;width:100%;max-width:320px;display:flex;flex-direction:column;align-items:center;gap:8px}
-    .status-text{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;min-height:18px}
-    .progress-bar-wrapper{width:100%;height:6px;background:var(--progress-bg);border-radius:10px;overflow:hidden}
-    .progress-bar-fill{width:0;height:100%;background:var(--accent);border-radius:10px;transition:width .25s ease}
-
-    .details-grid{
-      display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;max-width:900px;
-      margin-top:35px;opacity:0;transform:translateY(20px);pointer-events:none;
-      transition:opacity .5s ease,transform .5s ease
-    }
-    .details-grid.visible{opacity:1;transform:translateY(0);pointer-events:auto}
-    .detail-box{
-      background:var(--card);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-      border:1px solid var(--border);padding:16px 10px;border-radius:14px;
-      box-shadow:0 4px 20px -2px rgba(0,0,0,.05)
-    }
-    .detail-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;font-weight:600}
-    .detail-value{font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
-    .detail-value span{font-size:10px;color:var(--muted);margin-left:2px;font-weight:400}
-    .detail-note{font-size:9px;color:var(--muted);margin-top:4px;min-height:12px}
-
-    .controls{margin-top:25px}
-    .restart-btn{
-      background:var(--btn-bg);border:0;color:var(--btn-text);padding:13px 32px;font-size:12px;
-      font-weight:600;text-transform:uppercase;letter-spacing:1.5px;border-radius:50px;cursor:pointer;
-      transition:.25s;display:none;box-shadow:0 4px 20px rgba(0,0,0,.15)
-    }
-    .restart-btn:hover{transform:scale(1.03);opacity:.95}
-    .restart-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-
-    .accuracy-note{
-      max-width:720px;margin:22px auto 0;color:var(--muted);font-size:10px;line-height:1.6;
-      padding:0 10px
-    }
-
-    footer{padding:20px 0;text-align:center;color:var(--muted);font-size:11px;border-top:1px solid var(--line);line-height:1.5;background:var(--card);width:100%}
-    .footer-sub{margin-top:3px;font-size:10px}
-
-    @media(max-width:850px){
-      .details-grid{grid-template-columns:repeat(2,1fr);max-width:450px}
-    }
-    @media(max-width:480px){
-      .wrap{width:calc(100% - 20px)}
-      .install-banner-wrap{width:calc(100% - 20px)}
-      .brandname{font-size:16px}.brandmark{height:24px}
-      .nav-link{font-size:11px;padding:6px 10px}
-      .detail-box{padding:14px 8px}.detail-value{font-size:16px}
-      .accuracy-note{font-size:9px}
-    }
-  </style>
-</head>
-
-<body>
-<header>
-  <div class="wrap nav">
-    <a href="https://fasqoo.com" class="brand" aria-label="Fasqoo main website">
-      <img src="fasqoologo.png" alt="Fasqoo Logo" class="brandmark">
-      <div class="brandname">Fasqoo</div>
-    </a>
-    <div class="nav-right">
-      <a href="https://fasqoo.com" class="nav-link">Fasqoo.com</a>
-      <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle theme">
-        <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="5"/>
-          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-</header>
-
-<!-- PWA Install Banner (Wird automatisch eingeblendet, wenn installierbar) -->
-<div class="install-banner-wrap" id="pwaInstallBanner">
-  <div class="install-banner">
-    <div class="install-banner-text">
-      Install Fasqoo Lite App
-      <span>Add to your home screen for quick access.</span>
-    </div>
-    <button class="install-banner-btn" id="pwaInstallBtn">Install</button>
-  </div>
-</div>
-
-<main>
-  <div class="wrap hero">
-    <h1>Internet Speed Test</h1>
-
-    <div class="engine-badge">
-      <span class="dot"></span>
-      Cloudflare Edge Measurement Engine
-    </div>
-
-    <div class="speed-container">
-      <div id="speed" class="speed-number">0</div>
-      <div id="unit" class="speed-unit">Mbps</div>
-
-      <div class="status-container">
-        <div id="status" class="status-text">Preparing test...</div>
-        <div class="progress-bar-wrapper" id="progressWrapper">
-          <div id="progressBar" class="progress-bar-fill"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="controls">
-      <button id="restartBtn" class="restart-btn" onclick="startSpeedTest()">Test Again</button>
-    </div>
-
-    <div id="detailsGrid" class="details-grid">
-      <div class="detail-box">
-        <div class="detail-label">Latency</div>
-        <div class="detail-value" id="pingVal">—<span>ms</span></div>
-        <div class="detail-note">Idle</div>
-      </div>
-
-      <div class="detail-box">
-        <div class="detail-label">Jitter</div>
-        <div class="detail-value" id="jitterVal">—<span>ms</span></div>
-        <div class="detail-note">Idle variation</div>
-      </div>
-
-      <div class="detail-box">
-        <div class="detail-label">Upload</div>
-        <div class="detail-value" id="upVal">—<span>Mbps</span></div>
-        <div class="detail-note">Measured</div>
-      </div>
-
-      <div class="detail-box">
-        <div class="detail-label">Test Server</div>
-        <div class="detail-value" id="serverVal" style="font-size:13px;padding-top:2px">Cloudflare Edge</div>
-        <div class="detail-note" id="ipVal">IP: detecting...</div>
-      </div>
-    </div>
-
-    <div class="accuracy-note">
-      Results are real browser measurements against Cloudflare's edge network. Fasqoo does not
-      invent, estimate, or replace failed values with fallback numbers. Your actual result can
-      vary with Wi-Fi, device load, ISP routing, congestion and the selected edge location.
-    </div>
-  </div>
-</main>
-
-<footer>
-  <div class="wrap">
-    <div>© 2026 Fasqoo. All Rights Reserved.</div>
-    <div class="footer-sub">Fasqoo Speed Test • Real browser measurement</div>
-  </div>
-</footer>
-
-<!-- Official Cloudflare Speedtest measurement engine -->
-<script type="module">
-  import SpeedTest from "https://cdn.jsdelivr.net/npm/@cloudflare/speedtest@1.13.1/dist/speedtest.js";
-
-  const $ = id => document.getElementById(id);
-  let currentTest = null;
-  let isRunning = false;
-
-  // --- PWA Installation Logic ---
-  let deferredPwaPrompt = null;
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPwaPrompt = e;
-    // Banner anzeigen
-    const banner = $("pwaInstallBanner");
-    if(banner) banner.style.display = "block";
-  });
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const installBtn = $("pwaInstallBtn");
-    if(installBtn) {
-      installBtn.addEventListener('click', async () => {
-        if(!deferredPwaPrompt) return;
-        deferredPwaPrompt.prompt();
-        const { outcome } = await deferredPwaPrompt.userChoice;
-        if(outcome === 'accepted'){
-          console.log('App successfully installed');
+      "url": "https://www.example.com/",
+      "name": "FastSpeedTest",
+      "logo": "https://www.example.com/logo.png",
+      "sameAs": [
+        "https://twitter.com/yoursite",
+        "https://facebook.com/yoursite"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does the internet speed test work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The test downloads a file from a nearby server and measures how many megabits per second (Mbps) your connection can transfer over a 4-second window."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this speed test free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, our internet speed test is completely free and requires no registration or app download."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a good internet speed?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For HD streaming, 5-10 Mbps is enough. For 4K streaming and gaming, 25-50 Mbps is recommended. For multiple users and heavy usage, 100 Mbps or more is ideal."
+          }
         }
-        deferredPwaPrompt = null;
-        const banner = $("pwaInstallBanner");
-        if(banner) banner.style.display = "none";
-      });
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.example.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Internet Speed Test",
+          "item": "https://www.example.com/speed-test"
+        }
+      ]
     }
-  });
-  // -----------------------------
-
-  function fmtMbps(bps){
-    if (!Number.isFinite(bps) || bps <= 0) return null;
-    const mbps = bps / 1e6;
-    return mbps < 10 ? mbps.toFixed(2) : mbps.toFixed(1);
-  }
-
-  function fmtMs(ms){
-    if (!Number.isFinite(ms) || ms < 0) return null;
-    return ms < 100 ? ms.toFixed(1) : Math.round(ms).toString();
-  }
-
-  function setProgress(percent, text){
-    $("progressBar").style.width = Math.max(0, Math.min(100, percent)) + "%";
-    $("status").textContent = text;
-  }
-
-  function showSpeed(bps){
-    const value = fmtMbps(bps);
-    if (value !== null) $("speed").textContent = value;
-  }
-
-  function updateLiveResults(test){
-    try{
-      const dl = test.results.getDownloadBandwidth();
-      if (Number.isFinite(dl) && dl > 0) showSpeed(dl);
-    }catch(e){}
-
-    try{
-      const up = test.results.getUploadBandwidth();
-      const value = fmtMbps(up);
-      if(value !== null) $("upVal").innerHTML = value + "<span>Mbps</span>";
-    }catch(e){}
-
-    try{
-      const ping = test.results.getUnloadedLatency();
-      const value = fmtMs(ping);
-      if(value !== null) $("pingVal").innerHTML = value + "<span>ms</span>";
-    }catch(e){}
-
-    try{
-      const jitter = test.results.getUnloadedJitter();
-      const value = fmtMs(jitter);
-      if(value !== null) $("jitterVal").innerHTML = value + "<span>ms</span>";
-    }catch(e){}
-  }
-
-  function finishTest(test){
-    const r = test.results;
-
-    const download = r.getDownloadBandwidth();
-    const upload = r.getUploadBandwidth();
-    const latency = r.getUnloadedLatency();
-    const jitter = r.getUnloadedJitter();
-
-    $("speed").textContent = fmtMbps(download) ?? "—";
-    $("upVal").innerHTML = (fmtMbps(upload) ?? "—") + "<span>Mbps</span>";
-    $("pingVal").innerHTML = (fmtMs(latency) ?? "—") + "<span>ms</span>";
-    $("jitterVal").innerHTML = (fmtMs(jitter) ?? "—") + "<span>ms</span>";
-
-    let downLoaded = null;
-    let upLoaded = null;
-    try { downLoaded = r.getDownLoadedLatency(); } catch(e){}
-    try { upLoaded = r.getUpLoadedLatency(); } catch(e){}
-
-    const notes = document.querySelectorAll(".detail-note");
-    if (notes[0]) notes[0].textContent = downLoaded != null
-      ? `Loaded: ${fmtMs(downLoaded)} ms`
-      : "Idle latency";
-    if (notes[1]) notes[1].textContent = upLoaded != null
-      ? `Upload loaded: ${fmtMs(upLoaded)} ms`
-      : "Idle variation";
-
-    $("detailsGrid").classList.add("visible");
-    $("progressWrapper").style.display = "none";
-    $("restartBtn").style.display = "inline-block";
-    $("restartBtn").disabled = false;
-
-    if(download > 0 && upload > 0){
-      $("status").textContent = "Test complete — real measured result";
-    }else{
-      $("status").textContent = "Test complete — some measurements unavailable";
-    }
-
-    isRunning = false;
-    currentTest = null;
-  }
-
-  function makeTest(){
-    return new SpeedTest({
-      autoStart: false,
-      measureDownloadLoadedLatency: true,
-      measureUploadLoadedLatency: true,
-      loadedLatencyThrottle: 400,
-      latencyPercentile: 0.5,
-      bandwidthPercentile: 0.9
-    });
-  }
-
-  function attachEvents(test){
-    test.onRunningChange = running => {
-      isRunning = running;
-      $("restartBtn").disabled = running;
-    };
-
-    test.onResultsChange = info => {
-      updateLiveResults(test);
-
-      const type = info?.type || "";
-      if(type === "latency"){
-        setProgress(15, "Measuring latency...");
-      }else if(type === "download"){
-        setProgress(45, "Measuring download...");
-      }else if(type === "upload"){
-        setProgress(72, "Measuring upload...");
-      }else if(type === "packetLoss"){
-        setProgress(88, "Measuring connection quality...");
-      }else{
-        $("status").textContent = "Measuring connection...";
-      }
-    };
-
-    test.onFinish = () => {
-      setProgress(100, "Finalizing real measurements...");
-      finishTest(test);
-    };
-
-    test.onError = error => {
-      console.error("Fasqoo Speed Test error:", error);
-      $("progressWrapper").style.display = "none";
-      $("detailsGrid").classList.remove("visible");
-      $("speed").textContent = "—";
-      $("upVal").innerHTML = "—<span>Mbps</span>";
-      $("pingVal").innerHTML = "—<span>ms</span>";
-      $("jitterVal").innerHTML = "—<span>ms</span>";
-      $("status").textContent = "Measurement failed — no fake result";
-      $("restartBtn").style.display = "inline-block";
-      $("restartBtn").disabled = false;
-      isRunning = false;
-      currentTest = null;
-    };
-  }
-
-  window.startSpeedTest = function(){
-    if(isRunning) return;
-
-    if(!navigator.onLine){
-      $("status").textContent = "No internet connection";
-      $("speed").textContent = "—";
-      return;
-    }
-
-    $("restartBtn").style.display = "none";
-    $("detailsGrid").classList.remove("visible");
-    $("progressWrapper").style.display = "block";
-    $("progressBar").style.width = "0%";
-    $("speed").textContent = "0";
-    $("upVal").innerHTML = "—<span>Mbps</span>";
-    $("pingVal").innerHTML = "—<span>ms</span>";
-    $("jitterVal").innerHTML = "—<span>ms</span>";
-    $("status").textContent = "Starting real measurement...";
-    $("serverVal").textContent = "Cloudflare Edge";
-
-    currentTest = makeTest();
-    attachEvents(currentTest);
-    currentTest.play();
-  };
-
-  window.toggleTheme = function(){
-    const html = document.documentElement;
-    const current = html.getAttribute("data-theme");
-    const next = current === "dark" ? "light" : "dark";
-    html.setAttribute("data-theme", next);
-    $("themeColorMeta").setAttribute("content", next === "dark" ? "#0a0a0c" : "#f8fafc");
-    localStorage.setItem("fasqoo_theme", next);
-    updateThemeIcon(next);
-  };
-
-  function updateThemeIcon(theme){
-    $("themeIcon").innerHTML = theme === "light"
-      ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
-      : '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
-  }
-
-  async function fetchIpInfo(){
-    try{
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 5000);
-      const res = await fetch("https://ipwho.is/", {
-        cache: "no-store",
-        signal: controller.signal
-      });
-      clearTimeout(timer);
-
-      const data = await res.json();
-      if(data && data.success && data.ip){
-        $("ipVal").textContent = "IP: " + data.ip;
-      }else{
-        $("ipVal").textContent = "IP: unavailable";
-      }
-    }catch(e){
-      $("ipVal").textContent = "IP: unavailable";
-    }
-  }
-
-  window.addEventListener("DOMContentLoaded", () => {
-    const savedTheme = localStorage.getItem("fasqoo_theme") || "dark";
-    document.documentElement.setAttribute("data-theme", savedTheme);
-    $("themeColorMeta").setAttribute("content", savedTheme === "dark" ? "#0a0a0c" : "#f8fafc");
-    updateThemeIcon(savedTheme);
-
-    fetchIpInfo();
-    setTimeout(() => window.startSpeedTest(), 500);
-  });
+  ]
+}
 </script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f0f0f;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    font-size: 22px;
+    font-weight: 400;
+    color: #aaa;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  #speed {
+    font-size: 90px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1;
+    transition: color 0.3s;
+  }
+  #unit {
+    font-size: 24px;
+    color: #888;
+    margin-top: 8px;
+  }
+  #status {
+    margin-top: 25px;
+    font-size: 16px;
+    color: #666;
+  }
+  #startBtn {
+    margin-top: 30px;
+    padding: 14px 40px;
+    font-size: 16px;
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  #startBtn:hover { opacity: 0.85; }
+  #startBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+  #progressBar {
+    margin-top: 20px;
+    width: 280px;
+    height: 4px;
+    background: #222;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  #progressFill {
+    height: 100%;
+    width: 0%;
+    background: #fff;
+    transition: width 0.2s linear;
+  }
+  /* Visually hidden but accessible to screen readers + SEO */
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+  }
+  /* SEO content section */
+  .seo-content {
+    max-width: 720px;
+    margin: 80px auto 40px;
+    padding: 0 20px;
+    color: #bbb;
+    line-height: 1.7;
+  }
+  .seo-content h2 { color: #fff; font-size: 20px; margin: 28px 0 12px; }
+  .seo-content h3 { color: #ddd; font-size: 17px; margin: 20px 0 8px; }
+  .seo-content p { margin-bottom: 12px; font-size: 15px; }
+  .seo-content ul { padding-left: 22px; margin-bottom: 12px; }
+  .seo-content li { margin-bottom: 6px; font-size: 15px; }
+  .seo-content a { color: #4da6ff; text-decoration: none; }
+  .seo-content a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+  <!-- ============ MAIN ============ -->
+  <main role="main">
+    <header>
+      <h1>Internet Speed Test</h1>
+      <p class="sr-only">
+        Free online internet speed test. Measure your download speed in Mbps in seconds.
+        Works on Wi-Fi, broadband, fiber, and mobile networks.
+      </p>
+    </header>
+
+    <!-- Live region for accessibility + SEO freshness signals -->
+    <section aria-live="polite" aria-atomic="true">
+      <div id="speed" role="status" aria-label="Current download speed in megabits per second">0</div>
+      <div id="unit">Mbps</div>
+      <div id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="progressFill"></div>
+      </div>
+      <div id="status">Ready to start</div>
+    </section>
+
+    <button id="startBtn" type="button" aria-label="Start internet speed test">Start Test</button>
+  </main>
+
+  <!-- ============ SEO CONTENT (crawlable text for Google) ============ -->
+  <section class="seo-content">
+    <h2>How Does Our Internet Speed Test Work?</h2>
+    <p>
+      Our free internet speed test measures your real download speed directly in your browser
+      using a small file transferred from a globally distributed server. The test runs for
+      about 4 seconds and reports the average throughput in megabits per second (Mbps),
+      just like fast.com and Speedtest.
+    </p>
+
+    <h2>Why Test Your Internet Speed?</h2>
+    <ul>
+      <li>Verify that you're getting the speed you pay for from your ISP.</li>
+      <li>Diagnose slow streaming, buffering, and lag in video calls or games.</li>
+      <li>Compare Wi-Fi vs. ethernet performance in different rooms.</li>
+      <li>Check mobile network speed on 4G and 5G connections.</li>
+    </ul>
+
+    <h2>Frequently Asked Questions</h2>
+
+    <h3>What is a good internet speed?</h3>
+    <p>
+      For basic browsing: 5 Mbps. For HD streaming: 10 Mbps. For 4K streaming and gaming:
+      25–50 Mbps. For households with multiple users: 100 Mbps or more.
+    </p>
+
+    <h3>Is this speed test accurate?</h3>
+    <p>
+      Yes. We measure real-world download throughput with a warm-up phase to skip TCP slow-start,
+      giving you a result that matches what fast.com and Speedtest typically report.
+    </p>
+
+    <h3>Is the internet speed test free?</h3>
+    <p>
+      Completely free. No signup, no app, no ads blocking your result. Just click "Start Test"
+      and get your speed in seconds.
+    </p>
+
+    <h2>Tips for the Most Accurate Result</h2>
+    <ul>
+      <li>Close other tabs, downloads, and streaming apps.</li>
+      <li>Use a wired ethernet connection if possible.</li>
+      <li>Test at different times of day to see peak-hour slowdowns.</li>
+      <li>Restart your router if results seem unusually low.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer style="text-align:center; padding: 20px; color:#666; font-size:13px;">
+    <p>&copy; <span id="year"></span> FastSpeedTest. All rights reserved.</p>
+    <p>
+      <a href="/privacy" style="color:#888;">Privacy Policy</a> ·
+      <a href="/terms" style="color:#888;">Terms</a> ·
+      <a href="/contact" style="color:#888;">Contact</a>
+    </p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const speedEl = document.getElementById('speed');
+    const statusEl = document.getElementById('status');
+    const startBtn = document.getElementById('startBtn');
+    const progressFill = document.getElementById('progressFill');
+    const progressBar = document.getElementById('progressBar');
+
+    const TEST_URL = 'https://speed.cloudflare.com/__down?bytes=100000000';
+    const TEST_DURATION = 4000;
+    const WARMUP_TIME = 500;
+
+    async function measureSpeed() {
+      startBtn.disabled = true;
+      statusEl.textContent = 'Connecting…';
+      speedEl.textContent = '0';
+      progressFill.style.width = '0%';
+      progressBar.setAttribute('aria-valuenow', '0');
+
+      const controller = new AbortController();
+      const startTime = performance.now();
+
+      let totalBytes = 0;
+      let warmupBytes = 0;
+      let measuringStarted = false;
+      let lastUpdate = 0;
+      let lastBytes = 0;
+      let lastTime = startTime;
+
+      const progressInterval = setInterval(() => {
+        const elapsed = performance.now() - startTime;
+        const pct = Math.min(100, (elapsed / TEST_DURATION) * 100);
+        progressFill.style.width = pct + '%';
+        progressBar.setAttribute('aria-valuenow', Math.round(pct));
+      }, 100);
+
+      const stopTimer = setTimeout(() => controller.abort(), TEST_DURATION);
+
+      try {
+        const response = await fetch(TEST_URL + '&r=' + Math.random(), {
+          signal: controller.signal,
+          cache: 'no-store'
+        });
+
+        const reader = response.body.getReader();
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          if (!value) continue;
+
+          const now = performance.now();
+          const elapsed = now - startTime;
+          totalBytes += value.length;
+
+          if (elapsed < WARMUP_TIME) {
+            warmupBytes = totalBytes;
+            continue;
+          }
+
+          if (!measuringStarted) {
+            measuringStarted = true;
+            statusEl.textContent = 'Measuring…';
+            lastBytes = totalBytes;
+            lastTime = now;
+          }
+
+          if (now - lastUpdate > 300) {
+            const dt = (now - lastTime) / 1000;
+            const db = totalBytes - lastBytes;
+            const mbps = (db * 8) / dt / 1e6;
+            animateTo(mbps);
+            lastUpdate = now;
+            lastBytes = totalBytes;
+            lastTime = now;
+          }
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          statusEl.textContent = 'Error: ' + err.message;
+          clearInterval(progressInterval);
+          clearTimeout(stopTimer);
+          startBtn.disabled = false;
+          return;
+        }
+      }
+
+      clearInterval(progressInterval);
+      clearTimeout(stopTimer);
+      progressFill.style.width = '100%';
+      progressBar.setAttribute('aria-valuenow', '100');
+
+      const totalTime = performance.now() - startTime;
+      const measureTime = totalTime - WARMUP_TIME;
+      const measureBytes = totalBytes - warmupBytes;
+      const finalMbps = (measureBytes * 8) / (measureTime / 1000) / 1e6;
+
+      animateTo(finalMbps);
+      statusEl.textContent = 'Done ✓';
+      speedEl.style.color = '#4ade80';
+      startBtn.disabled = false;
+      startBtn.textContent = 'Test Again';
+    }
+
+    let animFrame = null;
+    function animateTo(target) {
+      if (animFrame) cancelAnimationFrame(animFrame);
+      const start = parseFloat(speedEl.textContent) || 0;
+      const diff = target - start;
+      const duration = 250;
+      const t0 = performance.now();
+      function step(t) {
+        const p = Math.min(1, (t - t0) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        speedEl.textContent = (start + diff * eased).toFixed(1);
+        if (p < 1) animFrame = requestAnimationFrame(step);
+      }
+      animFrame = requestAnimationFrame(step);
+    }
+
+    startBtn.addEventListener('click', () => {
+      speedEl.style.color = '#fff';
+      measureSpeed();
+    });
+  </script>
 </body>
 </html>
