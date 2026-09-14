@@ -567,22 +567,21 @@ async function startSpeedTest(){
     $("jitterVal").innerHTML = jitter.toFixed(1) + "<span>ms</span>";
     setProgress(30, "Measuring Download...");
 
-    // 2. FAST.COM STYLE LIVE CONTINUOUS DOWNLOAD TEST (~5 seconds duration)
+    // 2. EXTENDED FAST.COM STYLE LIVE DOWNLOAD TEST (~10 seconds duration)
     const downloadUrl = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
     let downloadStart = performance.now();
     let totalDownloadedBytes = 0;
     let downloadActive = true;
     let speedsSample = [];
+    const targetDownloadTime = 10.0; // Verlangsamet auf ca. 10 Sekunden
 
-    // Continuous parallel/sequential fetching loop for 5 seconds with live ticking UI
     const downloadTimer = setInterval(() => {
       let elapsed = (performance.now() - downloadStart) / 1000;
-      if(elapsed >= 5.0) {
+      if(elapsed >= targetDownloadTime) {
         downloadActive = false;
         clearInterval(downloadTimer);
       } else {
-        // Progress bar smooth advance from 30% to 75%
-        let p = 30 + (elapsed / 5.0) * 45;
+        let p = 30 + (elapsed / targetDownloadTime) * 45;
         setProgress(p, "Measuring Download...");
         
         if(totalDownloadedBytes > 0 && elapsed > 0) {
@@ -591,23 +590,21 @@ async function startSpeedTest(){
           $("speed").textContent = currentSpeed < 10 ? currentSpeed.toFixed(1) : Math.round(currentSpeed);
         }
       }
-    }, 150);
+    }, 200);
 
-    // Active downloading loop until time expires
     while(downloadActive) {
       try {
         const res = await fetch(downloadUrl + "?r=" + Math.random(), { cache: "no-store" });
         const blob = await res.blob();
         totalDownloadedBytes += blob.size;
       } catch(e) {
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise(r => setTimeout(r, 250));
       }
     }
 
     const finalDownloadDuration = (performance.now() - downloadStart) / 1000;
     let finalDownloadSpeed = finalDownloadDuration > 0 ? ((totalDownloadedBytes * 8) / finalDownloadDuration) / 1e6 : 0;
     
-    // Fallback or precision refinement
     if(speedsSample.length > 0) {
       let sum = speedsSample.reduce((a,b) => a+b, 0);
       finalDownloadSpeed = (finalDownloadSpeed + (sum / speedsSample.length)) / 2;
@@ -615,22 +612,23 @@ async function startSpeedTest(){
 
     $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(2) : Math.round(finalDownloadSpeed);
     setProgress(75, "Measuring Upload...");
-    await new Promise(r => setTimeout(r, 400));
+    await new Promise(r => setTimeout(r, 500));
 
-    // 3. FAST.COM STYLE LIVE CONTINUOUS UPLOAD TEST (~4 seconds duration)
+    // 3. EXTENDED FAST.COM STYLE LIVE UPLOAD TEST (~7 seconds duration)
     const uploadStart = performance.now();
     const payloadChunk = new Uint8Array(1000000); // 1MB chunk
     let totalUploadedBytes = 0;
     let uploadActive = true;
     let uploadSamples = [];
+    const targetUploadTime = 7.0; // Verlangsamet auf ca. 7 Sekunden
 
     const uploadTimer = setInterval(() => {
       let elapsed = (performance.now() - uploadStart) / 1000;
-      if(elapsed >= 4.0) {
+      if(elapsed >= targetUploadTime) {
         uploadActive = false;
         clearInterval(uploadTimer);
       } else {
-        let p = 75 + (elapsed / 4.0) * 22;
+        let p = 75 + (elapsed / targetUploadTime) * 22;
         setProgress(p, "Measuring Upload...");
 
         if(totalUploadedBytes > 0 && elapsed > 0) {
@@ -638,7 +636,7 @@ async function startSpeedTest(){
           uploadSamples.push(currentUpSpeed);
         }
       }
-    }, 150);
+    }, 200);
 
     while(uploadActive) {
       try {
@@ -649,7 +647,7 @@ async function startSpeedTest(){
         });
         totalUploadedBytes += payloadChunk.byteLength;
       } catch(e) {
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 350));
       }
     }
 
@@ -693,4 +691,4 @@ async function startSpeedTest(){
 
 </body>
 </html>
-```[cite: 2]
+```[cite: 3]
