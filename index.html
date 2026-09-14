@@ -534,7 +534,7 @@ async function startSpeedTest(){
         let latency = performance.now() - start;
         if(latency > 0 && latency < 2000) pingTimes.push(latency);
       } catch(e) {}
-      await new Promise(r => setTimeout(r, 80));
+      await new Promise(r => setTimeout(r, 60));
     }
 
     if(pingTimes.length > 2) {
@@ -556,96 +556,125 @@ async function startSpeedTest(){
     $("jitterVal").innerHTML = jitter.toFixed(1) + "<span>ms</span>";
     setProgress(30, "Measuring Download...");
 
-    // 2. EXTENDED DOWNLOAD TEST (~10 Seconds) mit echtem großen CDN-Datenstrom (50MB)
-    const downloadBytes = 50 * 1024 * 1024; // 50 MB
-    const downloadUrl = `https://speed.cloudflare.com/__down?bytes=${downloadBytes}`;
-    let downloadStart = performance.now();
-    let downloadActive = true;
-    let speedsSample = [];
-    const targetDownloadTime = 10.0; // Exakt 10 Sekunden Laufzeit
+    // 2. FAST.COM STYLE MULTI-STREAM DOWNLOAD (Exakte 9 Sekunden, fließend)
+    const downloadDuration = 9000; // 9 Sekunden Testdauer
+    const startTime = performance.now();
+    let totalBytesReceived = 0;
+    let activeStreams = 4; // 4 parallele Verbindungen wie bei Fast.com
+    let testActive = true;
+    let speedSamples = [];
 
-    const downloadTimer = setInterval(() => {
-      let elapsed = (performance.now() - downloadStart) / 1000;
-      if(elapsed >= targetDownloadTime) {
-        downloadActive = false;
-        clearInterval(downloadTimer);
-      } else {
-        let p = 30 + (elapsed / targetDownloadTime) * 45;
-        setProgress(p, "Measuring Download...");
-      }
-    }, 150);
-
-    // Stream-Abfrage für Live-Messung ohne den Browser zu blockieren
-    try {
-      const res = await fetch(downloadUrl + "&r=" + Math.random(), { cache: "no-store" });
-      const reader = res.body.getReader();
-      let receivedBytes = 0;
-
-      while(downloadActive) {
-        const { done, value } = await reader.read();
-        if(done) break;
-        receivedBytes += value.length;
-
-        let elapsed = (performance.now() - downloadStart) / 1000;
-        if(elapsed > 0) {
-          let currentSpeed = ((receivedBytes * 8) / elapsed) / 1e6;
-          speedsSample.push(currentSpeed);
-          $("speed").textContent = currentSpeed < 10 ? currentSpeed.toFixed(1) : Math.round(currentSpeed);
+    // Parallele Download-Streams starten
+    const runStream = async () => {
+      while(testActive) {
+        try {
+          const res = await fetch("https://speed.cloudflare.com/__down?bytes=25000000&r=" + Math.random(), { cache: "no-store" });
+          const reader = res.body.getReader();
+          while(testActive) {
+            const { done, value } = await reader.read();
+            if(done) break;
+            totalBytesReceived += value.length;
+          }
+          try { reader.cancel(); } catch(e){}
+        } catch(e) {
+          await new Promise(r => setTimeout(r, 200));
         }
       }
-      try { reader.cancel(); } catch(e){}
-    } catch(e) {
-      // Fallback falls Stream abgebrochen wird
-      await new Promise(r => setTimeout(r, 3000));
+    };
+
+    let streams = [];
+    for(let s = 0; s < activeStreams; s++) {
+      streams.push(runStream());
     }
 
-    const finalDownloadDuration = (performance.now() - downloadStart) / 1000;
-    let finalDownloadSpeed = speedsSample.length > 0 ? speedsSample[speedsSample.length - 1] : 25;
+    // UI-Aktualisierungs-Schleife (imitiert das typische Hochzählen von Fast.com)
+    await new Promise(resolve => {
+      const interval = setInterval(() => {
+        let elapsed = performance.now() - startTime;
+        let progressPercent = 30 + (elapsed / downloadDuration) * 45;
+        setProgress(Math.min(progressPercent, 75), "Measuring Download...");
 
+        let elapsedSec = elapsed / 1000;
+        if(elapsedSec > 0 && totalBytesReceived > 0) {
+          let currentBps = (totalBytesReceived * 8) / elapsedSec;
+          let currentMbps = currentBps / 1e6;
+          speedSamples.push(currentMbps);
+          
+          // Glättung für eine stabile Anzeige wie bei Fast.com
+          let avgSpeed = speedSamples.slice(-5).reduce((a,b)=>a+b, 0) / Math.min(speedSamples.length, 5);
+          $("speed").textContent = avgSpeed < 10 ? avgSpeed.toFixed(1) : Math.round(avgSpeed);
+        }
+
+        if(elapsed >= downloadDuration) {
+          testActive = false;
+          clearInterval(interval);
+          resolve();
+        }
+      }, 100);
+    });
+
+    testActive = false;
+    await Promise.allSettled(streams);
+
+    let finalDownloadSpeed = speedSamples.length > 0 ? speedSamples[speedSamples.length - 1] : 25;
     $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(2) : Math.round(finalDownloadSpeed);
+    
     setProgress(75, "Measuring Upload...");
     await new Promise(r => setTimeout(r, 400));
 
-    // 3. EXTENDED UPLOAD TEST (~7 Seconds)
-    const uploadStart = performance.now();
-    const payloadChunk = new Uint8Array(2000000); // 2MB Blöcke
-    let totalUploadedBytes = 0;
+    // 3. FAST.COM STYLE MULTI-STREAM UPLOAD (Exakte 7 Sekunden)
+    const uploadDuration = 7000;
+    const upStartTime = performance.now();
+    let totalBytesUploaded = 0;
     let uploadActive = true;
-    let uploadSamples = [];
-    const targetUploadTime = 7.0; // Exakt 7 Sekunden Laufzeit
+    let upSamples = [];
+    const payload = new Uint8Array(2000000); // 2MB Blöcke
 
-    const uploadTimer = setInterval(() => {
-      let elapsed = (performance.now() - uploadStart) / 1000;
-      if(elapsed >= targetUploadTime) {
-        uploadActive = false;
-        clearInterval(uploadTimer);
-      } else {
-        let p = 75 + (elapsed / targetUploadTime) * 22;
-        setProgress(p, "Measuring Upload...");
-
-        if(totalUploadedBytes > 0 && elapsed > 0) {
-          let currentUpSpeed = ((totalUploadedBytes * 8) / elapsed) / 1e6;
-          uploadSamples.push(currentUpSpeed);
+    const runUpStream = async () => {
+      while(uploadActive) {
+        try {
+          await fetch("https://speed.cloudflare.com/__up?r=" + Math.random(), {
+            method: "POST",
+            body: payload,
+            cache: "no-store"
+          });
+          totalBytesUploaded += payload.byteLength;
+        } catch(e) {
+          await new Promise(r => setTimeout(r, 200));
         }
       }
-    }, 150);
+    };
 
-    while(uploadActive) {
-      try {
-        await fetch("https://speed.cloudflare.com/__up?r=" + Math.random(), {
-          method: "POST",
-          body: payloadChunk,
-          cache: "no-store"
-        });
-        totalUploadedBytes += payloadChunk.byteLength;
-      } catch(e) {
-        await new Promise(r => setTimeout(r, 200));
-      }
+    let upStreams = [];
+    for(let s = 0; s < 2; s++) {
+      upStreams.push(runUpStream());
     }
 
-    const finalUploadDuration = (performance.now() - uploadStart) / 1000;
-    let finalUploadSpeed = uploadSamples.length > 0 ? uploadSamples[uploadSamples.length - 1] : (finalDownloadSpeed * 0.4);
+    await new Promise(resolve => {
+      const upInterval = setInterval(() => {
+        let elapsed = performance.now() - upStartTime;
+        let progressPercent = 75 + (elapsed / uploadDuration) * 22;
+        setProgress(Math.min(progressPercent, 97), "Measuring Upload...");
 
+        let elapsedSec = elapsed / 1000;
+        if(elapsedSec > 0 && totalBytesUploaded > 0) {
+          let currentUpBps = (totalBytesUploaded * 8) / elapsedSec;
+          let currentUpMbps = currentUpBps / 1e6;
+          upSamples.push(currentUpMbps);
+        }
+
+        if(elapsed >= uploadDuration) {
+          uploadActive = false;
+          clearInterval(upInterval);
+          resolve();
+        }
+      }, 100);
+    });
+
+    uploadActive = false;
+    await Promise.allSettled(upStreams);
+
+    let finalUploadSpeed = upSamples.length > 0 ? upSamples[upSamples.length - 1] : (finalDownloadSpeed * 0.4);
     $("upVal").innerHTML = (finalUploadSpeed < 10 ? finalUploadSpeed.toFixed(2) : Math.round(finalUploadSpeed)) + "<span>Mbps</span>";
 
     setProgress(100, "Test Complete");
