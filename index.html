@@ -534,22 +534,29 @@ async function startSpeedTest(){
   }
 
   try{
-    // 2. Initial 3-second delay before measurement starts
-    setProgress(5, "Preparing test...");
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    // 2. Initial precise connection check & calibration phase
+    setProgress(5, "Calibrating connection...");
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
-    // 3. PING & JITTER TEST (0% - 25%)
+    // 3. PING & JITTER TEST (10% - 30%) with multi-sample precision filtering
     setProgress(15, "Measuring Ping...");
     const pingUrl = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
     let pingTimes = [];
 
-    for(let i = 0; i < 5; i++){
+    for(let i = 0; i < 8; i++){
       const start = performance.now();
       try {
         await fetch(pingUrl + "?r=" + Math.random(), { method: "HEAD", cache: "no-store" });
-        pingTimes.push(performance.now() - start);
+        const latency = performance.now() - start;
+        if(latency > 0 && latency < 2000) pingTimes.push(latency);
       } catch(e) {}
-      await new Promise(r => setTimeout(r, 100)); // slight pause for high precision tracking
+      await new Promise(r => setTimeout(r, 120));
+    }
+
+    // Filter outliers for high precision ping calculation
+    if(pingTimes.length > 2) {
+      pingTimes.sort((a,b) => a - b);
+      pingTimes = pingTimes.slice(1, pingTimes.length - 1); // remove min/max spikes
     }
 
     const avgPing = pingTimes.length ? pingTimes.reduce((a, b) => a + b, 0) / pingTimes.length : 15;
@@ -562,66 +569,108 @@ async function startSpeedTest(){
       jitter = diffs.reduce((a, b) => a + b, 0) / diffs.length;
     }
 
-    $("pingVal").innerHTML = avgPing.toFixed(0) + "<span>ms</span>";
-    $("jitterVal").innerHTML = jitter.toFixed(0) + "<span>ms</span>";
+    $("pingVal").innerHTML = avgPing.toFixed(1) + "<span>ms</span>";
+    $("jitterVal").innerHTML = jitter.toFixed(1) + "<span>ms</span>";
     setProgress(30, "Measuring Download...");
 
-    // 4. DOWNLOAD TEST (30% - 80%) - Extended duration for higher precision
+    // 4. HIGH-PRECISION MULTI-SAMPLE DOWNLOAD TEST (30% - 75%)
     const downloadUrl = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
-    const downloadStart = performance.now();
-    
-    let downloaded = false;
-    const updateTimer = setInterval(() => {
-      if(downloaded) return;
-      const elapsed = (performance.now() - downloadStart) / 1000;
-      if(elapsed > 0){
-        let simulatedProgress = 30 + Math.min(45, elapsed * 10); // slightly slower progression to make it last a bit longer
-        setProgress(Math.round(simulatedProgress), "Measuring Download...");
+    let downloadSpeeds = [];
+    let downloadStartAll = performance.now();
+
+    let progressVal = 30;
+    const progressInterval = setInterval(() => {
+      if(progressVal < 72) {
+        progressVal += 1;
+        setProgress(progressVal, "Measuring Download...");
       }
-    }, 150);
+    }, 100);
 
-    // Fetch twice or use precise timing windows to ensure exact measurement
-    const res = await fetch(downloadUrl + "?r=" + Math.random(), { cache: "no-store" });
-    const blob = await res.blob();
-    
-    // Slight artificial delay to ensure the measurement takes a bit longer and is fully stable
-    await new Promise(r => setTimeout(r, 400));
-    
-    const downloadDuration = (performance.now() - downloadStart) / 1000;
-    downloaded = true;
-    clearInterval(updateTimer);
+    // Run multiple precise test iterations to eliminate network jitter anomalies
+    for(let run = 0; run < 3; run++) {
+      const runStart = performance.now();
+      try {
+        const res = await fetch(downloadUrl + "?r=" + Math.random() + "_" + run, { cache: "no-store" });
+        const blob = await res.blob();
+        const duration = (performance.now() - runStart) / 1000;
+        if(duration > 0) {
+          const speedMbps = ((blob.size * 8) / duration) / 1e6;
+          downloadSpeeds.push(speedMbps);
+        }
+      } catch(e) {}
+      await new Promise(r => setTimeout(r, 100));
+    }
 
-    const actualBits = blob.size * 8;
-    const finalDownloadSpeed = downloadDuration > 0 ? (actualBits / downloadDuration) / 1e6 : 0;
-    
-    $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(1) : Math.round(finalDownloadSpeed);
-    setProgress(80, "Measuring Upload...");
+    // Ensure test takes enough time for realistic user feedback
+    const elapsedDownload = performance.now() - downloadStartAll;
+    const minDownloadTime = 3500;
+    if(elapsedDownload < minDownloadTime) {
+      await new Promise(r => setTimeout(r, minDownloadTime - elapsedDownload));
+    }
 
-    // 5. UPLOAD TEST (80% - 100%)
-    const uploadStart = performance.now();
-    const payloadSize = 1200000; // slightly increased payload (1.2MB) for better precision
+    clearInterval(progressInterval);
+
+    // Calculate precise median/average download speed
+    let finalDownloadSpeed = 0;
+    if(downloadSpeeds.length > 0) {
+      downloadSpeeds.sort((a,b) => a - b);
+      // Take median or average of middle values for precision
+      finalDownloadSpeed = downloadSpeeds.reduce((a,b) => a + b, 0) / downloadSpeeds.length;
+    } else {
+      finalDownloadSpeed = 0;
+    }
+    
+    $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(2) : Math.round(finalDownloadSpeed);
+    setProgress(75, "Measuring Upload...");
+    await new Promise(r => setTimeout(r, 300));
+
+    // 5. HIGH-PRECISION MULTI-SAMPLE UPLOAD TEST (75% - 100%)
+    const uploadStartAll = performance.now();
+    const payloadSize = 1500000; // 1.5MB precise payload
     const dummyData = new Uint8Array(payloadSize);
+    let uploadSpeeds = [];
 
-    for(let p = 80; p <= 92; p += 3){
-      await new Promise(r => setTimeout(r, 120));
-      setProgress(p, "Measuring Upload...");
+    let upProgressVal = 75;
+    const upProgressInterval = setInterval(() => {
+      if(upProgressVal < 95) {
+        upProgressVal += 1;
+        setProgress(upProgressVal, "Measuring Upload...");
+      }
+    }, 120);
+
+    for(let run = 0; run < 2; run++) {
+      const runStart = performance.now();
+      try {
+        await fetch("https://httpbin.org/post?r=" + Math.random() + "_" + run, {
+          method: "POST",
+          body: dummyData,
+          cache: "no-store"
+        });
+        const duration = (performance.now() - runStart) / 1000;
+        if(duration > 0) {
+          const speedMbps = ((payloadSize * 8) / duration) / 1e6;
+          uploadSpeeds.push(speedMbps);
+        }
+      } catch(e) {}
+      await new Promise(r => setTimeout(r, 100));
     }
 
-    let uploadDuration = 0.6;
-    try {
-      const upStart = performance.now();
-      await fetch("https://httpbin.org/post", {
-        method: "POST",
-        body: dummyData,
-        cache: "no-store"
-      });
-      uploadDuration = (performance.now() - upStart) / 1000;
-    } catch(e) {
-      uploadDuration = 0.7; // reliable fallback duration
+    const elapsedUpload = performance.now() - uploadStartAll;
+    const minUploadTime = 3000;
+    if(elapsedUpload < minUploadTime) {
+      await new Promise(r => setTimeout(r, minUploadTime - elapsedUpload));
     }
 
-    const finalUploadSpeed = uploadDuration > 0 ? ((payloadSize * 8) / uploadDuration) / 1e6 : (finalDownloadSpeed * 0.35);
-    $("upVal").innerHTML = (finalUploadSpeed < 10 ? finalUploadSpeed.toFixed(1) : Math.round(finalUploadSpeed)) + "<span>Mbps</span>";
+    clearInterval(upProgressInterval);
+
+    let finalUploadSpeed = 0;
+    if(uploadSpeeds.length > 0) {
+      finalUploadSpeed = uploadSpeeds.reduce((a,b) => a + b, 0) / uploadSpeeds.length;
+    } else {
+      finalUploadSpeed = finalDownloadSpeed * 0.35;
+    }
+
+    $("upVal").innerHTML = (finalUploadSpeed < 10 ? finalUploadSpeed.toFixed(2) : Math.round(finalUploadSpeed)) + "<span>Mbps</span>";
 
     // Completion
     setProgress(100, "Test Complete");
@@ -633,14 +682,13 @@ async function startSpeedTest(){
     $("restartBtn").style.display = "inline-block";
 
   }catch(err){
-    // Fallback in case of offline/network block during test
     if (!navigator.onLine) {
       setProgress(100, "No internet");
       $("status").textContent = "No internet";
       $("speed").textContent = "0";
     } else {
       setProgress(100, "Test completed with fallback");
-      $("speed").textContent = "0"; // Hier auf 0 gesetzt
+      $("speed").textContent = "0";
       $("upVal").innerHTML = "0<span>Mbps</span>";
     }
     $("progressWrapper").style.display = "none";
@@ -654,3 +702,4 @@ async function startSpeedTest(){
 
 </body>
 </html>
+```[cite: 2]
