@@ -1,349 +1,508 @@
 
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <meta name="theme-color" content="#0a0a0c" id="themeColorMeta">
-
-  <!-- Primary SEO -->
-  <title>Free Internet Speed Test – Download, Upload, Ping & Jitter | Fasqoo</title>
-  <meta name="description" content="Free internet speed test by Fasqoo. Measure download speed, upload speed, ping, latency and jitter directly in your browser using Cloudflare's global edge network.">
-  <meta name="keywords" content="internet speed test, speed test, internet speed test free, wifi speed test, broadband speed test, download speed test, upload speed test, ping test, latency test, jitter test, connection test, network speed test, Fasqoo, Fasqoo">
-  <meta name="author" content="Fasqoo">
-  <meta name="publisher" content="Fasqoo">
-  <meta name="application-name" content="Fasqoo">
-  <meta name="generator" content="Fasqoo">
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="bingbot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="rating" content="general">
-  <meta name="revisit-after" content="7 days">
-  <meta name="language" content="English">
-  <meta name="content-language" content="en">
-
-  <!-- Canonical -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0c">
+  
+  <!-- SEO Meta Tags -->
+  <title>Fast & Free Internet Speed Test | Fasqoo Lite</title>
+  <meta name="description" content="Test your internet speed instantly with Fasqoo Lite. Accurate download, upload, ping, and jitter measurements powered by Cloudflare edge network.">
+  <meta name="keywords" content="internet speed test, broadband speed test, wifi speed test, check internet speed, fasqoo lite, ping test">
   <link rel="canonical" href="https://lite.fasqoo.com/">
 
-  <!-- Open Graph / Facebook / LinkedIn -->
+  <!-- Open Graph / Social Media SEO -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://lite.fasqoo.com/">
-  <meta property="og:site_name" content="Fasqoo">
-  <meta property="og:title" content="Internet Speed Test – Fast & Accurate | Fasqoo">
-  <meta property="og:description" content="Measure real download, upload, latency and jitter with Fasqoo using Cloudflare's global edge network.">
+  <meta property="og:title" content="Fast & Free Internet Speed Test | Fasqoo Lite">
+  <meta property="og:description" content="Check your download speed, upload speed, and latency instantly with our lightweight internet speed test.">
   <meta property="og:image" content="https://lite.fasqoo.com/fasqoologo.png">
-  <meta property="og:image:alt" content="Fasqoo Internet Speed Test">
-  <meta property="og:locale" content="en_US">
 
-  <!-- X / Twitter -->
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Internet Speed Test – Fast & Accurate | Fasqoo">
-  <meta name="twitter:description" content="Test your real download speed, upload speed, latency and jitter with Fasqoo.">
-  <meta name="twitter:image" content="https://lite.fasqoo.com/fasqoologo.png">
-  <meta name="twitter:image:alt" content="Fasqoo Internet Speed Test">
+  <!-- Twitter Card SEO -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Fast & Free Internet Speed Test | Fasqoo Lite">
+  <meta name="twitter:description" content="Check your download speed, upload speed, and latency instantly with our lightweight internet speed test.">
 
-  <!-- Mobile / Browser -->
-  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
-  <meta name="apple-mobile-web-app-title" content="Fasqoo">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-  <!-- Icons / PWA -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
 
-  <!-- Performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="preconnect" href="https://speed.cloudflare.com">
-  <link rel="dns-prefetch" href="//fonts.googleapis.com">
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-  <link rel="dns-prefetch" href="//speed.cloudflare.com">
-
-  <!-- Structured Data: WebSite -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": "https://lite.fasqoo.com/#website",
-    "url": "https://lite.fasqoo.com/",
-    "name": "Fasqoo",
-    "description": "Free browser-based internet speed test for download, upload, latency and jitter.",
-    "publisher": {
-      "@type": "Organization",
-      "name": "Fasqoo",
-      "url": "https://fasqoo.com/"
-    },
-    "inLanguage": "en"
-  }
-  </script>
-
-  <!-- Structured Data: WebApplication -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "@id": "https://lite.fasqoo.com/#app",
-    "name": "Fasqoo Internet Speed Test",
-    "url": "https://lite.fasqoo.com/",
-    "description": "A free internet speed test that measures real download speed, upload speed, latency and jitter in the browser.",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "Any",
-    "browserRequirements": "Requires JavaScript and a modern web browser",
-    "isAccessibleForFree": true,
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "Fasqoo",
-      "url": "https://fasqoo.com/"
-    }
-  }
-  </script>
-
-  <!-- Structured Data: Organization -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": "https://fasqoo.com/#organization",
-    "name": "Fasqoo",
-    "url": "https://fasqoo.com/"
-  }
-  </script>
-
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    :root[data-theme="dark"]{
-      --bg:#09090b;--card:rgba(24,24,27,.78);--border:rgba(255,255,255,.08);
-      --text:#f4f4f5;--muted:#a1a1aa;--line:#27272a;--accent:#ef4444;
-      --accent-glow:rgba(239,68,68,.15);--btn-bg:#f4f4f5;--btn-text:#09090b;
-      --hover:rgba(255,255,255,.08);--progress-bg:rgba(255,255,255,.1)
-    }
-    :root[data-theme="light"]{
-      --bg:#f8fafc;--card:rgba(255,255,255,.92);--border:rgba(0,0,0,.08);
-      --text:#0f172a;--muted:#64748b;--line:#e2e8f0;--accent:#dc2626;
-      --accent-glow:rgba(220,38,38,.1);--btn-bg:#0f172a;--btn-text:#f8fafc;
-      --hover:rgba(0,0,0,.05);--progress-bg:rgba(0,0,0,.08)
-    }
+<style>
+:root{
+  --bg: #09090b;
+  --card: rgba(24, 24, 27, 0.7);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --line: #27272a;
+  --accent: #ef4444;
+  --accent-glow: rgba(239, 68, 68, 0.15);
+  --header-border: rgba(255,255,255,0.08);
+  --footer-bg: rgba(9, 9, 11, 0.5);
+  --shadow: rgba(0,0,0,0.20);
+}
+html[data-theme="light"]{
+  --bg: #f7f7f8;
+  --card: rgba(255,255,255,0.82);
+  --card-border: rgba(24,24,27,0.10);
+  --text: #18181b;
+  --muted: #71717a;
+  --line: #e4e4e7;
+  --accent: #dc2626;
+  --accent-glow: rgba(220,38,38,0.12);
+  --header-border: rgba(24,24,27,0.08);
+  --footer-bg: rgba(247,247,248,0.82);
+  --shadow: rgba(0,0,0,0.08);
+}
+html{
+  color-scheme: dark;
+  transition: background-color .25s ease, color .25s ease;
+}
+html[data-theme="light"]{ color-scheme: light; }
 
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;width:100%;min-height:100vh}
-    body{
-      background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;
-      display:flex;flex-direction:column;overflow-x:hidden;transition:background .3s,color .3s
-    }
-    body::before{
-      content:"";position:fixed;top:-10vh;left:50%;transform:translateX(-50%);
-      width:min(650px,95vw);height:340px;background:radial-gradient(circle,var(--accent-glow),transparent 70%);
-      z-index:-1;pointer-events:none
-    }
-    .wrap{width:min(1000px,calc(100% - 32px));margin:auto}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Plus Jakarta Sans', sans-serif;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  overflow-x: hidden;
+}
 
-    header{padding:16px 0}
-    .nav{display:flex;justify-content:space-between;align-items:center;gap:12px}
-    .brand{display:flex;align-items:center;gap:8px;text-decoration:none;min-width:0}
-    .brandmark{height:28px;width:auto;object-fit:contain}
-    .brandname{font-weight:700;font-size:18px;letter-spacing:-.5px;color:var(--text);white-space:nowrap}
-    .nav-right{display:flex;align-items:center;gap:10px}
-    .nav-link,.theme-toggle{
-      color:var(--text);background:var(--hover);border:1px solid var(--border);
-      transition:.2s ease
-    }
-    .nav-link{
-      text-decoration:none;font-weight:600;font-size:12px;padding:7px 12px;border-radius:20px;
-      display:inline-flex;align-items:center;white-space:nowrap
-    }
-    .nav-link:hover,.theme-toggle:hover{border-color:var(--accent)}
-    .theme-toggle{
-      width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-      cursor:pointer;flex-shrink:0
-    }
+/* Background Ambient Glow */
+body::before {
+  content: '';
+  position: absolute;
+  top: -10vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+}
 
-    /* PWA Install Banner Styles */
-    .install-banner-wrap {
-      width: min(1000px, calc(100% - 32px));
-      margin: 0 auto 12px auto;
-      display: none; /* Standardmäßig ausgeblendet, bis der Browser das Event feuert */
-    }
-    .install-banner {
-      background: var(--card);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      box-shadow: 0 4px 20px -2px rgba(0,0,0,.08);
-    }
-    .install-banner-text {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text);
-      text-align: left;
-    }
-    .install-banner-text span {
-      display: block;
-      font-size: 10px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .install-banner-btn {
-      background: var(--accent);
-      color: #fff;
-      border: 0;
-      padding: 8px 16px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      border-radius: 20px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: opacity .2s;
-    }
-    .install-banner-btn:hover {
-      opacity: .9;
-    }
+.wrap{width:min(900px, calc(100% - 40px));margin:auto;}
 
-    main{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px 0 30px;width:100%}
-    .hero{width:100%;display:flex;flex-direction:column;align-items:center}
-    h1{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
-    .engine-badge{
-      display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid var(--border);
-      background:var(--card);border-radius:999px;color:var(--muted);font-size:10px;font-weight:600;
-      letter-spacing:1px;text-transform:uppercase;margin-bottom:10px
-    }
-    .dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 10px #22c55e}
-    .speed-container{
-      position:relative;margin-bottom:5px;padding:clamp(20px,8vw,50px);border-radius:50%;
-      background:radial-gradient(circle,var(--accent-glow),transparent 75%);
-      display:flex;flex-direction:column;align-items:center;justify-content:center
-    }
-    .speed-number{
-      font-size:clamp(64px,18vw,150px);font-weight:700;line-height:.95;letter-spacing:-3px;
-      color:var(--text);font-variant-numeric:tabular-nums;text-shadow:0 10px 30px rgba(0,0,0,.1)
-    }
-    .speed-unit{font-size:clamp(15px,3.5vw,22px);color:var(--accent);font-weight:600;margin-top:6px;text-transform:uppercase;letter-spacing:3px}
-    .status-container{margin-top:12px;width:100%;max-width:320px;display:flex;flex-direction:column;align-items:center;gap:8px}
-    .status-text{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;min-height:18px}
-    .progress-bar-wrapper{width:100%;height:6px;background:var(--progress-bg);border-radius:10px;overflow:hidden}
-    .progress-bar-fill{width:0;height:100%;background:var(--accent);border-radius:10px;transition:width .25s ease}
+header{
+  padding:24px 0;
+  padding-top:max(24px, env(safe-area-inset-top));
+}
 
-    .details-grid{
-      display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;max-width:900px;
-      margin-top:35px;opacity:0;transform:translateY(20px);pointer-events:none;
-      transition:opacity .5s ease,transform .5s ease
-    }
-    .details-grid.visible{opacity:1;transform:translateY(0);pointer-events:auto}
-    .detail-box{
-      background:var(--card);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-      border:1px solid var(--border);padding:16px 10px;border-radius:14px;
-      box-shadow:0 4px 20px -2px rgba(0,0,0,.05)
-    }
-    .detail-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;font-weight:600}
-    .detail-value{font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
-    .detail-value span{font-size:10px;color:var(--muted);margin-left:2px;font-weight:400}
-    .detail-note{font-size:9px;color:var(--muted);margin-top:4px;min-height:12px}
+.nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
 
-    .controls{margin-top:25px}
-    .restart-btn{
-      background:var(--btn-bg);border:0;color:var(--btn-text);padding:13px 32px;font-size:12px;
-      font-weight:600;text-transform:uppercase;letter-spacing:1.5px;border-radius:50px;cursor:pointer;
-      transition:.25s;display:none;box-shadow:0 4px 20px rgba(0,0,0,.15)
-    }
-    .restart-btn:hover{transform:scale(1.03);opacity:.95}
-    .restart-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+}
 
-    .accuracy-note{
-      max-width:720px;margin:22px auto 0;color:var(--muted);font-size:10px;line-height:1.6;
-      padding:0 10px
-    }
+.brandmark{
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(239, 68, 68, 0.2));
+}
 
-    footer{padding:20px 0;text-align:center;color:var(--muted);font-size:11px;border-top:1px solid var(--line);line-height:1.5;background:var(--card);width:100%}
-    .footer-sub{margin-top:3px;font-size:10px}
+.brandname{
+  font-weight:700;
+  font-size:22px;
+  letter-spacing:-0.5px;
+  color:var(--text);
+}
 
-    @media(max-width:850px){
-      .details-grid{grid-template-columns:repeat(2,1fr);max-width:450px}
-    }
-    @media(max-width:480px){
-      .wrap{width:calc(100% - 20px)}
-      .install-banner-wrap{width:calc(100% - 20px)}
-      .brandname{font-size:16px}.brandmark{height:24px}
-      .nav-link{font-size:11px;padding:6px 10px}
-      .detail-box{padding:14px 8px}.detail-value{font-size:16px}
-      .accuracy-note{font-size:9px}
-    }
-  
-    .hero-subtitle{max-width:680px;margin:-2px auto 16px;color:var(--muted);font-size:clamp(11px,1.8vw,14px);line-height:1.6}
-    .restart-btn:focus-visible,.theme-toggle:focus-visible,.nav-link:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-    @media(max-width:700px){main{padding-top:8px;padding-bottom:24px}.wrap{width:min(100% - 20px,1000px)}.details-grid{gap:8px;margin-top:25px}.detail-box{min-width:0}.detail-value{overflow-wrap:anywhere}}
-    @media(max-width:380px){.nav{gap:7px}.nav-right{gap:6px}.brandname{font-size:15px}.nav-link{font-size:10px;padding:6px 8px}.theme-toggle{width:32px;height:32px}.speed-number{font-size:clamp(52px,20vw,78px);letter-spacing:-2px}.speed-unit{font-size:13px;letter-spacing:2px}.details-grid{grid-template-columns:1fr 1fr}.detail-label{font-size:9px}.detail-value{font-size:15px}.accuracy-note{font-size:9px}}
-  </style>
+main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:30px 0;
+}
+
+.speed-container{
+  margin-bottom:10px;
+  position: relative;
+  padding: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+}
+
+.speed-number{
+  font-size:clamp(80px, 18vw, 160px);
+  font-weight:700;
+  line-height:1;
+  letter-spacing:-4px;
+  color:var(--text);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.speed-unit{
+  font-size:clamp(18px, 3vw, 24px);
+  color:var(--accent);
+  font-weight:600;
+  margin-top:10px;
+  text-transform:uppercase;
+  letter-spacing:3px;
+}
+
+.status-text{
+  font-size:14px;
+  color:var(--muted);
+  margin-top:12px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  font-weight: 500;
+}
+
+.details-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:16px;
+  width:100%;
+  margin-top:50px;
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events:none;
+}
+
+.details-grid.visible{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.detail-box{
+  background:var(--card);
+  backdrop-filter: blur(12px);
+  border:1px solid var(--card-border);
+  padding:22px 16px;
+  border-radius:12px;
+  text-align:center;
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.detail-box:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.detail-label{
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  margin-bottom:8px;
+  font-weight: 600;
+}
+
+.detail-value{
+  font-size:22px;
+  font-weight:600;
+  color:var(--text);
+  letter-spacing: -0.5px;
+}
+
+.detail-value span{
+  font-size:12px;
+  color:var(--muted);
+  margin-left:3px;
+  font-weight: 400;
+}
+
+.controls{
+  margin-top:35px;
+}
+
+.restart-btn{
+  background: var(--text);
+  border: none;
+  color: var(--bg);
+  padding: 14px 36px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  border-radius:50px;
+  cursor:pointer;
+  transition:all 0.25s ease;
+  display:none;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+}
+
+.restart-btn:hover{
+  background: #ffffff;
+  transform: scale(1.03);
+  box-shadow: 0 6px 25px rgba(255, 255, 255, 0.25);
+}
+
+.restart-btn:active {
+  transform: scale(0.98);
+}
+
+footer{
+  padding:30px 0;
+  padding-bottom:max(30px, env(safe-area-inset-bottom));
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  border-top:1px solid var(--line);
+  line-height:1.8;
+  background: rgba(9, 9, 11, 0.5);
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 12px;
+}
+
+.footer-links a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+
+.footer-links a:hover {
+  color: var(--text);
+}
+
+
+
+/* Theme controls */
+.theme-controls{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.theme-btn{
+  width:38px;
+  height:38px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--card-border);
+  border-radius:50%;
+  background:var(--card);
+  color:var(--text);
+  cursor:pointer;
+  font-size:17px;
+  transition:transform .2s ease, background .2s ease, border-color .2s ease;
+}
+.theme-btn:hover{transform:translateY(-1px);border-color:var(--accent);}
+.theme-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+body, .detail-box, footer, .theme-btn, .restart-btn{
+  transition:background-color .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+
+/* Responsive layout — optimized for phones, tablets, laptops and large monitors */
+.wrap{
+  width:min(900px, calc(100% - 40px));
+  margin-inline:auto;
+}
+
+main{
+  width:100%;
+}
+
+.speed-container{
+  max-width:100%;
+}
+
+.details-grid{
+  width:100%;
+}
+
+@media (max-width: 900px){
+  .wrap{width:min(100% - 32px, 760px);}
+  header{padding:20px 0;}
+  main{padding:24px 0;}
+  .details-grid{gap:12px;margin-top:36px;}
+  .detail-box{padding:19px 12px;}
+}
+
+@media (max-width: 768px){
+  .wrap{width:calc(100% - 28px);}
+  .brandname{font-size:20px;}
+  .brandmark{height:30px;}
+  .speed-container{padding:22px;margin-bottom:4px;}
+  .details-grid{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:10px;
+    margin-top:30px;
+  }
+  .detail-box{min-width:0;padding:17px 10px;}
+  .detail-value{
+    font-size:20px;
+    overflow-wrap:anywhere;
+  }
+  .footer-links{gap:14px;}
+}
+
+@media (max-width: 480px){
+  .wrap{width:calc(100% - 20px);}
+  header{padding:15px 0;}
+  main{padding:16px 0;}
+  .nav{gap:10px;}
+  .brand{gap:8px;min-width:0;}
+  .brandmark{height:27px;}
+  .brandname{
+    font-size:18px;
+    white-space:nowrap;
+  }
+  .theme-btn{
+    width:36px;
+    height:36px;
+    font-size:16px;
+  }
+  .speed-container{
+    padding:10px 4px 18px;
+    width:100%;
+  }
+  .speed-number{
+    font-size:clamp(64px, 25vw, 108px);
+    letter-spacing:-3px;
+  }
+  .speed-unit{
+    font-size:17px;
+    letter-spacing:2px;
+    margin-top:7px;
+  }
+  .status-text{
+    font-size:11px;
+    letter-spacing:1.2px;
+    padding-inline:8px;
+  }
+  .details-grid{
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:22px;
+  }
+  .detail-box{
+    padding:14px 7px;
+    border-radius:10px;
+  }
+  .detail-label{
+    font-size:9px;
+    letter-spacing:1px;
+    margin-bottom:6px;
+  }
+  .detail-value{
+    font-size:17px;
+  }
+  .detail-value span{font-size:10px;}
+  .restart-btn{
+    padding:12px 28px;
+    font-size:12px;
+  }
+  footer{
+    padding:22px 0;
+    font-size:10px;
+  }
+  .footer-links{
+    gap:10px;
+    margin-top:9px;
+  }
+}
+
+@media (max-width: 340px){
+  .brandname{font-size:16px;}
+  .brandmark{height:24px;}
+  .speed-number{font-size:60px;}
+  .details-grid{gap:6px;}
+  .detail-box{padding:12px 5px;}
+  .detail-value{font-size:15px;}
+}
+
+/* Landscape phones */
+@media (max-height: 520px) and (orientation: landscape){
+  header{padding:10px 0;}
+  main{padding:10px 0;}
+  .speed-container{padding:5px 0 10px;}
+  .speed-number{font-size:clamp(50px, 16vh, 80px);}
+  .speed-unit{margin-top:4px;}
+  .status-text{margin-top:6px;}
+  .details-grid{margin-top:15px;}
+  footer{padding:12px 0;}
+}
+
+/* Prevent accidental horizontal overflow on every viewport */
+html,body{max-width:100%;overflow-x:hidden;}
+img,svg,video,canvas{max-width:100%;height:auto;}
+button{touch-action:manipulation;}
+
+
+.fasqoo-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:36px;
+  padding:0 12px;
+  border-radius:9px;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.2px;
+  color:var(--text);
+  border:1px solid var(--border);
+  background:var(--card);
+  transition:background .2s ease,color .2s ease,border-color .2s ease;
+  white-space:nowrap;
+}
+.fasqoo-link:hover{
+  background:var(--hover);
+}
+
+</style>
 </head>
-
 <body>
+
 <header>
   <div class="wrap nav">
-    <a href="https://fasqoo.com" class="brand" aria-label="Fasqoo main website">
+    <a href="https://fasqoo.com" class="brand">
       <img src="fasqoologo.png" alt="Fasqoo Logo" class="brandmark">
       <div class="brandname">Fasqoo</div>
     </a>
-    <div class="nav-right">
-      <a href="https://fasqoo.com" class="nav-link">Fasqoo.com</a>
-      <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle theme">
-        <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="5"/>
-          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-        </svg>
-      </button>
+    <div class="theme-controls" aria-label="Theme">
+      <a class="fasqoo-link" href="https://www.fasqoo.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Fasqoo.com">Fasqoo.com</a>
+      <button id="themeToggle" class="theme-btn" type="button"
+              aria-label="Switch theme" title="Switch theme">☀</button>
     </div>
   </div>
 </header>
 
-<!-- PWA Install Banner (Wird automatisch eingeblendet, wenn installierbar) -->
-<div class="install-banner-wrap" id="pwaInstallBanner">
-  <div class="install-banner">
-    <div class="install-banner-text">
-      Install Fasqoo App
-      <span>Add to your home screen for quick access.</span>
-    </div>
-    <button class="install-banner-btn" id="pwaInstallBtn">Install</button>
-  </div>
-</div>
-
 <main>
-  <div class="wrap hero">
-    <h1>Free Internet Speed Test</h1><p class="hero-subtitle">Check your download speed, upload speed, ping and jitter with a real browser-based measurement.</p>
-
-    <div class="engine-badge">
-      <span class="dot"></span>
-      Cloudflare Edge Measurement Engine
-    </div>
-
+  <div class="wrap">
+    <h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">Internet Speed Test Lite</h1>
+    
     <div class="speed-container">
       <div id="speed" class="speed-number">0</div>
       <div id="unit" class="speed-unit">Mbps</div>
-
-      <div class="status-container">
-        <div id="status" class="status-text">Preparing test...</div>
-        <div class="progress-bar-wrapper" id="progressWrapper">
-          <div id="progressBar" class="progress-bar-fill"></div>
-        </div>
-      </div>
+      <div id="status" class="status-text">Initializing connection...</div>
     </div>
 
     <div class="controls">
@@ -352,34 +511,21 @@
 
     <div id="detailsGrid" class="details-grid">
       <div class="detail-box">
-        <div class="detail-label">Latency</div>
-        <div class="detail-value" id="pingVal">—<span>ms</span></div>
-        <div class="detail-note">Idle</div>
+        <div class="detail-label">Latency (Ping)</div>
+        <div class="detail-value" id="pingVal">-<span>ms</span></div>
       </div>
-
       <div class="detail-box">
         <div class="detail-label">Jitter</div>
-        <div class="detail-value" id="jitterVal">—<span>ms</span></div>
-        <div class="detail-note">Idle variation</div>
+        <div class="detail-value" id="jitterVal">-<span>ms</span></div>
       </div>
-
       <div class="detail-box">
         <div class="detail-label">Upload</div>
-        <div class="detail-value" id="upVal">—<span>Mbps</span></div>
-        <div class="detail-note">Measured</div>
+        <div class="detail-value" id="upVal">-<span>Mbps</span></div>
       </div>
-
       <div class="detail-box">
-        <div class="detail-label">Test Server</div>
-        <div class="detail-value" id="serverVal" style="font-size:13px;padding-top:2px">Cloudflare Edge</div>
-        <div class="detail-note" id="ipVal">IP: detecting...</div>
+        <div class="detail-label">Server / IP</div>
+        <div class="detail-value" id="ipVal" style="font-size:15px; padding-top:4px;">Loading...</div>
       </div>
-    </div>
-
-    <div class="accuracy-note">
-      Results are real browser measurements against Cloudflare's edge network. Fasqoo does not
-      invent, estimate, or replace failed values with fallback numbers. Your actual result can
-      vary with Wi-Fi, device load, ISP routing, congestion and the selected edge location.
     </div>
   </div>
 </main>
@@ -387,252 +533,318 @@
 <footer>
   <div class="wrap">
     <div>© 2026 Fasqoo. All Rights Reserved.</div>
-    <div class="footer-sub">Fasqoo Speed Test • Real browser measurement</div>
+    <div style="margin-top: 4px;">Fasqoo and Fasqoo Speed Test are trademarks of Fasqoo. • Powered by Cloudflare Edge</div>
+  
   </div>
 </footer>
-  <!-- Cloudflare Speedtest measurement engine -->
-  <script type="module">
-    import SpeedTest from "https://cdn.jsdelivr.net/npm/@cloudflare/speedtest@1.13.1/dist/speedtest.js";
 
-    const $ = id => document.getElementById(id);
-    let currentTest = null;
-    let isRunning = false;
-    let deferredPwaPrompt = null;
-    let testStartedAt = 0;
+<script>
 
-    const MIN_RESULT_DISPLAY_MS = 4500;
+(function(){
+  const saved = localStorage.getItem("fasqoo-theme");
+  const prefersLight = window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: light)").matches;
+  const theme = saved === "light" || saved === "dark"
+    ? saved
+    : (prefersLight ? "light" : "dark");
 
-    const fmtMbps = bps => {
-      if (!Number.isFinite(bps) || bps <= 0) return null;
-      const mbps = bps / 1e6;
-      return mbps < 10 ? mbps.toFixed(2) : mbps.toFixed(1);
-    };
+  document.documentElement.dataset.theme = theme;
 
-    const fmtMs = ms => {
-      if (!Number.isFinite(ms) || ms < 0) return null;
-      return ms < 100 ? ms.toFixed(1) : Math.round(ms).toString();
-    };
+  window.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("themeToggle");
+    if(!btn) return;
 
-    function setProgress(percent, text) {
-      $("progressBar").style.width = Math.max(0, Math.min(100, percent)) + "%";
-      $("status").textContent = text;
+    function updateButton(){
+      const isLight = document.documentElement.dataset.theme === "light";
+      btn.textContent = isLight ? "☾" : "☀";
+      btn.title = isLight ? "Switch to dark mode" : "Switch to light mode";
+      btn.setAttribute("aria-label",
+        isLight ? "Switch to dark mode" : "Switch to light mode");
     }
 
-    function updateLiveResults(test) {
-      try {
-        const v = fmtMbps(test.results.getDownloadBandwidth());
-        if (v !== null) $("speed").textContent = v;
-      } catch (_) {}
-      try {
-        const v = fmtMbps(test.results.getUploadBandwidth());
-        if (v !== null) $("upVal").innerHTML = v + "<span>Mbps</span>";
-      } catch (_) {}
-      try {
-        const v = fmtMs(test.results.getUnloadedLatency());
-        if (v !== null) $("pingVal").innerHTML = v + "<span>ms</span>";
-      } catch (_) {}
-      try {
-        const v = fmtMs(test.results.getUnloadedJitter());
-        if (v !== null) $("jitterVal").innerHTML = v + "<span>ms</span>";
-      } catch (_) {}
+    updateButton();
+
+    btn.addEventListener("click", () => {
+      const next = document.documentElement.dataset.theme === "light"
+        ? "dark" : "light";
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem("fasqoo-theme", next);
+      updateButton();
+    });
+  });
+})();
+
+const $ = id => document.getElementById(id);
+const SPEED_BASE = "https://speed.cloudflare.com";
+let isRunning = false;
+let abortTest = null;
+
+window.addEventListener("DOMContentLoaded", () => {
+  startSpeedTest();
+  fetchIpInfo();
+});
+
+async function fetchIpInfo(){
+  try{
+    const res = await fetch("https://ipwho.is/", {
+      cache: "no-store",
+      headers: { "Accept": "application/json" }
+    });
+    if(!res.ok) throw new Error("IP lookup failed");
+    const data = await res.json();
+    $("ipVal").textContent = data.success && data.ip ? data.ip : "Unavailable";
+  }catch(e){
+    $("ipVal").textContent = "Unavailable";
+  }
+}
+
+function createTimeout(ms, parentSignal){
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  const abortParent = () => controller.abort();
+
+  if(parentSignal){
+    if(parentSignal.aborted) controller.abort();
+    else parentSignal.addEventListener("abort", abortParent, {once:true});
+  }
+
+  return {
+    signal: controller.signal,
+    clear: () => {
+      clearTimeout(timer);
+      if(parentSignal) parentSignal.removeEventListener("abort", abortParent);
     }
+  };
+}
 
-    function finishTest(test) {
-      const r = test.results;
-      const download = r.getDownloadBandwidth();
-      const upload = r.getUploadBandwidth();
-      const latency = r.getUnloadedLatency();
-      const jitter = r.getUnloadedJitter();
+function formatMs(value){
+  return Number.isFinite(value) && value >= 0 ? Math.round(value) : "—";
+}
 
-      $("speed").textContent = fmtMbps(download) ?? "—";
-      $("upVal").innerHTML = (fmtMbps(upload) ?? "—") + "<span>Mbps</span>";
-      $("pingVal").innerHTML = (fmtMs(latency) ?? "—") + "<span>ms</span>";
-      $("jitterVal").innerHTML = (fmtMs(jitter) ?? "—") + "<span>ms</span>";
+function formatJitter(value){
+  return Number.isFinite(value) && value >= 0 ? value.toFixed(1) : "—";
+}
 
-      let downLoaded = null, upLoaded = null;
-      try { downLoaded = r.getDownLoadedLatency(); } catch (_) {}
-      try { upLoaded = r.getUpLoadedLatency(); } catch (_) {}
+function formatMbps(value){
+  if(!Number.isFinite(value) || value < 0) return "—";
+  return value < 10 ? value.toFixed(1) : Math.round(value);
+}
 
-      const notes = document.querySelectorAll(".detail-note");
-      if (notes[0]) notes[0].textContent =
-        downLoaded !== null ? `Loaded: ${fmtMs(downLoaded)} ms` : "Idle latency";
-      if (notes[1]) notes[1].textContent =
-        upLoaded !== null ? `Upload loaded: ${fmtMs(upLoaded)} ms` : "Idle variation";
+function calculateJitter(samples){
+  if(samples.length < 2) return 0;
+  let total = 0;
+  for(let i = 1; i < samples.length; i++){
+    total += Math.abs(samples[i] - samples[i - 1]);
+  }
+  return total / (samples.length - 1);
+}
 
-      $("detailsGrid").classList.add("visible");
-      $("progressWrapper").style.display = "none";
-      $("restartBtn").style.display = "inline-block";
-      $("restartBtn").disabled = false;
-      $("status").textContent =
-        Number.isFinite(download) && Number.isFinite(upload)
-          ? "Test complete — real measured result"
-          : "Test complete — some measurements unavailable";
+async function measureLatency(signal){
+  const samples = [];
+  const attempts = 7;
 
-      isRunning = false;
-      currentTest = null;
+  for(let i = 0; i < attempts; i++){
+    if(signal.aborted) throw new DOMException("Test cancelled", "AbortError");
+
+    const timer = createTimeout(3000, signal);
+    const start = performance.now();
+
+    try{
+      const res = await fetch(
+        SPEED_BASE + "/__down?bytes=0&r=" + crypto.randomUUID(),
+        {
+          method: "GET",
+          signal: timer.signal,
+          cache: "no-store",
+          credentials: "omit"
+        }
+      );
+
+      if(!res.ok) throw new Error("Latency request failed");
+      await res.arrayBuffer();
+
+      const elapsed = performance.now() - start;
+      if(Number.isFinite(elapsed) && elapsed > 0) samples.push(elapsed);
+    }catch(e){
+      if(e.name === "AbortError" && signal.aborted) throw e;
+    }finally{
+      timer.clear();
     }
+  }
 
-    /*
-      Real measurement only. No generated/fallback speed numbers.
+  if(samples.length < 3) throw new Error("Not enough latency samples");
 
-      Cloudflare's engine performs actual requests to its edge network.
-      The custom measurement plan uses repeated samples and a 2.5-second
-      bandwidth finish threshold so this is not a 3-second "quick probe".
-      A minimum UI display time is also used only to prevent an unusually
-      fast completion from looking like a fake instant test; it never
-      changes the measured values.
-    */
-    function createTest() {
-      return new SpeedTest({
-        autoStart: false,
-        measureDownloadLoadedLatency: true,
-        measureUploadLoadedLatency: true,
-        loadedLatencyThrottle: 400,
-        loadedLatencyMaxPoints: 20,
-        latencyPercentile: 0.5,
-        bandwidthPercentile: 0.9,
-        bandwidthMinRequestDuration: 25,
-        bandwidthFinishRequestDuration: 2500,
-        bandwidthAbortRequestDuration: 0,
+  // Remove the single lowest and highest sample when 5+ samples exist.
+  const sorted = [...samples].sort((a,b) => a-b);
+  const usable = sorted.length >= 5 ? sorted.slice(1, -1) : sorted;
 
-        // Deliberately extended measurement plan.
-        // Packet-loss/TURN is omitted because this page does not display it
-        // and Cloudflare notes that public TURN packet-loss testing is deprecated.
-        measurements: [
-          { type: "latency", numPackets: 20 },
-          { type: "download", bytes: 1e5, count: 6, bypassMinDuration: true },
-          { type: "download", bytes: 1e6, count: 6 },
-          { type: "upload", bytes: 1e5, count: 6 },
-          { type: "upload", bytes: 1e6, count: 6 },
-          { type: "download", bytes: 1e7, count: 6 },
-          { type: "upload", bytes: 1e7, count: 6 },
-          { type: "download", bytes: 2.5e7, count: 5 },
-          { type: "upload", bytes: 2.5e7, count: 5 },
-          { type: "download", bytes: 1e8, count: 4 },
-          { type: "upload", bytes: 5e7, count: 4 },
-          { type: "download", bytes: 2.5e8, count: 2 }
-        ]
-      });
-    }
+  const ping = usable.reduce((a,b) => a+b, 0) / usable.length;
+  const jitter = calculateJitter(usable);
 
-    function attachEvents(test) {
-      test.onRunningChange = running => {
-        isRunning = running;
-        $("restartBtn").disabled = running;
-      };
+  return { ping, jitter };
+}
 
-      test.onResultsChange = info => {
-        updateLiveResults(test);
-        if (info?.type === "latency") setProgress(12, "Measuring ping and jitter...");
-        else if (info?.type === "download") setProgress(42, "Measuring download speed...");
-        else if (info?.type === "upload") setProgress(72, "Measuring upload speed...");
-        else setProgress(85, "Stabilizing measurements...");
-      };
+async function measureDownload(signal){
+  const sizes = [1e6, 2e6, 5e6, 10e6, 20e6, 40e6, 80e6];
+  const measurements = [];
 
-      test.onFinish = () => {
-        setProgress(96, "Finalizing real measurements...");
-        const elapsed = performance.now() - testStartedAt;
-        const remaining = Math.max(0, MIN_RESULT_DISPLAY_MS - elapsed);
-        setTimeout(() => {
-          setProgress(100, "Measurement complete");
-          finishTest(test);
-        }, remaining);
-      };
+  for(const size of sizes){
+    if(signal.aborted) throw new DOMException("Test cancelled", "AbortError");
 
-      test.onError = error => {
-        console.error("Fasqoo Speed Test error:", error);
-        $("progressWrapper").style.display = "none";
-        $("detailsGrid").classList.remove("visible");
-        $("speed").textContent = "—";
-        $("upVal").innerHTML = "—<span>Mbps</span>";
-        $("pingVal").innerHTML = "—<span>ms</span>";
-        $("jitterVal").innerHTML = "—<span>ms</span>";
-        $("status").textContent = "Measurement failed — no fake result";
-        $("restartBtn").style.display = "inline-block";
-        $("restartBtn").disabled = false;
-        isRunning = false;
-        currentTest = null;
-      };
-    }
+    const timer = createTimeout(12000, signal);
+    const start = performance.now();
 
-    window.startSpeedTest = function() {
-      if (isRunning) return;
-      if (!navigator.onLine) {
-        $("status").textContent = "No internet connection";
-        $("speed").textContent = "—";
-        return;
+    try{
+      const res = await fetch(
+        SPEED_BASE + "/__down?bytes=" + size + "&r=" + crypto.randomUUID(),
+        {
+          method: "GET",
+          signal: timer.signal,
+          cache: "no-store",
+          credentials: "omit"
+        }
+      );
+
+      if(!res.ok) throw new Error("Download request failed");
+
+      const buf = await res.arrayBuffer();
+      const seconds = (performance.now() - start) / 1000;
+
+      if(buf.byteLength <= 0 || seconds <= 0){
+        throw new Error("Invalid download sample");
       }
 
-      $("restartBtn").style.display = "none";
-      $("detailsGrid").classList.remove("visible");
-      $("progressWrapper").style.display = "block";
-      $("progressBar").style.width = "0%";
-      $("speed").textContent = "0";
-      $("upVal").innerHTML = "—<span>Mbps</span>";
-      $("pingVal").innerHTML = "—<span>ms</span>";
-      $("jitterVal").innerHTML = "—<span>ms</span>";
-      $("status").textContent = "Starting extended real measurement...";
-      $("serverVal").textContent = "Cloudflare Edge";
-
-      testStartedAt = performance.now();
-      currentTest = createTest();
-      attachEvents(currentTest);
-      currentTest.play();
-    };
-
-    window.toggleTheme = function() {
-      const root = document.documentElement;
-      const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-      root.setAttribute("data-theme", next);
-      $("themeColorMeta").setAttribute("content", next === "dark" ? "#0a0a0c" : "#f8fafc");
-      localStorage.setItem("fasqoo_theme", next);
-      updateThemeIcon(next);
-    };
-
-    function updateThemeIcon(theme) {
-      $("themeIcon").innerHTML = theme === "light"
-        ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
-        : '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
-    }
-
-    async function fetchIpInfo() {
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 5000);
-        const res = await fetch("https://ipwho.is/", { cache: "no-store", signal: controller.signal });
-        clearTimeout(timer);
-        const data = await res.json();
-        $("ipVal").textContent = data?.success && data?.ip ? "IP: " + data.ip : "IP: unavailable";
-      } catch (_) {
-        $("ipVal").textContent = "IP: unavailable";
+      const speed = (buf.byteLength * 8) / seconds / 1e6;
+      if(!Number.isFinite(speed) || speed <= 0){
+        throw new Error("Invalid download speed");
       }
+
+      measurements.push({bytes: buf.byteLength, seconds});
+      $("speed").textContent = formatMbps(speed);
+    }catch(e){
+      if(e.name === "AbortError" && signal.aborted) throw e;
+      // Failed samples are discarded. No fallback/fake value is used.
+    }finally{
+      timer.clear();
     }
+  }
 
-    window.addEventListener("beforeinstallprompt", event => {
-      event.preventDefault();
-      deferredPwaPrompt = event;
-      const banner = $("pwaInstallBanner");
-      if (banner) banner.style.display = "block";
-    });
+  if(!measurements.length) throw new Error("Download measurement failed");
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const savedTheme = localStorage.getItem("fasqoo_theme") || "dark";
-      document.documentElement.setAttribute("data-theme", savedTheme);
-      $("themeColorMeta").setAttribute("content", savedTheme === "dark" ? "#0a0a0c" : "#f8fafc");
-      updateThemeIcon(savedTheme);
+  const totalBytes = measurements.reduce((sum,m) => sum + m.bytes, 0);
+  const totalSeconds = measurements.reduce((sum,m) => sum + m.seconds, 0);
 
-      const installBtn = $("pwaInstallBtn");
-      if (installBtn) installBtn.addEventListener("click", async () => {
-        if (!deferredPwaPrompt) return;
-        deferredPwaPrompt.prompt();
-        await deferredPwaPrompt.userChoice;
-        deferredPwaPrompt = null;
-        $("pwaInstallBanner").style.display = "none";
-      });
+  return (totalBytes * 8) / totalSeconds / 1e6;
+}
 
-      fetchIpInfo();
-      setTimeout(() => window.startSpeedTest(), 700);
-    });
-  </script>
+function makeRandomBytes(size){
+  const data = new Uint8Array(size);
+  // Random payload avoids a trivially compressible constant request body.
+  crypto.getRandomValues(data);
+  return data;
+}
+
+async function measureUpload(signal){
+  const sizes = [500000, 1000000, 2500000, 5000000];
+  const measurements = [];
+
+  for(const size of sizes){
+    if(signal.aborted) throw new DOMException("Test cancelled", "AbortError");
+
+    const data = makeRandomBytes(size);
+    const timer = createTimeout(12000, signal);
+    const start = performance.now();
+
+    try{
+      const res = await fetch(
+        SPEED_BASE + "/__up?r=" + crypto.randomUUID(),
+        {
+          method: "POST",
+          body: data,
+          signal: timer.signal,
+          cache: "no-store",
+          credentials: "omit",
+          headers: {"Content-Type": "application/octet-stream"}
+        }
+      );
+
+      if(!res.ok) throw new Error("Upload request failed");
+      await res.arrayBuffer();
+
+      const seconds = (performance.now() - start) / 1000;
+      if(seconds <= 0) throw new Error("Invalid upload time");
+
+      const speed = (size * 8) / seconds / 1e6;
+      if(!Number.isFinite(speed) || speed <= 0){
+        throw new Error("Invalid upload speed");
+      }
+
+      measurements.push({bytes: size, seconds});
+    }catch(e){
+      if(e.name === "AbortError" && signal.aborted) throw e;
+      // Failed samples are discarded. No fallback/fake value is used.
+    }finally{
+      timer.clear();
+    }
+  }
+
+  if(!measurements.length) throw new Error("Upload measurement failed");
+
+  const totalBytes = measurements.reduce((sum,m) => sum + m.bytes, 0);
+  const totalSeconds = measurements.reduce((sum,m) => sum + m.seconds, 0);
+
+  return (totalBytes * 8) / totalSeconds / 1e6;
+}
+
+async function startSpeedTest(){
+  if(isRunning) return;
+
+  isRunning = true;
+  abortTest = new AbortController();
+
+  $("restartBtn").style.display = "none";
+  $("detailsGrid").classList.remove("visible");
+  $("speed").textContent = "0";
+  $("unit").textContent = "Mbps";
+  $("pingVal").innerHTML = "—<span>ms</span>";
+  $("jitterVal").innerHTML = "—<span>ms</span>";
+  $("upVal").innerHTML = "—<span>Mbps</span>";
+  $("status").textContent = "Measuring latency...";
+
+  try{
+    const latency = await measureLatency(abortTest.signal);
+
+    $("pingVal").innerHTML = formatMs(latency.ping) + "<span>ms</span>";
+    $("jitterVal").innerHTML = formatJitter(latency.jitter) + "<span>ms</span>";
+
+    $("status").textContent = "Measuring download...";
+    const download = await measureDownload(abortTest.signal);
+    $("speed").textContent = formatMbps(download);
+
+    $("status").textContent = "Measuring upload...";
+    const upload = await measureUpload(abortTest.signal);
+    $("upVal").innerHTML = formatMbps(upload) + "<span>Mbps</span>";
+
+    $("status").textContent = "Test complete";
+    $("detailsGrid").classList.add("visible");
+    $("restartBtn").style.display = "inline-block";
+  }catch(err){
+    console.error("Fasqoo speed test:", err);
+    $("status").textContent =
+      err.name === "AbortError"
+        ? "Test cancelled."
+        : "Measurement failed — no fallback values used.";
+    $("detailsGrid").classList.add("visible");
+    $("restartBtn").style.display = "inline-block";
+  }finally{
+    isRunning = false;
+    abortTest = null;
+  }
+}
+
+window.addEventListener("beforeunload", () => {
+  if(abortTest) abortTest.abort();
+});</script>
+
 </body>
 </html>
