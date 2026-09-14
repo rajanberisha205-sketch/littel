@@ -1,43 +1,22 @@
-const CACHE_NAME = "fasqoo-lite-v3";
-const CORE = ["/", "/index.html", "/site.webmanifest"];
+const CACHE_NAME = 'fasqoo-lite-v1';
+const assetsToCache = [
+  '/',
+  '/index.html',
+  '/fasqoologo.png'
+];
 
-self.addEventListener("install", event => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(CORE))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(assetsToCache);
+    })
   );
 });
 
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-      ))
-      .then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener("fetch", event => {
-  const req = event.request;
-  const url = new URL(req.url);
-
-  // Never cache speed-test or IP-measurement traffic.
-  if (
-    req.method !== "GET" ||
-    url.origin !== self.location.origin ||
-    url.hostname === "speed.cloudflare.com" ||
-    url.hostname === "ipwho.is"
-  ) return;
-
+self.addEventListener('fetch', (event) => {
   event.respondWith(
-    fetch(req).then(res => {
-      if (res && res.ok) {
-        const copy = res.clone();
-        caches.open(CACHE_NAME).then(c => c.put(req, copy)).catch(() => {});
-      }
-      return res;
-    }).catch(() => caches.match(req).then(cached => cached || caches.match("/")))
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
   );
 });
