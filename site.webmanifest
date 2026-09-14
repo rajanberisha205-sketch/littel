@@ -1,13 +1,12 @@
 {
-  "name": "Fasqoo Lite Speed Test",
+  "name": "Fast & Free Internet Speed Test | Fasqoo Lite",
   "short_name": "Fasqoo Lite",
-  "description": "Schneller und minimalistischer Internet Speed Test",
+  "description": "Test your internet speed instantly with Fasqoo Lite.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#09090b",
   "theme_color": "#0a0a0c",
-  "orientation": "any",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
