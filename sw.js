@@ -1,51 +1,43 @@
-const CACHE_NAME = "fasqoo-lite-v2";
-const APP_SHELL = [
-  "/",
-  "/index.html",
-  "/site.webmanifest"
-];
+const CACHE_NAME = "fasqoo-lite-v3";
+const CORE = ["/", "/index.html", "/site.webmanifest"];
 
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_SHELL))
+      .then(cache => cache.addAll(CORE))
       .then(() => self.skipWaiting())
   );
 });
 
 self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.filter(key => key !== CACHE_NAME)
-            .map(key => caches.delete(key))
-      )
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then(keys => Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener("fetch", event => {
-  const request = event.request;
+  const req = event.request;
+  const url = new URL(req.url);
 
-  // Keep the speed-test measurement requests truly online.
+  // Never cache speed-test or IP-measurement traffic.
   if (
-    request.url.startsWith("https://speed.cloudflare.com/") ||
-    request.url.startsWith("https://ipwho.is/")
-  ) {
-    return;
-  }
-
-  if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) {
-    return;
-  }
+    req.method !== "GET" ||
+    url.origin !== self.location.origin ||
+    url.hostname === "speed.cloudflare.com" ||
+    url.hostname === "ipwho.is"
+  ) return;
 
   event.respondWith(
-    fetch(request)
-      .then(response => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
-        return response;
-      })
-      .catch(() => caches.match(request).then(cached => cached || caches.match("/")))
+    fetch(req).then(res => {
+      if (res && res.ok) {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then(c => c.put(req, copy)).catch(() => {});
+      }
+      return res;
+    }).catch(() => caches.match(req).then(cached => cached || caches.match("/")))
   );
 });
