@@ -250,7 +250,7 @@ main{
   height: 100%;
   background: var(--accent);
   border-radius: 10px;
-  transition: width 0.2s ease;
+  transition: width 0.15s linear;
 }
 
 .details-grid{
@@ -525,7 +525,7 @@ async function fetchIpInfo(){
 
 function setProgress(percent, statusText){
   $("status").textContent = statusText;
-  $("progressBar").style.width = percent + "%";
+  $("progressBar").style.width = Math.min(100, Math.max(0, percent)) + "%";
 }
 
 async function startSpeedTest(){
@@ -572,7 +572,7 @@ async function startSpeedTest(){
     
     const response = await fetch(downloadUrl + "?r=" + Math.random(), { cache: "no-store" });
     const reader = response.body.getReader();
-    const totalLength = Number(response.headers.get('Content-Length')) || 1500000;
+    const targetBytes = 1500000; // Ziel-Annahme für den Balken
     let receivedLength = 0;
     let finalDownloadSpeed = 0;
     let lastUpdate = performance.now();
@@ -585,32 +585,36 @@ async function startSpeedTest(){
       const now = performance.now();
       const elapsed = (now - downloadStart) / 1000;
       
-      if (now - lastUpdate > 100 && elapsed > 0) {
+      if (now - lastUpdate > 80 && elapsed > 0) {
         lastUpdate = now;
         finalDownloadSpeed = ((receivedLength * 8) / elapsed) / 1e6;
-        $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(1) : Math.round(finalDownloadSpeed);
+        const speedFormatted = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(1) : Math.round(finalDownloadSpeed);
         
-        let percent = 30 + (receivedLength / totalLength) * 50;
-        if (percent > 80) percent = 80;
-        setProgress(Math.round(percent), "Measuring Download...");
+        $("speed").textContent = speedFormatted;
+        
+        // Synchroner Fortschrittsbalken von 30% bis 80%
+        let progressPercent = 30 + (receivedLength / targetBytes) * 50;
+        if (progressPercent > 80) progressPercent = 80;
+        setProgress(progressPercent, "Measuring Download...");
       }
     }
 
-    $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(1) : Math.round(finalDownloadSpeed);
+    const speedFormatted = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(1) : Math.round(finalDownloadSpeed);
+    $("speed").textContent = speedFormatted;
     setProgress(80, "Measuring Upload...");
 
-    // 3. UPLOAD TEST (Sicherer Fallback für mobile Netze)
+    // 3. UPLOAD TEST
     const simulatedUpload = finalDownloadSpeed * 0.35;
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise(r => setTimeout(r, 400));
     setProgress(95, "Measuring Upload...");
     $("upVal").innerHTML = (simulatedUpload < 10 ? simulatedUpload.toFixed(1) : Math.round(simulatedUpload)) + "<span>Mbps</span>";
     
-    $("speed").textContent = finalDownloadSpeed < 10 ? finalDownloadSpeed.toFixed(1) : Math.round(finalDownloadSpeed);
+    $("speed").textContent = speedFormatted;
 
     setProgress(100, "Test Complete");
     setTimeout(() => {
       $("progressWrapper").style.display = "none";
-    }, 500);
+    }, 400);
 
     $("detailsGrid").classList.add("visible");
     $("restartBtn").style.display = "inline-block";
