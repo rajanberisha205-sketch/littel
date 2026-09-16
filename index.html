@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <meta name="theme-color" content="#0a0a0c" id="themeColorMeta">
+  <meta name="color-scheme" content="dark light">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fasqoo Lite">
   
   <!-- SEO Meta Tags -->
   <title>Fast & Free Internet Speed Test | Fasqoo Lite</title>
@@ -64,6 +69,7 @@ html, body {
   padding:0;
   width: 100%;
   height: 100vh;
+  min-height: 100svh;
   background:var(--bg);
   color:var(--text);
   font-family:'Plus Jakarta Sans', sans-serif;
@@ -72,6 +78,7 @@ html, body {
   justify-content:space-between;
   overflow: hidden;
   -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
   transition: background 0.3s ease, color 0.3s ease;
 }
 
@@ -369,6 +376,28 @@ footer{
   color: var(--accent);
 }
 
+.measurement-note{
+  width:100%;
+  max-width:850px;
+  margin-top:10px;
+  color:var(--muted);
+  font-size:clamp(9px,1.7vw,10px);
+  line-height:1.4;
+  text-align:center;
+}
+
+.sr-only{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  padding:0 !important;
+  margin:-1px !important;
+  overflow:hidden !important;
+  clip:rect(0,0,0,0) !important;
+  white-space:nowrap !important;
+  border:0 !important;
+}
+
 @media(max-width: 850px) {
   .details-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -386,13 +415,13 @@ footer{
       <div class="brandname">Fasqoo</div>
     </a>
     <div class="nav-right">
-      <button class="nav-link" id="installBtn" style="display: none;" onclick="installPWA()" title="Install App">
+      <button type="button" class="nav-link" id="installBtn" style="display: none;" onclick="installPWA()" title="Install Fasqoo Lite" aria-label="Install Fasqoo Lite as an app">
         <span>Install App</span>
       </button>
       <a href="https://fasqoo.com" class="nav-link" title="Main Website">
         <span>Fasqoo.com</span>
       </a>
-      <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle theme">
+      <button type="button" class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle theme" aria-pressed="false">
         <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       </button>
     </div>
@@ -401,14 +430,14 @@ footer{
 
 <main>
   <div class="wrap">
-    <h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">Internet Speed Test Lite</h1>
+    <h1 class="sr-only">Internet Speed Test Lite</h1>
     
     <div class="speed-container">
       <div id="speed" class="speed-number">0</div>
       <div id="unit" class="speed-unit">Mbps</div>
       
       <div class="status-container">
-        <div id="status" class="status-text">Ready to test</div>
+        <div id="status" class="status-text" role="status" aria-live="polite">Ready to test</div>
         <div class="progress-bar-wrapper" id="progressWrapper">
           <div id="progressBar" class="progress-bar-fill"></div>
         </div>
@@ -417,6 +446,10 @@ footer{
 
     <div class="controls">
       <button id="restartBtn" class="restart-btn" onclick="startSpeedTest()">Test Again</button>
+    </div>
+
+    <div class="measurement-note" id="measurementNote">
+      Real browser measurement. Final results use multiple samples to reduce short-term network variation.
     </div>
 
     <div id="detailsGrid" class="details-grid">
@@ -456,9 +489,14 @@ footer{
   // Fasqoo Lite uses Cloudflare's public speed-test endpoints for real network traffic.
   // No simulated/fallback speed values are ever shown.
   const SPEED_HOST = "https://speed.cloudflare.com";
-  const DOWN_BYTES = 8 * 1024 * 1024;
-  const UP_BYTES = 4 * 1024 * 1024;
+  // Real measurement settings. Longer samples reduce short-burst noise without
+  // inventing or smoothing the final result.
+  const DOWN_BYTES = 16 * 1024 * 1024;
+  const UP_BYTES = 8 * 1024 * 1024;
   const PARALLEL_STREAMS = 4;
+  const DOWNLOAD_ROUNDS = 2;
+  const UPLOAD_ROUNDS = 2;
+  const MIN_STABLE_SAMPLE_SECONDS = 0.75;
 
   function toggleTheme(){
     const html = document.documentElement;
@@ -468,6 +506,8 @@ footer{
     $("themeColorMeta").setAttribute("content", newTheme === "dark" ? "#0a0a0c" : "#f8fafc");
     localStorage.setItem("fasqoo_theme", newTheme);
     updateThemeIcon(newTheme);
+    const btn = $("themeToggleBtn");
+    if (btn) btn.setAttribute("aria-pressed", newTheme === "light" ? "true" : "false");
   }
 
   function updateThemeIcon(theme){
@@ -488,26 +528,50 @@ footer{
 
   function installPWA() {
     if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') console.log('User installed the app');
-      deferredPrompt = null;
+    const promptEvent = deferredPrompt;
+    deferredPrompt = null;
+
+    promptEvent.prompt();
+
+    promptEvent.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('Fasqoo Lite installed');
+      }
       const installBtn = document.getElementById('installBtn');
       if (installBtn) installBtn.style.display = 'none';
+    }).catch((err) => {
+      console.log('PWA install prompt was dismissed or unavailable', err);
     });
   }
+
+  function updateInstallButtonForDisplayMode() {
+    const standalone = window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true;
+    const installBtn = document.getElementById('installBtn');
+    if (standalone && installBtn) installBtn.style.display = 'none';
+  }
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) installBtn.style.display = 'none';
+    console.log('Fasqoo Lite appinstalled event fired');
+  });
 
   window.addEventListener("DOMContentLoaded", () => {
     const savedTheme = localStorage.getItem("fasqoo_theme") || "dark";
     document.documentElement.setAttribute("data-theme", savedTheme);
     updateThemeIcon(savedTheme);
+    const themeBtn = $("themeToggleBtn");
+    if (themeBtn) themeBtn.setAttribute("aria-pressed", savedTheme === "light" ? "true" : "false");
+    updateInstallButtonForDisplayMode();
 
     startSpeedTest();
     fetchIpInfo();
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('/sw.js', { scope: '/' })
           .then(() => console.log('PWA Service Worker active'))
           .catch((err) => console.log('SW registration failed', err));
       });
@@ -584,95 +648,164 @@ footer{
   }
 
   async function measureDownload(){
-    const started = performance.now();
-    let totalBytes = 0;
+    const roundResults = [];
 
-    const workers = Array.from({length: PARALLEL_STREAMS}, async (_, streamIndex) => {
-      const url = SPEED_HOST + "/__down?bytes=" + DOWN_BYTES +
-        "&stream=" + streamIndex + "&r=" + crypto.randomUUID();
+    async function runRound(roundIndex){
+      const started = performance.now();
+      let totalBytes = 0;
 
-      const response = await fetch(url, {
-        method: "GET",
-        cache: "no-store",
-        credentials: "omit"
+      const workers = Array.from({length: PARALLEL_STREAMS}, async (_, streamIndex) => {
+        const url = SPEED_HOST + "/__down?bytes=" + DOWN_BYTES +
+          "&stream=" + streamIndex + "&round=" + roundIndex +
+          "&r=" + crypto.randomUUID();
+
+        const response = await fetch(url, {
+          method: "GET",
+          cache: "no-store",
+          credentials: "omit"
+        });
+
+        if(!response.ok || !response.body){
+          throw new Error("Download endpoint unavailable (HTTP " + response.status + ")");
+        }
+
+        const reader = response.body.getReader();
+        let streamBytes = 0;
+
+        while(true){
+          const {done, value} = await reader.read();
+          if(done) break;
+
+          streamBytes += value.byteLength;
+          totalBytes += value.byteLength;
+
+          const elapsed = (performance.now() - started) / 1000;
+          if(elapsed >= MIN_STABLE_SAMPLE_SECONDS){
+            const liveMbps = (totalBytes * 8) / elapsed / 1e6;
+            $("speed").textContent = formatMbps(liveMbps);
+          }
+        }
+
+        return streamBytes;
       });
 
-      if(!response.ok || !response.body){
-        throw new Error("Download endpoint unavailable (HTTP " + response.status + ")");
+      await Promise.all(workers);
+
+      const elapsed = (performance.now() - started) / 1000;
+      if(totalBytes <= 0 || elapsed <= 0){
+        throw new Error("No download data received");
       }
 
-      const reader = response.body.getReader();
-      let streamBytes = 0;
+      return (totalBytes * 8) / elapsed / 1e6;
+    }
 
-      while(true){
-        const {done, value} = await reader.read();
-        if(done) break;
-        streamBytes += value.byteLength;
-        totalBytes += value.byteLength;
+    for(let round = 0; round < DOWNLOAD_ROUNDS; round++){
+      setProgress(
+        25 + Math.round((round / DOWNLOAD_ROUNDS) * 35),
+        "Measuring Download..."
+      );
 
-        const elapsed = (performance.now() - started) / 1000;
-        if(elapsed > 0){
-          const liveMbps = (totalBytes * 8) / elapsed / 1e6;
-          $("speed").textContent = formatMbps(liveMbps);
-        }
+      const result = await runRound(round);
+      if(Number.isFinite(result) && result > 0){
+        roundResults.push(result);
       }
-      return streamBytes;
-    });
+    }
 
-    await Promise.all(workers);
+    if(!roundResults.length){
+      throw new Error("No valid download measurements");
+    }
 
-    const elapsed = (performance.now() - started) / 1000;
-    if(totalBytes <= 0 || elapsed <= 0) throw new Error("No download data received");
+    // Median is used only to reduce the effect of an unusually short/slow round.
+    // No artificial value is added or substituted.
+    const sorted = [...roundResults].sort((a,b) => a-b);
+    const middle = Math.floor(sorted.length / 2);
+    const result = sorted.length % 2
+      ? sorted[middle]
+      : (sorted[middle - 1] + sorted[middle]) / 2;
 
-    return (totalBytes * 8) / elapsed / 1e6;
+    return result;
   }
 
   async function measureUpload(){
-    const started = performance.now();
-    let totalBytes = 0;
-    let requestCount = 0;
+    const roundResults = [];
 
-    // Each request has a fresh body. The measured value is based only on bytes
-    // actually accepted by the remote speed-test endpoint and elapsed time.
-    const workers = Array.from({length: PARALLEL_STREAMS}, async (_, streamIndex) => {
-      while(requestCount < PARALLEL_STREAMS * 2){
-        const myRequest = requestCount++;
-        const body = makeRandomBody(UP_BYTES);
+    async function runRound(roundIndex){
+      const started = performance.now();
+      let totalBytes = 0;
+      let requestCount = 0;
+      const totalRequests = PARALLEL_STREAMS * 2;
 
-        const response = await fetch(
-          SPEED_HOST + "/__up?bytes=" + UP_BYTES +
-          "&stream=" + streamIndex + "&request=" + myRequest + "&r=" + crypto.randomUUID(),
-          {
-            method: "POST",
-            body,
-            cache: "no-store",
-            credentials: "omit",
-            headers: { "Content-Type": "application/octet-stream" }
+      const workers = Array.from({length: PARALLEL_STREAMS}, async (_, streamIndex) => {
+        while(true){
+          const myRequest = requestCount++;
+          if(myRequest >= totalRequests) break;
+
+          const body = makeRandomBody(UP_BYTES);
+
+          const response = await fetch(
+            SPEED_HOST + "/__up?bytes=" + UP_BYTES +
+            "&stream=" + streamIndex +
+            "&round=" + roundIndex +
+            "&request=" + myRequest +
+            "&r=" + crypto.randomUUID(),
+            {
+              method: "POST",
+              body,
+              cache: "no-store",
+              credentials: "omit",
+              headers: { "Content-Type": "application/octet-stream" }
+            }
+          );
+
+          if(!response.ok){
+            throw new Error("Upload endpoint returned HTTP " + response.status);
           }
-        );
 
-        if(!response.ok){
-          throw new Error("Upload endpoint returned HTTP " + response.status);
+          // Consume the response before counting the request as completed.
+          await response.arrayBuffer();
+          totalBytes += body.byteLength;
+
+          const elapsed = (performance.now() - started) / 1000;
+          if(elapsed >= MIN_STABLE_SAMPLE_SECONDS){
+            const liveMbps = (totalBytes * 8) / elapsed / 1e6;
+            $("upVal").innerHTML = formatMbps(liveMbps) + "<span>Mbps</span>";
+          }
         }
+      });
 
-        // Consume the response before counting the request as completed.
-        await response.arrayBuffer();
-        totalBytes += body.byteLength;
+      await Promise.all(workers);
 
-        const elapsed = (performance.now() - started) / 1000;
-        if(elapsed > 0){
-          const liveMbps = (totalBytes * 8) / elapsed / 1e6;
-          $("upVal").innerHTML = formatMbps(liveMbps) + "<span>Mbps</span>";
-        }
+      const elapsed = (performance.now() - started) / 1000;
+      if(totalBytes <= 0 || elapsed <= 0){
+        throw new Error("No upload data accepted");
       }
-    });
 
-    await Promise.all(workers);
+      return (totalBytes * 8) / elapsed / 1e6;
+    }
 
-    const elapsed = (performance.now() - started) / 1000;
-    if(totalBytes <= 0 || elapsed <= 0) throw new Error("No upload data accepted");
+    for(let round = 0; round < UPLOAD_ROUNDS; round++){
+      setProgress(
+        62 + Math.round((round / UPLOAD_ROUNDS) * 34),
+        "Measuring Upload..."
+      );
 
-    return (totalBytes * 8) / elapsed / 1e6;
+      const result = await runRound(round);
+      if(Number.isFinite(result) && result > 0){
+        roundResults.push(result);
+      }
+    }
+
+    if(!roundResults.length){
+      throw new Error("No valid upload measurements");
+    }
+
+    const sorted = [...roundResults].sort((a,b) => a-b);
+    const middle = Math.floor(sorted.length / 2);
+    const result = sorted.length % 2
+      ? sorted[middle]
+      : (sorted[middle - 1] + sorted[middle]) / 2;
+
+    return result;
   }
 
   async function startSpeedTest(){
@@ -699,6 +832,8 @@ footer{
       setProgress(25, "Measuring Download...");
       const downloadMbps = await measureDownload();
       $("speed").textContent = formatMbps(downloadMbps);
+
+      $("upVal").innerHTML = "-<span>Mbps</span>";
       setProgress(62, "Measuring Upload...");
 
       // 3. Real upload
