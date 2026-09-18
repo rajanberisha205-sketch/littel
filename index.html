@@ -10,13 +10,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Fasqoo Lite">
   
-  <!-- SEO Meta Tags -->
   <title>Fast & Free Internet Speed Test | Fasqoo Lite</title>
   <meta name="description" content="Test your internet speed instantly with Fasqoo Lite. Accurate download, upload, ping, and jitter measurements powered by global edge CDNs.">
   <meta name="keywords" content="internet speed test, broadband speed test, wifi speed test, check internet speed, fasqoo lite, ping test, Fasqoo">
   <link rel="canonical" href="https://lite.fasqoo.com/">
 
-  <!-- Open Graph / Social Media SEO -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://lite.fasqoo.com/">
   <meta property="og:title" content="Fast & Free Internet Speed Test | Fasqoo Lite">
@@ -453,7 +451,7 @@ footer{
     </div>
 
     <div class="measurement-note" id="measurementNote">
-      Real browser measurement over Cloudflare edge. Fixed short measurement windows, 4 parallel streams, only actually transferred bytes are counted.
+      Real browser measurement over Cloudflare edge. Only actually transferred bytes are counted.
     </div>
 
     <div id="detailsGrid" class="details-grid">
@@ -486,549 +484,383 @@ footer{
 
 <script>
 (function () {
-  "use strict";
+  'use strict';
 
-  const $ = id => document.getElementById(id);
-  let isRunning = false;
-  let deferredPrompt = null;
+  var $ = function (id) { return document.getElementById(id); };
+  var HOST = 'https://speed.cloudflare.com';
 
-  /* ------------------------------------------------------------------
-     Fasqoo Lite — real network measurement only.
-     All traffic goes to Cloudflare's public speed-test endpoints.
-     No simulated values, no estimates, no fallbacks with invented numbers.
-     ------------------------------------------------------------------ */
-  const SPEED_HOST = "https://speed.cloudflare.com";
+  var PING_COUNT = 5;
+  var PING_TIMEOUT_MS = 3000;
+  var DOWNLOAD_MS = 3000;
+  var UPLOAD_MS = 4000;
+  var DOWNLOAD_STREAMS = 4;
+  var UPLOAD_STREAMS = 2;
+  var DOWNLOAD_CHUNK = 25 * 1024 * 1024;
+  var UPLOAD_CHUNK = 128 * 1024;
 
-  const CFG = {
-    // Ping: only a few quick samples
-    pingSamples: 5,
-    pingPhaseMs: 3000,
+  var isRunning = false;
+  var deferredPrompt = null;
 
-    // Download / Upload: fixed short windows, 4 real parallel streams each
-    downloadMs: 2500,
-    uploadMs: 2500,
-    streams: 4,
-
-    // Request sizing
-    downloadChunkBytes: 25 * 1024 * 1024,
-    uploadChunkBytes: 1 * 1024 * 1024,
-    maxIterations: 300,          // hard safety cap, prevents endless loops
-
-    // Validity / abort guards
-    minValidBytes: 8 * 1024,     // below this a measurement is not trusted
-    minPhaseMs: 1000,            // never abort a phase before this
-    stallMs: 1200,               // abort a phase when no byte arrives for this long
-    overallMs: 25000             // global watchdog: test can never hang
-  };
-
-  /* ---------------- phase management (abort + timers) ---------------- */
-
-  let currentPhase = null;
-
-  function beginPhase(maxMs) {
-    const controller = new AbortController();
-    const phase = {
-      controller: controller,
-      stopped: false,
-      abortedAt: 0,
-      timers: [],
-      addTimer: function (t) { this.timers.push(t); return t; },
-      stop: function () {
-        if (this.stopped) return;
-        this.stopped = true;
-        this.abortedAt = performance.now();
-        for (let i = 0; i < this.timers.length; i++) clearTimeout(this.timers[i]);
-        this.timers.length = 0;
-        try { controller.abort(); } catch (e) { /* ignore */ }
-      }
-    };
-    phase.addTimer(setTimeout(function () { phase.stop(); }, maxMs));
-    currentPhase = phase;
-    return phase;
-  }
-
-  function stopCurrentPhase() {
-    if (currentPhase) {
-      const p = currentPhase;
-      currentPhase = null;
-      p.stop();
-    }
-  }
-
-  function releasePhase(phase) {
-    if (currentPhase === phase) currentPhase = null;
-  }
-
-  /* ---------------- UI helpers ---------------- */
-
+  /* ---------- UI ---------- */
   function setStatus(text, isError) {
-    const el = $("status");
+    var el = $('status');
     el.textContent = text;
-    if (isError) el.classList.add("error");
-    else el.classList.remove("error");
+    if (isError) el.classList.add('error'); else el.classList.remove('error');
   }
-
   function setBar(pct) {
-    $("progressBar").style.width = Math.min(100, Math.max(0, pct)) + "%";
+    $('progressBar').style.width = Math.min(100, Math.max(0, pct)) + '%';
+  }
+  function fmt(mbps) {
+    if (!isFinite(mbps) || mbps < 0) return '0.0';
+    return mbps < 100 ? mbps.toFixed(1) : String(Math.round(mbps));
   }
 
-  function formatMbps(mbps) {
-    if (!Number.isFinite(mbps) || mbps < 0) return "0.0";
-    if (mbps < 100) return mbps.toFixed(1);
-    return Math.round(mbps).toString();
-  }
-
-  function resetUI() {
-    $("restartBtn").style.display = "none";
-    $("detailsGrid").classList.remove("visible");
-    $("progressWrapper").style.display = "block";
-    $("speed").textContent = "0";
-    $("unit").textContent = "Mbps";
-    $("pingVal").innerHTML = "-<span>ms</span>";
-    $("jitterVal").innerHTML = "-<span>ms</span>";
-    $("upVal").innerHTML = "-<span>Mbps</span>";
-    setBar(0);
-    setStatus("Starting…", false);
-  }
-
-  function finishUI() {
-    $("detailsGrid").classList.add("visible");
-    $("restartBtn").style.display = "inline-block";
-    setTimeout(function () { $("progressWrapper").style.display = "none"; }, 400);
-  }
-
-  /* ---------------- theme ---------------- */
-
-  function toggleTheme() {
-    const html = document.documentElement;
-    const currentTheme = html.getAttribute("data-theme");
-    const newTheme = currentTheme === "dark" ? "light" : "dark";
-    html.setAttribute("data-theme", newTheme);
-    $("themeColorMeta").setAttribute("content", newTheme === "dark" ? "#0a0a0c" : "#f8fafc");
-    localStorage.setItem("fasqoo_theme", newTheme);
-    updateThemeIcon(newTheme);
-    const btn = $("themeToggleBtn");
-    if (btn) btn.setAttribute("aria-pressed", newTheme === "light" ? "true" : "false");
-  }
-
-  function updateThemeIcon(theme) {
-    const icon = $("themeIcon");
+  /* ---------- Theme ---------- */
+  window.toggleTheme = function () {
+    var html = document.documentElement;
+    var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    $('themeColorMeta').setAttribute('content', next === 'dark' ? '#0a0a0c' : '#f8fafc');
+    try { localStorage.setItem('fasqoo_theme', next); } catch (e) {}
+    updateIcon(next);
+    $('themeToggleBtn').setAttribute('aria-pressed', next === 'light' ? 'true' : 'false');
+  };
+  function updateIcon(t) {
+    var icon = $('themeIcon');
     if (!icon) return;
-    if (theme === "light") {
-      icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
-    } else {
-      icon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
-    }
+    icon.innerHTML = (t === 'light')
+      ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+      : '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
   }
 
-  /* ---------------- PWA ---------------- */
-
+  /* ---------- PWA ---------- */
   window.addEventListener('beforeinstallprompt', function (e) {
     e.preventDefault();
     deferredPrompt = e;
-    const installBtn = document.getElementById('installBtn');
-    if (installBtn) installBtn.style.display = 'inline-flex';
+    var btn = $('installBtn');
+    if (btn) btn.style.display = 'inline-flex';
   });
-
   window.installPWA = function () {
     if (!deferredPrompt) return;
-    const promptEvent = deferredPrompt;
-    deferredPrompt = null;
-    promptEvent.prompt();
-    promptEvent.userChoice.then(function (choiceResult) {
-      if (choiceResult.outcome === 'accepted') console.log('Fasqoo Lite installed');
-      const installBtn = document.getElementById('installBtn');
-      if (installBtn) installBtn.style.display = 'none';
-    }).catch(function (err) {
-      console.log('PWA install prompt dismissed or unavailable', err);
-    });
+    var p = deferredPrompt; deferredPrompt = null;
+    p.prompt();
+    p.userChoice.then(function () {
+      var btn = $('installBtn');
+      if (btn) btn.style.display = 'none';
+    }).catch(function () {});
   };
-
-  function updateInstallButtonForDisplayMode() {
-    const standalone = window.matchMedia('(display-mode: standalone)').matches ||
-      window.navigator.standalone === true;
-    const installBtn = document.getElementById('installBtn');
-    if (standalone && installBtn) installBtn.style.display = 'none';
-  }
-
   window.addEventListener('appinstalled', function () {
     deferredPrompt = null;
-    const installBtn = document.getElementById('installBtn');
-    if (installBtn) installBtn.style.display = 'none';
-    console.log('Fasqoo Lite appinstalled event fired');
+    var btn = $('installBtn');
+    if (btn) btn.style.display = 'none';
   });
 
-  /* ---------------- IP info ---------------- */
-
-  async function fetchIpInfo() {
-    try {
-      const res = await fetch("https://ipwho.is/", { cache: "no-store" });
-      const data = await res.json();
-      $("ipVal").textContent = (data && data.success) ? data.ip : "Edge Network";
-    } catch (e) {
-      $("ipVal").textContent = "Edge Network";
-    }
+  /* ---------- IP ---------- */
+  function fetchIp() {
+    fetch('https://ipwho.is/', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { $('ipVal').textContent = (d && d.success) ? d.ip : 'Edge Network'; })
+      .catch(function () { $('ipVal').textContent = 'Edge Network'; });
   }
 
-  /* ---------------- upload payload (generated once, reused) ---------------- */
+  /* ---------- PING ---------- */
+  function measurePing() {
+    var samples = [];
+    var start = performance.now();
 
-  let uploadBodyCache = null;
-
-  function getUploadBody() {
-    if (!uploadBodyCache) {
-      const size = CFG.uploadChunkBytes;
-      const buf = new Uint8Array(size);
-      const chunk = 65536; // getRandomValues limit per call
-      for (let offset = 0; offset < size; offset += chunk) {
-        crypto.getRandomValues(buf.subarray(offset, Math.min(offset + chunk, size)));
+    function step(i) {
+      if (i >= PING_COUNT || performance.now() - start > PING_TIMEOUT_MS) {
+        return Promise.resolve();
       }
-      uploadBodyCache = buf;
-    }
-    return uploadBodyCache;
-  }
-
-  /* ---------------- PING ---------------- */
-
-  async function measurePing() {
-    const phase = beginPhase(CFG.pingPhaseMs);
-    const samples = [];
-
-    try {
-      for (let i = 0; i < CFG.pingSamples; i++) {
-        if (phase.stopped) break;
-        try {
-          const t0 = performance.now();
-          const res = await fetch(SPEED_HOST + "/__down?bytes=0&r=" + crypto.randomUUID(), {
-            method: "GET",
-            cache: "no-store",
-            credentials: "omit",
-            signal: phase.controller.signal
-          });
-          if (!res.ok) throw new Error("Ping HTTP " + res.status);
-          await res.arrayBuffer();
-          samples.push(performance.now() - t0);
-        } catch (err) {
-          if (phase.stopped) break;
-          // single sample failed — keep going, decide below
-        }
-        setBar(5 + ((i + 1) / CFG.pingSamples) * 15);
-      }
-    } finally {
-      phase.stop();
-      releasePhase(phase);
-    }
-
-    if (!samples.length) {
-      const e = new Error("No connection");
-      e.code = "NO_CONNECTION";
-      throw e;
-    }
-
-    samples.sort(function (a, b) { return a - b; });
-
-    // Median ping: robust against one outlier
-    const mid = Math.floor(samples.length / 2);
-    const ping = samples.length % 2 ? samples[mid] : (samples[mid - 1] + samples[mid]) / 2;
-
-    // Jitter: mean absolute difference between consecutive samples
-    let jitter = 0;
-    if (samples.length > 1) {
-      let sum = 0;
-      for (let i = 1; i < samples.length; i++) sum += Math.abs(samples[i] - samples[i - 1]);
-      jitter = sum / (samples.length - 1);
-    }
-
-    return { ping: ping, jitter: jitter };
-  }
-
-  /* ---------------- DOWNLOAD ---------------- */
-
-  async function downloadStream(phase, state, streamIndex, startedAt) {
-    let iterations = 0;
-
-    while (!phase.stopped && iterations < CFG.maxIterations) {
-      iterations++;
-
-      const url = SPEED_HOST + "/__down?bytes=" + CFG.downloadChunkBytes +
-        "&stream=" + streamIndex +
-        "&r=" + crypto.randomUUID();
-
-      try {
-        const res = await fetch(url, {
-          method: "GET",
-          cache: "no-store",
-          credentials: "omit",
-          signal: phase.controller.signal
+      var t0 = performance.now();
+      return fetch(HOST + '/__down?bytes=0&r=' + Math.random(), { cache: 'no-store' })
+        .then(function (r) { return r.arrayBuffer(); })
+        .then(function () { samples.push(performance.now() - t0); })
+        .catch(function () { /* ignore one failed sample */ })
+        .then(function () {
+          setBar(5 + ((i + 1) / PING_COUNT) * 15);
+          return step(i + 1);
         });
+    }
 
-        if (!res.ok || !res.body) throw new Error("Download HTTP " + res.status);
+    return step(0).then(function () {
+      if (!samples.length) {
+        var e = new Error('No connection'); e.code = 'NO_CONNECTION'; throw e;
+      }
+      samples.sort(function (a, b) { return a - b; });
+      var mid = Math.floor(samples.length / 2);
+      var ping = (samples.length % 2)
+        ? samples[mid]
+        : (samples[mid - 1] + samples[mid]) / 2;
+      var jitter = 0;
+      if (samples.length > 1) {
+        var s = 0;
+        for (var i = 1; i < samples.length; i++) s += Math.abs(samples[i] - samples[i - 1]);
+        jitter = s / (samples.length - 1);
+      }
+      return { ping: ping, jitter: jitter };
+    });
+  }
 
-        const reader = res.body.getReader();
+  /* ---------- DOWNLOAD ---------- */
+  function measureDownload() {
+    return new Promise(function (resolve, reject) {
+      var controller = new AbortController();
+      var start = performance.now();
+      var bytes = 0;
+      var stopped = false;
+      var lastUI = 0;
 
-        while (true) {
-          const chunk = await reader.read();
-          if (chunk.done) break;
+      setTimeout(function () {
+        stopped = true;
+        try { controller.abort(); } catch (e) {}
+      }, DOWNLOAD_MS);
 
-          const len = chunk.value.byteLength;
-          if (len > 0) {
-            state.bytes += len;
-            state.lastByteAt = performance.now();
-            updateLiveDownload(state, startedAt);
+      function pump(reader) {
+        if (stopped) {
+          try { reader.cancel(); } catch (e) {}
+          return Promise.resolve();
+        }
+        return reader.read().then(function (chunk) {
+          if (chunk.done || stopped) {
+            try { reader.cancel(); } catch (e) {}
+            return;
           }
-        }
-      } catch (err) {
-        if (phase.stopped) return; // aborted on purpose — not an error
-        throw err;
-      }
-    }
-  }
-
-  let lastDownUi = 0;
-  function updateLiveDownload(state, startedAt) {
-    const now = performance.now();
-    if (now - lastDownUi < 120) return;
-    lastDownUi = now;
-
-    const elapsed = (now - startedAt) / 1000;
-    if (elapsed < 0.2) return;
-
-    const mbps = (state.bytes * 8) / elapsed / 1e6;
-    $("speed").textContent = formatMbps(mbps);
-
-    const p = Math.min(1, (now - startedAt) / CFG.downloadMs);
-    setBar(30 + p * 30);
-  }
-
-  async function measureDownload() {
-    const phase = beginPhase(CFG.downloadMs);
-    const startedAt = performance.now();
-    const state = { bytes: 0, lastByteAt: startedAt };
-
-    // Stall guard: abort early if the link stops delivering bytes
-    phase.addTimer(setInterval(function () {
-      const now = performance.now();
-      if (now - startedAt < CFG.minPhaseMs) return;
-      if (now - state.lastByteAt > CFG.stallMs) phase.stop();
-    }, 200));
-
-    const workers = [];
-    for (let i = 0; i < CFG.streams; i++) {
-      workers.push(downloadStream(phase, state, i, startedAt));
-    }
-
-    await Promise.allSettled(workers);
-
-    const endAt = phase.abortedAt || performance.now();
-    phase.stop();
-    releasePhase(phase);
-
-    const elapsed = (endAt - startedAt) / 1000;
-
-    if (state.bytes < CFG.minValidBytes || elapsed <= 0) {
-      const e = new Error("Download measurement failed");
-      e.code = "MEASURE_FAILED";
-      throw e;
-    }
-
-    return (state.bytes * 8) / elapsed / 1e6;
-  }
-
-  /* ---------------- UPLOAD ---------------- */
-
-  async function uploadStream(phase, state, streamIndex, startedAt) {
-    let iterations = 0;
-    const body = getUploadBody();
-
-    while (!phase.stopped && iterations < CFG.maxIterations) {
-      iterations++;
-
-      const url = SPEED_HOST + "/__up?bytes=" + body.byteLength +
-        "&stream=" + streamIndex +
-        "&r=" + crypto.randomUUID();
-
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          body: body,
-          cache: "no-store",
-          credentials: "omit",
-          headers: { "Content-Type": "application/octet-stream" },
-          signal: phase.controller.signal
+          var len = chunk.value.byteLength;
+          if (len > 0) {
+            bytes += len;
+            var now = performance.now();
+            if (now - lastUI > 100) {
+              lastUI = now;
+              var el = (now - start) / 1000;
+              if (el > 0.3) {
+                $('speed').textContent = fmt((bytes * 8) / el / 1e6);
+                setBar(30 + Math.min(1, (now - start) / DOWNLOAD_MS) * 30);
+              }
+            }
+          }
+          return pump(reader);
+        }).catch(function (err) {
+          if (err && err.name === 'AbortError') return;
+          /* swallow — worker will retry */
         });
-
-        if (!res.ok) throw new Error("Upload HTTP " + res.status);
-
-        // Only bytes the server actually accepted are counted.
-        await res.arrayBuffer();
-
-        state.bytes += body.byteLength;
-        state.lastByteAt = performance.now();
-        updateLiveUpload(state, startedAt);
-      } catch (err) {
-        if (phase.stopped) return; // aborted on purpose — not an error
-        throw err;
       }
-    }
+
+      function stream() {
+        if (stopped) return Promise.resolve();
+        var url = HOST + '/__down?bytes=' + DOWNLOAD_CHUNK + '&r=' + Math.random();
+        return fetch(url, { cache: 'no-store', signal: controller.signal })
+          .then(function (res) {
+            if (!res.ok || !res.body) return null;
+            return pump(res.body.getReader());
+          })
+          .catch(function (err) {
+            if (err && err.name === 'AbortError') return null;
+            return new Promise(function (r) { setTimeout(r, 100); });
+          })
+          .then(function () { return stream(); });
+      }
+
+      var workers = [];
+      for (var i = 0; i < DOWNLOAD_STREAMS; i++) workers.push(stream());
+
+      Promise.all(workers).then(function () {
+        var el = (performance.now() - start) / 1000;
+        if (bytes < 8000) { reject(new Error('Download failed (' + bytes + ' bytes)')); return; }
+        resolve((bytes * 8) / el / 1e6);
+      }).catch(reject);
+    });
   }
 
-  let lastUpUi = 0;
-  function updateLiveUpload(state, startedAt) {
-    const now = performance.now();
-    if (now - lastUpUi < 120) return;
-    lastUpUi = now;
-
-    const elapsed = (now - startedAt) / 1000;
-    if (elapsed < 0.2) return;
-
-    const mbps = (state.bytes * 8) / elapsed / 1e6;
-    $("upVal").innerHTML = formatMbps(mbps) + "<span>Mbps</span>";
-
-    const p = Math.min(1, (now - startedAt) / CFG.uploadMs);
-    setBar(65 + p * 34);
+  /* ---------- UPLOAD ---------- */
+  var uploadChunkCache = null;
+  function getUploadChunk() {
+    if (!uploadChunkCache) {
+      var buf = new Uint8Array(UPLOAD_CHUNK);
+      var stepSize = 65536;
+      for (var i = 0; i < buf.length; i += stepSize) {
+        crypto.getRandomValues(buf.subarray(i, Math.min(i + stepSize, buf.length)));
+      }
+      uploadChunkCache = buf;
+    }
+    return uploadChunkCache;
   }
 
-  async function measureUpload() {
-    const phase = beginPhase(CFG.uploadMs);
-    const startedAt = performance.now();
-    const state = { bytes: 0, lastByteAt: startedAt };
+  function measureUpload() {
+    return new Promise(function (resolve, reject) {
+      var controller = new AbortController();
+      var start = performance.now();
+      var bytes = 0;
+      var stopped = false;
+      var lastUI = 0;
+      var template = getUploadChunk();
 
-    phase.addTimer(setInterval(function () {
-      const now = performance.now();
-      if (now - startedAt < CFG.minPhaseMs) return;
-      if (now - state.lastByteAt > CFG.stallMs) phase.stop();
-    }, 200));
+      setTimeout(function () {
+        stopped = true;
+        try { controller.abort(); } catch (e) {}
+      }, UPLOAD_MS);
 
-    const workers = [];
-    for (let i = 0; i < CFG.streams; i++) {
-      workers.push(uploadStream(phase, state, i, startedAt));
-    }
+      function stream() {
+        if (stopped) return Promise.resolve();
+        var url = HOST + '/__up?r=' + Math.random();
+        var body = new Uint8Array(template); // copy, avoid shared-buffer issues
+        return fetch(url, {
+          method: 'POST',
+          body: body,
+          cache: 'no-store',
+          signal: controller.signal
+        })
+          .then(function (res) {
+            if (!res.ok) {
+              console.warn('Upload HTTP', res.status, res.statusText);
+              return null;
+            }
+            return res.arrayBuffer().then(function () {
+              bytes += body.byteLength;
+              var now = performance.now();
+              if (now - lastUI > 100) {
+                lastUI = now;
+                var el = (now - start) / 1000;
+                if (el > 0.3) {
+                  $('upVal').innerHTML = fmt((bytes * 8) / el / 1e6) + '<span>Mbps</span>';
+                  setBar(65 + Math.min(1, (now - start) / UPLOAD_MS) * 34);
+                }
+              }
+            });
+          })
+          .catch(function (err) {
+            if (err && err.name === 'AbortError') return null;
+            console.warn('Upload error:', err && err.message);
+            return new Promise(function (r) { setTimeout(r, 150); });
+          })
+          .then(function () { return stream(); });
+      }
 
-    await Promise.allSettled(workers);
+      var workers = [];
+      for (var i = 0; i < UPLOAD_STREAMS; i++) workers.push(stream());
 
-    const endAt = phase.abortedAt || performance.now();
-    phase.stop();
-    releasePhase(phase);
-
-    const elapsed = (endAt - startedAt) / 1000;
-
-    if (state.bytes < CFG.minValidBytes || elapsed <= 0) {
-      const e = new Error("Upload measurement failed");
-      e.code = "MEASURE_FAILED";
-      throw e;
-    }
-
-    return (state.bytes * 8) / elapsed / 1e6;
+      Promise.all(workers).then(function () {
+        var el = (performance.now() - start) / 1000;
+        if (bytes < 4000) { reject(new Error('Upload failed (' + bytes + ' bytes)')); return; }
+        resolve((bytes * 8) / el / 1e6);
+      }).catch(reject);
+    });
   }
 
-  /* ---------------- MAIN TEST RUN ---------------- */
-
-  window.startSpeedTest = async function () {
+  /* ---------- MAIN ---------- */
+  window.startSpeedTest = function () {
     if (isRunning) return;
     isRunning = true;
 
-    resetUI();
+    $('restartBtn').style.display = 'none';
+    $('detailsGrid').classList.remove('visible');
+    $('progressWrapper').style.display = 'block';
+    $('speed').textContent = '0';
+    $('unit').textContent = 'Mbps';
+    $('pingVal').innerHTML = '-<span>ms</span>';
+    $('jitterVal').innerHTML = '-<span>ms</span>';
+    $('upVal').innerHTML = '-<span>Mbps</span>';
+    setBar(0);
+    setStatus('Starting…', false);
 
-    let testAborted = false;
-    let downloadMbps = null;
-    let uploadMbps = null;
-    let pingOk = false;
-    let failureCode = null;
+    var downloadMbps = null;
+    var uploadMbps = null;
+    var pingOk = false;
 
-    // Global watchdog — the test can never hang
-    const watchdog = setTimeout(function () {
-      testAborted = true;
-      stopCurrentPhase();
-    }, CFG.overallMs);
-
-    try {
-      // 0. Instant offline detection
-      if (navigator.onLine === false) {
-        const e = new Error("offline");
-        e.code = "NO_CONNECTION";
-        throw e;
-      }
-
-      // 1. Latency + jitter (few quick samples)
-      setStatus("Measuring Ping…", false);
-      setBar(5);
-      const latency = await measurePing();
-      $("pingVal").innerHTML = Math.round(latency.ping) + "<span>ms</span>";
-      $("jitterVal").innerHTML = latency.jitter.toFixed(1) + "<span>ms</span>";
-      pingOk = true;
-
-      if (testAborted) throw new Error("aborted");
-
-      // 2. Download — 4 real parallel streams, fixed short window
-      setStatus("Measuring Download…", false);
-      setBar(30);
-      downloadMbps = await measureDownload();
-      $("speed").textContent = formatMbps(downloadMbps);
-      setBar(62);
-
-      if (testAborted) throw new Error("aborted");
-
-      // 3. Upload — only after download, 4 real parallel uploads
-      setStatus("Measuring Upload…", false);
-      setBar(65);
-      uploadMbps = await measureUpload();
-      $("upVal").innerHTML = formatMbps(uploadMbps) + "<span>Mbps</span>";
-
-      // Download stays the headline value
-      $("speed").textContent = formatMbps(downloadMbps);
-      setBar(100);
-      setStatus("Test Complete", false);
-
-    } catch (err) {
-      console.error("Real speed test error:", err);
-      failureCode = (err && err.code === "NO_CONNECTION") ? "NO_CONNECTION" : "FAILED";
-
-      // Never invent numbers. Show em-dash for anything not truly measured.
-      if (downloadMbps === null) $("speed").textContent = "—";
-      if (uploadMbps === null) $("upVal").innerHTML = "—<span>Mbps</span>";
-      if (!pingOk) {
-        $("pingVal").innerHTML = "—<span>ms</span>";
-        $("jitterVal").innerHTML = "—<span>ms</span>";
-      }
-
-      setBar(100);
-      setStatus(
-        failureCode === "NO_CONNECTION"
-          ? "No Internet Connection"
-          : "Test failed — please try again",
-        true
-      );
-
-    } finally {
-      clearTimeout(watchdog);
-      stopCurrentPhase();
-      finishUI();
+    function finish() {
+      $('detailsGrid').classList.add('visible');
+      $('restartBtn').style.display = 'inline-block';
+      setTimeout(function () { $('progressWrapper').style.display = 'none'; }, 400);
       isRunning = false;
     }
+
+    // Offline check
+    if (navigator.onLine === false) {
+      $('speed').textContent = '—';
+      $('pingVal').innerHTML = '—<span>ms</span>';
+      $('jitterVal').innerHTML = '—<span>ms</span>';
+      $('upVal').innerHTML = '—<span>Mbps</span>';
+      setBar(100);
+      setStatus('No Internet Connection', true);
+      finish();
+      return;
+    }
+
+    setStatus('Measuring Ping…', false);
+    setBar(5);
+
+    measurePing()
+      .then(function (lat) {
+        $('pingVal').innerHTML = Math.round(lat.ping) + '<span>ms</span>';
+        $('jitterVal').innerHTML = lat.jitter.toFixed(1) + '<span>ms</span>';
+        pingOk = true;
+
+        setStatus('Measuring Download…', false);
+        setBar(30);
+        return measureDownload();
+      })
+      .then(function (dl) {
+        downloadMbps = dl;
+        $('speed').textContent = fmt(dl);
+        setBar(62);
+
+        setStatus('Measuring Upload…', false);
+        setBar(65);
+        // Upload is isolated: failure never breaks the page
+        return measureUpload().catch(function (err) {
+          console.warn('Upload phase unavailable:', err && err.message);
+          return null;
+        });
+      })
+      .then(function (ul) {
+        if (ul !== null && isFinite(ul) && ul > 0) {
+          uploadMbps = ul;
+          $('upVal').innerHTML = fmt(ul) + '<span>Mbps</span>';
+          setStatus('Test Complete', false);
+        } else {
+          $('upVal').innerHTML = '—<span>Mbps</span>';
+          setStatus('Test Complete (upload unavailable)', false);
+        }
+        setBar(100);
+        finish();
+      })
+      .catch(function (err) {
+        console.error('Test failed:', err);
+        var offline = err && err.code === 'NO_CONNECTION';
+
+        if (downloadMbps === null) $('speed').textContent = '—';
+        if (!pingOk) {
+          $('pingVal').innerHTML = '—<span>ms</span>';
+          $('jitterVal').innerHTML = '—<span>ms</span>';
+        }
+        if (uploadMbps === null) $('upVal').innerHTML = '—<span>Mbps</span>';
+
+        setBar(100);
+        setStatus(offline ? 'No Internet Connection' : 'Test failed — please try again', true);
+        finish();
+      });
   };
 
-  /* ---------------- BOOT ---------------- */
-
-  window.addEventListener("DOMContentLoaded", function () {
-    const savedTheme = localStorage.getItem("fasqoo_theme") || "dark";
-    document.documentElement.setAttribute("data-theme", savedTheme);
-    updateThemeIcon(savedTheme);
-
-    const themeBtn = $("themeToggleBtn");
-    if (themeBtn) themeBtn.setAttribute("aria-pressed", savedTheme === "light" ? "true" : "false");
-
-    updateInstallButtonForDisplayMode();
-
-    startSpeedTest();
-    fetchIpInfo();
-
+  /* ---------- BOOT ---------- */
+  window.addEventListener('DOMContentLoaded', function () {
+    // Safety: unregister any previous service workers so old cached code
+    // cannot interfere with this build.
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('/sw.js', { scope: '/' })
-          .then(function () { console.log('PWA Service Worker active'); })
-          .catch(function (err) { console.log('SW registration failed', err); });
-      });
+      navigator.serviceWorker.getRegistrations().then(function (regs) {
+        regs.forEach(function (r) { try { r.unregister(); } catch (e) {} });
+      }).catch(function () {});
     }
+
+    var savedTheme = 'dark';
+    try { savedTheme = localStorage.getItem('fasqoo_theme') || 'dark'; } catch (e) {}
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateIcon(savedTheme);
+    $('themeToggleBtn').setAttribute('aria-pressed', savedTheme === 'light' ? 'true' : 'false');
+
+    fetchIp();
+    startSpeedTest();
   });
+
 })();
 </script>
 
