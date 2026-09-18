@@ -21,11 +21,6 @@
   <meta property="og:description" content="Check your download speed, upload speed, and latency instantly with our lightweight internet speed test.">
   <meta property="og:image" content="https://lite.fasqoo.com/fasqoologo.png">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -486,6 +481,14 @@ footer{
 (function () {
   'use strict';
 
+  // Safety net: swallow any AbortError that escapes a promise chain.
+  // These are expected when we intentionally stop a measurement phase.
+  window.addEventListener('unhandledrejection', function (e) {
+    if (e && e.reason && e.reason.name === 'AbortError') {
+      e.preventDefault();
+    }
+  });
+
   var $ = function (id) { return document.getElementById(id); };
   var HOST = 'https://speed.cloudflare.com';
 
@@ -495,7 +498,6 @@ footer{
      - Only bytes received inside the steady-state window are counted
      - Upload uses mode: 'no-cors' because Cloudflare's /__up endpoint
        does not return CORS headers, so reading the response is blocked.
-       The POST is still sent; we count bytes once the request resolves.
      - No simulated values, no estimates, no invented numbers
      ------------------------------------------------------------------ */
   var CFG = {
@@ -535,6 +537,16 @@ footer{
   function fmt(mbps) {
     if (!isFinite(mbps) || mbps < 0) return '0.0';
     return mbps < 100 ? mbps.toFixed(1) : String(Math.round(mbps));
+  }
+
+  // Cancel a reader without producing an unhandled rejection.
+  function safeCancel(reader) {
+    try {
+      var p = reader.cancel();
+      if (p && typeof p.catch === 'function') {
+        p.catch(function () { /* ignore */ });
+      }
+    } catch (e) { /* ignore */ }
   }
 
   /* ---------------- Theme ---------------- */
@@ -704,24 +716,26 @@ footer{
 
       function pump(reader) {
         if (stopped) {
-          try { reader.cancel(); } catch (e) {}
+          safeCancel(reader);
           return Promise.resolve();
         }
         return reader.read().then(function (chunk) {
           if (chunk.done || stopped) {
-            try { reader.cancel(); } catch (e) {}
+            safeCancel(reader);
             return;
           }
           var len = chunk.value.byteLength;
           if (len > 0) record(len);
-          if (performance.now() >= measureEndAt) {
+          if (stopped || performance.now() >= measureEndAt) {
             stop();
-            try { reader.cancel(); } catch (e) {}
+            safeCancel(reader);
             return;
           }
           return pump(reader);
         }).catch(function (err) {
+          // AbortError is expected when we stop the phase — swallow it.
           if (err && err.name === 'AbortError') return;
+          // Any other reader error: end this stream quietly.
         });
       }
 
