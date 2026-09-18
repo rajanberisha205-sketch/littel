@@ -449,7 +449,7 @@ footer{
     </div>
 
     <div class="measurement-note" id="measurementNote">
-      Real browser measurement using live Cloudflare edge traffic. No simulated or fallback speed values.
+      Real browser measurement using the official Cloudflare Speedtest engine. No simulated or fallback speed values.
     </div>
 
     <div id="detailsGrid" class="details-grid">
@@ -488,13 +488,7 @@ footer{
   // Fasqoo Lite uses Cloudflare's public speed-test endpoints for real network traffic.
   // No simulated/fallback speed values are ever shown.
   const SPEED_HOST = "https://speed.cloudflare.com";
-  // Real measurement settings. Longer samples reduce short-burst noise without
-  // inventing or smoothing the final result.
-  const PARALLEL_STREAMS = 4;
-  const TEST_DURATION_MS = 2500;
-  const OVERALL_TIMEOUT_MS = 9000;
-  const UPLOAD_CHUNK_BYTES = 1024 * 1024;
-  const MIN_STABLE_SAMPLE_SECONDS = 0.35;
+  const CF_SPEEDTEST_URL = "https://unpkg.com/@cloudflare/speedtest@1.13.1/dist/speedtest.js";
 
   function toggleTheme(){
     const html = document.documentElement;
@@ -613,165 +607,14 @@ footer{
     return body;
   }
 
-  async function measurePing(){
-    const samples = [];
-    const url = SPEED_HOST + "/__down?bytes=0";
+  let speedTestModulePromise = null;
 
-    // Three real requests are enough for a quick latency estimate.
-    for(let i = 0; i < 3; i++){
-      const t0 = performance.now();
-      const response = await fetch(url + "&r=" + crypto.randomUUID(), {
-        method: "GET",
-        cache: "no-store",
-        credentials: "omit"
-      });
-      if(!response.ok) throw new Error("Ping endpoint returned HTTP " + response.status);
-      await response.arrayBuffer();
-      samples.push(performance.now() - t0);
+  async function loadCloudflareSpeedTest(){
+    if(!speedTestModulePromise){
+      speedTestModulePromise = import(CF_SPEEDTEST_URL);
     }
-
-    samples.sort((a,b) => a-b);
-    const ping = samples[1] ?? samples[0];
-    const jitter = samples.length > 1
-      ? samples.slice(1).reduce((sum, v, i) => sum + Math.abs(v - samples[i]), 0) / (samples.length - 1)
-      : 0;
-
-    return { ping, jitter };
-  }
-
-  async function measureDownload(){
-    const started = performance.now();
-    let totalBytes = 0;
-    const controllers = Array.from({length: PARALLEL_STREAMS}, () => new AbortController());
-
-    // The test is time-based, not a fixed huge file. Bytes actually received
-    // from Cloudflare are counted. Nothing is simulated or substituted.
-    const stopTimer = setTimeout(() => {
-      controllers.forEach(c => c.abort());
-    }, TEST_DURATION_MS);
-
-    const workers = controllers.map(async (controller, streamIndex) => {
-      try {
-        const url = SPEED_HOST + "/__down?bytes=104857600" +
-          "&stream=" + streamIndex + "&r=" + crypto.randomUUID();
-
-        const response = await fetch(url, {
-          method: "GET",
-          cache: "no-store",
-          credentials: "omit",
-          signal: controller.signal
-        });
-
-        if(!response.ok || !response.body){
-          throw new Error("Download endpoint unavailable (HTTP " + response.status + ")");
-        }
-
-        const reader = response.body.getReader();
-
-        while(true){
-          const {done, value} = await reader.read();
-          if(done) break;
-          if(value && value.byteLength){
-            totalBytes += value.byteLength;
-
-            const elapsed = (performance.now() - started) / 1000;
-            if(elapsed >= MIN_STABLE_SAMPLE_SECONDS){
-              $("speed").textContent = formatMbps((totalBytes * 8) / elapsed / 1e6);
-            }
-          }
-        }
-      }catch(err){
-        if(err.name !== "AbortError") throw err;
-      }
-    });
-
-    try {
-      await Promise.all(workers);
-    } finally {
-      clearTimeout(stopTimer);
-      controllers.forEach(c => c.abort());
-    }
-
-    const elapsed = (performance.now() - started) / 1000;
-    if(totalBytes <= 0 || elapsed <= 0){
-      throw new Error("No download data received");
-    }
-
-    return (totalBytes * 8) / elapsed / 1e6;
-  }
-
-  function makeUploadBody(size){
-    // A fixed real payload is reused. The measured value is based only on
-    // requests that the server actually accepts.
-    const body = new Uint8Array(size);
-    crypto.getRandomValues(body.subarray(0, Math.min(size, 65536)));
-    for(let offset = 65536; offset < size; offset += 65536){
-      crypto.getRandomValues(body.subarray(offset, Math.min(offset + 65536, size)));
-    }
-    return body;
-  }
-
-  async function measureUpload(){
-    const started = performance.now();
-    let acceptedBytes = 0;
-    let requestCounter = 0;
-    const controllers = Array.from({length: PARALLEL_STREAMS}, () => new AbortController());
-    const body = makeUploadBody(UPLOAD_CHUNK_BYTES);
-
-    const stopTimer = setTimeout(() => {
-      controllers.forEach(c => c.abort());
-    }, TEST_DURATION_MS);
-
-    const workers = controllers.map(async (controller, streamIndex) => {
-      try {
-        while(performance.now() - started < TEST_DURATION_MS){
-          const requestId = requestCounter++;
-          const response = await fetch(
-            SPEED_HOST + "/__up?bytes=" + UPLOAD_CHUNK_BYTES +
-            "&stream=" + streamIndex +
-            "&request=" + requestId +
-            "&r=" + crypto.randomUUID(),
-            {
-              method: "POST",
-              body,
-              cache: "no-store",
-              credentials: "omit",
-              headers: {"Content-Type": "application/octet-stream"},
-              signal: controller.signal
-            }
-          );
-
-          if(!response.ok){
-            throw new Error("Upload endpoint returned HTTP " + response.status);
-          }
-
-          await response.arrayBuffer();
-          acceptedBytes += body.byteLength;
-
-          const elapsed = (performance.now() - started) / 1000;
-          if(elapsed >= MIN_STABLE_SAMPLE_SECONDS){
-            $("upVal").innerHTML =
-              formatMbps((acceptedBytes * 8) / elapsed / 1e6) + "<span>Mbps</span>";
-          }
-        }
-      }catch(err){
-        if(err.name !== "AbortError") throw err;
-      }
-    });
-
-    try {
-      await Promise.all(workers);
-    } finally {
-      clearTimeout(stopTimer);
-      controllers.forEach(c => c.abort());
-    }
-
-    const elapsed = (performance.now() - started) / 1000;
-    if(acceptedBytes <= 0 || elapsed <= 0){
-      throw new Error("No upload data accepted");
-    }
-
-    return (acceptedBytes * 8) / elapsed / 1e6;
+    const mod = await speedTestModulePromise;
+    return mod.default;
   }
 
   async function startSpeedTest(){
@@ -786,45 +629,117 @@ footer{
     $("pingVal").innerHTML = "-<span>ms</span>";
     $("jitterVal").innerHTML = "-<span>ms</span>";
     $("upVal").innerHTML = "-<span>Mbps</span>";
+    $("status").textContent = "Starting real test...";
 
-    const overallTimeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Speed test timeout")), OVERALL_TIMEOUT_MS)
-    );
-
-    const runTest = (async () => {
-      // 1. Real latency + jitter
-      setProgress(5, "Measuring Ping...");
-      const latency = await measurePing();
-      $("pingVal").innerHTML = latency.ping.toFixed(0) + "<span>ms</span>";
-      $("jitterVal").innerHTML = latency.jitter.toFixed(1) + "<span>ms</span>";
-
-      // 2. Real download: 4 parallel Cloudflare streams for 2.5 seconds.
-      setProgress(18, "Measuring Download...");
-      const downloadMbps = await measureDownload();
-      $("speed").textContent = formatMbps(downloadMbps);
-
-      // 3. Real upload: 4 parallel Cloudflare uploads for 2.5 seconds.
-      setProgress(60, "Measuring Upload...");
-      const uploadMbps = await measureUpload();
-      $("upVal").innerHTML = formatMbps(uploadMbps) + "<span>Mbps</span>";
-
-      $("speed").textContent = formatMbps(downloadMbps);
-      setProgress(100, "Test Complete");
-
-      setTimeout(() => {
-        $("progressWrapper").style.display = "none";
-      }, 250);
-
-      $("detailsGrid").classList.add("visible");
-      $("restartBtn").style.display = "inline-block";
-    })();
+    let engine = null;
 
     try{
-      await Promise.race([runTest, overallTimeout]);
-    }catch(err){
-      console.error("Real speed test error:", err);
+      const SpeedTest = await loadCloudflareSpeedTest();
 
-      // Never show invented numbers when a measurement fails or times out.
+      /*
+       * This is the official Cloudflare Speedtest measurement engine.
+       * It measures real traffic against Cloudflare's edge network and
+       * calculates bandwidth from browser PerformanceResourceTiming data.
+       *
+       * The configuration is intentionally shorter than Cloudflare's full
+       * public test: no packet-loss phase and no very large payloads.
+       * No values are invented or estimated by Fasqoo.
+       */
+      engine = new SpeedTest({
+        autoStart: false,
+        downloadApiUrl: SPEED_HOST + "/__down",
+        uploadApiUrl: SPEED_HOST + "/__up",
+        logAimApiUrl: null,
+        logMeasurementApiUrl: null,
+        measureDownloadLoadedLatency: false,
+        measureUploadLoadedLatency: false,
+        bandwidthFinishRequestDuration: 650,
+        bandwidthAbortRequestDuration: 0,
+        bandwidthPercentile: 0.9,
+        latencyPercentile: 0.5,
+        bandwidthMinRequestDuration: 20,
+        measurements: [
+          { type: "latency", numPackets: 5 },
+          { type: "download", bytes: 1000000, count: 3, bypassMinDuration: true },
+          { type: "upload", bytes: 1000000, count: 3, bypassMinDuration: true },
+          { type: "download", bytes: 10000000, count: 3 },
+          { type: "upload", bytes: 10000000, count: 3 }
+        ]
+      });
+
+      engine.onPhaseChange = ({measurement}) => {
+        if(measurement.type === "latency"){
+          setProgress(8, "Measuring Ping...");
+        }else if(measurement.type === "download"){
+          setProgress(25, "Measuring Download...");
+        }else if(measurement.type === "upload"){
+          setProgress(65, "Measuring Upload...");
+        }
+      };
+
+      engine.onResultsChange = () => {
+        const r = engine.results.getSummary();
+
+        if(Number.isFinite(r.latency)){
+          $("pingVal").innerHTML = Math.round(r.latency) + "<span>ms</span>";
+        }
+        if(Number.isFinite(r.jitter)){
+          $("jitterVal").innerHTML = r.jitter.toFixed(1) + "<span>ms</span>";
+        }
+        if(Number.isFinite(r.download)){
+          $("speed").textContent = formatMbps(r.download / 1e6);
+        }
+        if(Number.isFinite(r.upload)){
+          $("upVal").innerHTML = formatMbps(r.upload / 1e6) + "<span>Mbps</span>";
+        }
+
+        if(Number.isFinite(r.download)){
+          setProgress(55, "Measuring Upload...");
+        }
+        if(Number.isFinite(r.upload)){
+          setProgress(90, "Finishing...");
+        }
+      };
+
+      const finished = new Promise((resolve, reject) => {
+        engine.onFinish = results => resolve(results);
+        engine.onError = message => reject(new Error(message || "Cloudflare speed test error"));
+      });
+
+      // Hard safety limit: a broken connection must never block the page.
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Speed test timed out")), 12000)
+      );
+
+      engine.play();
+      const results = await Promise.race([finished, timeout]);
+      const summary = results.getSummary();
+
+      // Only accept final values actually returned by the measurement engine.
+      if(!Number.isFinite(summary.download) || !Number.isFinite(summary.upload) ||
+         !Number.isFinite(summary.latency)){
+        throw new Error("Incomplete real measurement");
+      }
+
+      $("speed").textContent = formatMbps(summary.download / 1e6);
+      $("pingVal").innerHTML = Math.round(summary.latency) + "<span>ms</span>";
+      $("jitterVal").innerHTML =
+        (Number.isFinite(summary.jitter) ? summary.jitter.toFixed(1) : "—") + "<span>ms</span>";
+      $("upVal").innerHTML = formatMbps(summary.upload / 1e6) + "<span>Mbps</span>";
+
+      setProgress(100, "Test Complete");
+      $("progressWrapper").style.display = "none";
+      $("detailsGrid").classList.add("visible");
+      $("restartBtn").style.display = "inline-block";
+
+    }catch(err){
+      console.error("Real Cloudflare speed test error:", err);
+
+      try{
+        if(engine && engine.isRunning) engine.pause();
+      }catch(_){}
+
+      // Never display a made-up result.
       $("speed").textContent = "—";
       $("pingVal").innerHTML = "—<span>ms</span>";
       $("jitterVal").innerHTML = "—<span>ms</span>";
