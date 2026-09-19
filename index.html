@@ -86,6 +86,10 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
         <div id="speedCaption" class="speed-caption">Ready to test</div>
       </div>
     </div>
+    <div class="controls">
+      <button id="restartBtn" class="restart-btn" onclick="startSpeedTest()">Start Test</button>
+      <div class="fasqoo-info-wrap"><button class="fasqoo-info" type="button" aria-label="About this measurement">i<span class="fasqoo-tooltip">Real browser-based measurement through Cloudflare Edge. No invented fallback speed values are shown.</span></button></div>
+    </div>
     <div class="status-container">
       <div id="status" class="status-text" role="status" aria-live="polite">Ready to test</div>
       <div class="progress-bar-wrapper" id="progressWrapper"><div id="progressBar" class="progress-bar-fill"></div></div>
@@ -100,10 +104,6 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
     <div class="dashboard">
       <div class="dash-card"><div class="dash-label">Internet provider</div><div class="dash-main" id="ispVal">Detecting...</div><div class="dash-sub" id="networkVal">Network information</div></div>
       <div class="dash-card"><div class="dash-label">Test server</div><div class="dash-main">Cloudflare Edge</div><div class="dash-sub" id="serverVal">Browser measurement endpoint</div></div>
-    </div>
-    <div class="controls">
-      <button id="restartBtn" class="restart-btn" onclick="startSpeedTest()">↻ Test Again</button>
-      <div class="fasqoo-info-wrap"><button class="fasqoo-info" type="button" aria-label="About this measurement">i<span class="fasqoo-tooltip">Real browser-based measurement through Cloudflare Edge. No invented fallback speed values are shown.</span></button></div>
     </div>
     <div class="trust"><strong>Real measurement, not an estimate.</strong> Fasqoo measures your connection directly in the browser.</div>
   </section>
@@ -206,7 +206,6 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
     if (themeBtn) themeBtn.setAttribute("aria-pressed", savedTheme === "light" ? "true" : "false");
     updateInstallButtonForDisplayMode();
 
-    startSpeedTest();
     fetchIpInfo();
 
     if ('serviceWorker' in navigator) {
