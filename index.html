@@ -485,17 +485,273 @@ footer{
   let isRunning = false;
   let deferredPrompt = null;
 
-  // Fasqoo Lite uses Cloudflare's public speed-test endpoints for real network traffic.
-  // No simulated/fallback speed values are ever shown.
+  // Real speed-test engine.
+  // Uses Cloudflare's public speed-test endpoints with adaptive sampling,
+  // per-request timeouts and connection recovery. No speed values are invented.
   const SPEED_HOST = "https://speed.cloudflare.com";
-  // Real measurement settings. Longer samples reduce short-burst noise without
-  // inventing or smoothing the final result.
-  const DOWN_BYTES = 16 * 1024 * 1024;
-  const UP_BYTES = 8 * 1024 * 1024;
+
   const PARALLEL_STREAMS = 4;
-  const DOWNLOAD_ROUNDS = 2;
-  const UPLOAD_ROUNDS = 2;
-  const MIN_STABLE_SAMPLE_SECONDS = 0.75;
+  const DOWNLOAD_BYTES_PER_REQUEST = 8 * 1024 * 1024;
+  const UPLOAD_BYTES_PER_REQUEST = 4 * 1024 * 1024;
+  const MAX_DOWNLOAD_SECONDS = 8;
+  const MAX_UPLOAD_SECONDS = 7;
+  const MIN_SAMPLE_SECONDS = 0.35;
+  const REQUEST_TIMEOUT_MS = 9000;
+
+  function sleep(ms){
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  function withTimeout(promise, ms, message = "Request timed out"){
+    let timer;
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(message)), ms);
+    });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+  }
+
+  function makeRandomBody(size){
+    const body = new Uint8Array(size);
+    const chunkSize = 65536;
+    for(let offset = 0; offset < size; offset += chunkSize){
+      crypto.getRandomValues(
+        body.subarray(offset, Math.min(offset + chunkSize, size))
+      );
+    }
+    return body;
+  }
+
+  async function measurePing(){
+    const samples = [];
+    const url = SPEED_HOST + "/__down?bytes=0";
+
+    for(let i = 0; i < 5; i++){
+      const t0 = performance.now();
+
+      const response = await withTimeout(
+        fetch(url + "&r=" + crypto.randomUUID(), {
+          method: "GET",
+          cache: "no-store",
+          credentials: "omit"
+        }),
+        REQUEST_TIMEOUT_MS,
+        "Ping request timed out"
+      );
+
+      if(!response.ok) {
+        throw new Error("Ping endpoint returned HTTP " + response.status);
+      }
+
+      await response.arrayBuffer();
+      samples.push(performance.now() - t0);
+    }
+
+    samples.sort((a,b) => a-b);
+    const useful = samples.length >= 3 ? samples.slice(1, -1) : samples;
+    const ping = useful.reduce((a,b) => a+b, 0) / useful.length;
+
+    const jitterValues = [];
+    for(let i = 1; i < useful.length; i++){
+      jitterValues.push(Math.abs(useful[i] - useful[i-1]));
+    }
+
+    const jitter = jitterValues.length
+      ? jitterValues.reduce((a,b) => a+b, 0) / jitterValues.length
+      : 0;
+
+    return { ping, jitter };
+  }
+
+  function updateLiveSpeed(bytes, started, targetElement = $("speed")){
+    const elapsed = (performance.now() - started) / 1000;
+    if(elapsed < MIN_SAMPLE_SECONDS || bytes <= 0) return;
+
+    const mbps = (bytes * 8) / elapsed / 1e6;
+    targetElement.textContent = formatMbps(mbps);
+  }
+
+  async function measureDownload(){
+    const started = performance.now();
+    let totalBytes = 0;
+    let activeWorkers = 0;
+    let completedWorkers = 0;
+
+    const deadline = started + MAX_DOWNLOAD_SECONDS * 1000;
+
+    async function worker(streamIndex){
+      activeWorkers++;
+
+      try{
+        const url =
+          SPEED_HOST +
+          "/__down?bytes=" + DOWNLOAD_BYTES_PER_REQUEST +
+          "&stream=" + streamIndex +
+          "&r=" + crypto.randomUUID();
+
+        const response = await withTimeout(
+          fetch(url, {
+            method: "GET",
+            cache: "no-store",
+            credentials: "omit"
+          }),
+          REQUEST_TIMEOUT_MS,
+          "Download connection timed out"
+        );
+
+        if(!response.ok || !response.body){
+          throw new Error(
+            "Download endpoint unavailable (HTTP " + response.status + ")"
+          );
+        }
+
+        const reader = response.body.getReader();
+
+        while(true){
+          const result = await withTimeout(
+            reader.read(),
+            REQUEST_TIMEOUT_MS,
+            "Download stream stalled"
+          );
+
+          if(result.done) break;
+
+          if(result.value){
+            totalBytes += result.value.byteLength;
+            updateLiveSpeed(totalBytes, started);
+          }
+
+          const elapsed = performance.now() - started;
+          const progress = Math.min(
+            62,
+            25 + (elapsed / (MAX_DOWNLOAD_SECONDS * 1000)) * 37
+          );
+
+          setProgress(
+            progress,
+            "Measuring Download..."
+          );
+
+          if(performance.now() >= deadline){
+            try { await reader.cancel(); } catch(e) {}
+            break;
+          }
+        }
+      }catch(err){
+        console.warn("Download stream stopped:", err);
+      }finally{
+        activeWorkers--;
+        completedWorkers++;
+      }
+    }
+
+    await Promise.all(
+      Array.from(
+        {length: PARALLEL_STREAMS},
+        (_, i) => worker(i)
+      )
+    );
+
+    const elapsed = (performance.now() - started) / 1000;
+
+    if(totalBytes <= 0 || elapsed <= 0){
+      throw new Error("No download data received");
+    }
+
+    return {
+      mbps: (totalBytes * 8) / elapsed / 1e6,
+      bytes: totalBytes,
+      seconds: elapsed
+    };
+  }
+
+  async function measureUpload(){
+    const started = performance.now();
+    let totalBytes = 0;
+    let nextRequest = 0;
+    const deadline = started + MAX_UPLOAD_SECONDS * 1000;
+
+    async function worker(streamIndex){
+      while(performance.now() < deadline){
+        const requestNumber = nextRequest++;
+
+        const body = makeRandomBody(UPLOAD_BYTES_PER_REQUEST);
+
+        try{
+          const response = await withTimeout(
+            fetch(
+              SPEED_HOST +
+              "/__up?bytes=" + UPLOAD_BYTES_PER_REQUEST +
+              "&stream=" + streamIndex +
+              "&request=" + requestNumber +
+              "&r=" + crypto.randomUUID(),
+              {
+                method: "POST",
+                body,
+                cache: "no-store",
+                credentials: "omit",
+                headers: {
+                  "Content-Type": "application/octet-stream"
+                }
+              }
+            ),
+            REQUEST_TIMEOUT_MS,
+            "Upload request timed out"
+          );
+
+          if(!response.ok){
+            throw new Error(
+              "Upload endpoint returned HTTP " + response.status
+            );
+          }
+
+          await response.arrayBuffer();
+
+          totalBytes += body.byteLength;
+
+          const elapsed = (performance.now() - started) / 1000;
+          if(elapsed >= MIN_SAMPLE_SECONDS){
+            const liveMbps =
+              (totalBytes * 8) / elapsed / 1e6;
+
+            $("upVal").innerHTML =
+              formatMbps(liveMbps) + "<span>Mbps</span>";
+          }
+
+          const progress = Math.min(
+            100,
+            62 + (elapsed / MAX_UPLOAD_SECONDS) * 38
+          );
+
+          setProgress(
+            progress,
+            "Measuring Upload..."
+          );
+        }catch(err){
+          console.warn("Upload request stopped:", err);
+          break;
+        }
+      }
+    }
+
+    await Promise.all(
+      Array.from(
+        {length: PARALLEL_STREAMS},
+        (_, i) => worker(i)
+      )
+    );
+
+    const elapsed = (performance.now() - started) / 1000;
+
+    if(totalBytes <= 0 || elapsed <= 0){
+      throw new Error("No upload data accepted");
+    }
+
+    return {
+      mbps: (totalBytes * 8) / elapsed / 1e6,
+      bytes: totalBytes,
+      seconds: elapsed
+    };
+  }
 
   function toggleTheme(){
     const html = document.documentElement;
@@ -829,15 +1085,18 @@ footer{
 
       // 2. Real download
       setProgress(25, "Measuring Download...");
-      const downloadMbps = await measureDownload();
+      const downloadResult = await measureDownload();
+      const downloadMbps = downloadResult.mbps;
       $("speed").textContent = formatMbps(downloadMbps);
 
       $("upVal").innerHTML = "-<span>Mbps</span>";
       setProgress(62, "Measuring Upload...");
 
       // 3. Real upload
-      const uploadMbps = await measureUpload();
-      $("upVal").innerHTML = formatMbps(uploadMbps) + "<span>Mbps</span>";
+      const uploadResult = await measureUpload();
+      const uploadMbps = uploadResult.mbps;
+      $("upVal").innerHTML =
+        formatMbps(uploadMbps) + "<span>Mbps</span>";
 
       // Keep the main speed display as the measured download result.
       $("speed").textContent = formatMbps(downloadMbps);
