@@ -490,22 +490,22 @@ footer{
   let deferredPrompt = null;
 
   // The official Cloudflare browser measurement engine.
-  // We keep the same public measurement endpoints, but use an adaptive,
-  // progressive test sequence rather than fixed multi-round 16/8 MB bursts.
+  // Timing-only optimization: smaller payloads + fewer repeats,
+  // so the test finishes fast while still producing 100% real samples.
   const MEASUREMENTS = [
-    { type: "latency", numPackets: 7 },
+    { type: "latency", numPackets: 5 },
 
-    { type: "download", bytes: 1e5, count: 3, bypassMinDuration: true },
-    { type: "download", bytes: 1e6, count: 3 },
-    { type: "download", bytes: 1e7, count: 4 },
-    { type: "download", bytes: 2.5e7, count: 3 },
+    { type: "download", bytes: 1e5, count: 2, bypassMinDuration: true },
+    { type: "download", bytes: 5e5, count: 2 },
+    { type: "download", bytes: 2e6, count: 2 },
+    { type: "download", bytes: 5e6, count: 2 },
 
-    { type: "latency", numPackets: 10 },
+    { type: "latency", numPackets: 6 },
 
-    { type: "upload", bytes: 1e5, count: 3, bypassMinDuration: true },
-    { type: "upload", bytes: 1e6, count: 3 },
-    { type: "upload", bytes: 1e7, count: 3 },
-    { type: "upload", bytes: 2.5e7, count: 2 }
+    { type: "upload", bytes: 1e5, count: 2, bypassMinDuration: true },
+    { type: "upload", bytes: 5e5, count: 2 },
+    { type: "upload", bytes: 2e6, count: 2 },
+    { type: "upload", bytes: 5e6, count: 2 }
   ];
 
   function toggleTheme(){
@@ -772,13 +772,13 @@ footer{
       autoStart: false,
       measurements: MEASUREMENTS,
 
-      // Keep the measurement continuous but stop expanding a direction
-      // once individual requests are clearly long enough.
-      bandwidthFinishRequestDuration: 650,
+      // Stop requesting more data once a single request has clearly
+      // produced enough samples for a stable rate.
+      bandwidthFinishRequestDuration: 400,
 
-      // A stalled/very slow large request should not force the whole test
-      // to sit indefinitely.
-      bandwidthAbortRequestDuration: 8000,
+      // Abort a stalled / very slow single request much earlier,
+      // so the whole test cannot hang for many seconds.
+      bandwidthAbortRequestDuration: 4000,
 
       bandwidthPercentile: 0.9,
       latencyPercentile: 0.5,
