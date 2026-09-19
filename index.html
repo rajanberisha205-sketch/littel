@@ -28,6 +28,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
 
+  <link rel="preconnect" href="https://speed.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -449,7 +450,7 @@ footer{
     </div>
 
     <div class="measurement-note" id="measurementNote">
-      Real browser measurement. Final results use multiple samples to reduce short-term network variation.
+      Real browser measurement over several parallel connections. The initial ramp-up phase is excluded from the result.
     </div>
 
     <div id="detailsGrid" class="details-grid">
@@ -485,7 +486,19 @@ footer{
   let isRunning = false;
   let deferredPrompt = null;
 
+  // Fasqoo Lite uses Cloudflare's public speed-test endpoints for real network traffic.
+  // No simulated/fallback speed values are ever shown.
   const SPEED_HOST = "https://speed.cloudflare.com";
+  // Time-based measurement: each phase runs for a fixed duration, so the test
+  // takes about the same time on slow and fast connections. The first
+  // WARMUP_SECONDS (TCP slow start) are excluded from the reported result.
+  const DOWN_BYTES = 16 * 1024 * 1024;   // size of one download request per stream
+  const UP_BYTES = 8 * 1024 * 1024;      // size of one upload request per stream
+  const PARALLEL_STREAMS = 4;
+  const DOWNLOAD_SECONDS = 5;
+  const UPLOAD_SECONDS = 5;
+  const WARMUP_SECONDS = 1;
+  const TICK_MS = 100;
 
   function toggleTheme(){
     const html = document.documentElement;
@@ -587,13 +600,15 @@ footer{
   }
 
   function formatMbps(mbps){
-    if (!Number.isFinite(mbps) || mbps <= 0) return "0.0";
+    if (!Number.isFinite(mbps)) return "0.0";
     if (mbps < 10) return mbps.toFixed(1);
     if (mbps < 100) return mbps.toFixed(1);
     return Math.round(mbps).toString();
   }
 
   function makeRandomBody(size){
+    // getRandomValues() is limited to 65,536 bytes per call in browsers.
+    // Fill in safe chunks so large upload tests never trigger the Crypto error.
     const body = new Uint8Array(size);
     const chunkSize = 65536;
     for(let offset = 0; offset < size; offset += chunkSize){
@@ -602,23 +617,25 @@ footer{
     return body;
   }
 
-  // Schnelle parallele Ping-Messung (dauert ~100ms)
   async function measurePing(){
+    const samples = [];
     const url = SPEED_HOST + "/__down?bytes=0";
-    const pingPromises = Array.from({length: 4}, async () => {
+
+    // More samples make the result less sensitive to a single delayed request.
+    for(let i = 0; i < 7; i++){
       const t0 = performance.now();
       const response = await fetch(url + "&r=" + crypto.randomUUID(), {
         method: "GET",
         cache: "no-store",
         credentials: "omit"
       });
-      if(!response.ok) throw new Error("Ping HTTP " + response.status);
+      if(!response.ok) throw new Error("Ping endpoint returned HTTP " + response.status);
       await response.arrayBuffer();
-      return performance.now() - t0;
-    });
+      samples.push(performance.now() - t0);
+    }
 
-    const samples = (await Promise.all(pingPromises)).sort((a,b) => a-b);
-    const trimmed = samples.slice(0, 3);
+    samples.sort((a,b) => a-b);
+    const trimmed = samples.slice(1, -1);
     const avg = trimmed.reduce((a,b) => a+b, 0) / trimmed.length;
 
     const jitterSamples = [];
@@ -632,116 +649,183 @@ footer{
     return { ping: avg, jitter };
   }
 
-  // Fast.com-ähnlicher Download: Max. 3,5 Sekunden Testdauer
   async function measureDownload(){
-    const DURATION_MS = 3500;
-    const PARALLEL_STREAMS = 3;
-    const DOWN_BYTES = 25 * 1024 * 1024;
-
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), DURATION_MS);
-
     const started = performance.now();
     let totalBytes = 0;
+    let warm = null;   // {bytes, time} snapshot when warm-up ends
+    let end = null;    // {bytes, time} snapshot when the test time is over
 
-    const streams = Array.from({length: PARALLEL_STREAMS}, async (_, streamIndex) => {
-      try {
-        const url = SPEED_HOST + "/__down?bytes=" + DOWN_BYTES +
-          "&stream=" + streamIndex + "&r=" + crypto.randomUUID();
+    const ticker = setInterval(() => {
+      const now = performance.now();
+      const elapsed = (now - started) / 1000;
 
-        const response = await fetch(url, {
-          method: "GET",
-          cache: "no-store",
-          credentials: "omit",
-          signal: controller.signal
-        });
-
-        if(!response.ok || !response.body) return;
-
-        const reader = response.body.getReader();
-        while(true){
-          const {done, value} = await reader.read();
-          if(done) break;
-
-          totalBytes += value.byteLength;
-          const elapsed = (performance.now() - started) / 1000;
-          if(elapsed > 0.3){
-            const liveMbps = (totalBytes * 8) / elapsed / 1e6;
-            $("speed").textContent = formatMbps(liveMbps);
-            const progress = Math.min(55, 15 + Math.round((elapsed / (DURATION_MS / 1000)) * 40));
-            setProgress(progress, "Measuring Download...");
-          }
-        }
-      } catch(e) {
-        // Abbruch nach Zeitfenster ist beabsichtigt
+      if(!warm && elapsed >= WARMUP_SECONDS){
+        warm = { bytes: totalBytes, time: now };
       }
-    });
 
-    await Promise.all(streams);
-    clearTimeout(timeoutId);
+      if(elapsed >= DOWNLOAD_SECONDS){
+        if(!end){
+          end = { bytes: totalBytes, time: now };
+          controller.abort();
+        }
+        return;
+      }
 
-    const elapsed = (performance.now() - started) / 1000;
-    if(totalBytes <= 0 || elapsed <= 0) throw new Error("Keine Downloaddaten empfangen");
-
-    return (totalBytes * 8) / elapsed / 1e6;
-  }
-
-  // Fast.com-ähnlicher Upload: Max. 3,0 Sekunden Testdauer
-  async function measureUpload(){
-    const DURATION_MS = 3000;
-    const PARALLEL_STREAMS = 2;
-    const UP_CHUNK_BYTES = 2 * 1024 * 1024;
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), DURATION_MS);
-
-    const started = performance.now();
-    let totalBytes = 0;
-    const body = makeRandomBody(UP_CHUNK_BYTES);
+      const from = warm || { bytes: 0, time: started };
+      const dt = (now - from.time) / 1000;
+      if(dt > 0.2){
+        $("speed").textContent = formatMbps(((totalBytes - from.bytes) * 8) / dt / 1e6);
+      }
+      setProgress(25 + (elapsed / DOWNLOAD_SECONDS) * 35, "Measuring Download...");
+    }, TICK_MS);
 
     const workers = Array.from({length: PARALLEL_STREAMS}, async (_, streamIndex) => {
-      let requestCount = 0;
+      let requestIndex = 0;
+      // Keep every stream busy until the time is over (new request when one finishes).
       while(!controller.signal.aborted){
-        try {
-          const response = await fetch(
-            SPEED_HOST + "/__up?bytes=" + UP_CHUNK_BYTES +
-            "&stream=" + streamIndex + "&req=" + (requestCount++) +
-            "&r=" + crypto.randomUUID(),
-            {
-              method: "POST",
-              body,
-              cache: "no-store",
-              credentials: "omit",
-              headers: { "Content-Type": "application/octet-stream" },
-              signal: controller.signal
-            }
-          );
+        const url = SPEED_HOST + "/__down?bytes=" + DOWN_BYTES +
+          "&stream=" + streamIndex + "&request=" + (requestIndex++) +
+          "&r=" + crypto.randomUUID();
+        try{
+          const response = await fetch(url, {
+            method: "GET",
+            cache: "no-store",
+            credentials: "omit",
+            signal: controller.signal
+          });
 
-          if(response.ok){
-            await response.arrayBuffer();
-            totalBytes += UP_CHUNK_BYTES;
+          if(!response.ok || !response.body){
+            throw new Error("Download endpoint unavailable (HTTP " + response.status + ")");
           }
 
-          const elapsed = (performance.now() - started) / 1000;
-          if(elapsed > 0.3){
-            const liveMbps = (totalBytes * 8) / elapsed / 1e6;
-            $("upVal").innerHTML = formatMbps(liveMbps) + "<span>Mbps</span>";
-            const progress = Math.min(95, 60 + Math.round((elapsed / (DURATION_MS / 1000)) * 35));
-            setProgress(progress, "Measuring Upload...");
+          const reader = response.body.getReader();
+          while(true){
+            const {done, value} = await reader.read();
+            if(done) break;
+            totalBytes += value.byteLength;
           }
-        } catch(e) {
-          break;
+        }catch(err){
+          if(controller.signal.aborted) return;  // normal end of the test
+          throw err;
         }
       }
     });
 
-    await Promise.all(workers);
-    clearTimeout(timeoutId);
+    try{
+      await Promise.all(workers);
+    }finally{
+      clearInterval(ticker);
+      controller.abort();
+    }
 
-    const elapsed = (performance.now() - started) / 1000;
-    if(totalBytes <= 0 || elapsed <= 0) throw new Error("Keine Uploaddaten akzeptiert");
+    if(!end) end = { bytes: totalBytes, time: performance.now() };
+    const from = warm || { bytes: 0, time: started };
+    const bytes = end.bytes - from.bytes;
+    const seconds = (end.time - from.time) / 1000;
 
-    return (totalBytes * 8) / elapsed / 1e6;
+    if(bytes <= 0 || seconds <= 0){
+      throw new Error("No download data received");
+    }
+    return (bytes * 8) / seconds / 1e6;
+  }
+
+  async function measureUpload(){
+    // Generate the random payload once, before the clock starts.
+    const body = makeRandomBody(UP_BYTES);
+
+    const started = performance.now();
+    let totalBytes = 0;
+    let warm = null;
+    let end = null;
+    let stopped = false;
+    const activeRequests = new Set();
+
+    const ticker = setInterval(() => {
+      const now = performance.now();
+      const elapsed = (now - started) / 1000;
+
+      if(!warm && elapsed >= WARMUP_SECONDS){
+        warm = { bytes: totalBytes, time: now };
+      }
+
+      if(elapsed >= UPLOAD_SECONDS){
+        if(!end){
+          end = { bytes: totalBytes, time: now };
+          stopped = true;
+          activeRequests.forEach(x => x.abort());
+        }
+        return;
+      }
+
+      const from = warm || { bytes: 0, time: started };
+      const dt = (now - from.time) / 1000;
+      if(dt > 0.2){
+        $("upVal").innerHTML = formatMbps(((totalBytes - from.bytes) * 8) / dt / 1e6) + "<span>Mbps</span>";
+      }
+      setProgress(62 + (elapsed / UPLOAD_SECONDS) * 34, "Measuring Upload...");
+    }, TICK_MS);
+
+    // XMLHttpRequest gives live upload progress while a request is still running,
+    // so slow connections don't have to wait for a whole 8 MB request to finish.
+    function sendOne(streamIndex, requestIndex){
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        let lastLoaded = 0;
+        activeRequests.add(xhr);
+
+        xhr.open("POST", SPEED_HOST + "/__up?bytes=" + UP_BYTES +
+          "&stream=" + streamIndex + "&request=" + requestIndex +
+          "&r=" + crypto.randomUUID());
+        xhr.setRequestHeader("Content-Type", "application/octet-stream");
+
+        xhr.upload.onprogress = (e) => {
+          totalBytes += e.loaded - lastLoaded;
+          lastLoaded = e.loaded;
+        };
+        xhr.onload = () => {
+          activeRequests.delete(xhr);
+          if(xhr.status >= 200 && xhr.status < 300) resolve();
+          else reject(new Error("Upload endpoint returned HTTP " + xhr.status));
+        };
+        xhr.onerror = () => {
+          activeRequests.delete(xhr);
+          if(stopped) resolve();
+          else reject(new Error("Upload request failed"));
+        };
+        xhr.onabort = () => {
+          activeRequests.delete(xhr);
+          resolve();
+        };
+
+        xhr.send(body);
+      });
+    }
+
+    const workers = Array.from({length: PARALLEL_STREAMS}, async (_, streamIndex) => {
+      let requestIndex = 0;
+      while(!stopped){
+        await sendOne(streamIndex, requestIndex++);
+      }
+    });
+
+    try{
+      await Promise.all(workers);
+    }finally{
+      clearInterval(ticker);
+      stopped = true;
+      activeRequests.forEach(x => x.abort());
+    }
+
+    if(!end) end = { bytes: totalBytes, time: performance.now() };
+    const from = warm || { bytes: 0, time: started };
+    const bytes = end.bytes - from.bytes;
+    const seconds = (end.time - from.time) / 1000;
+
+    if(bytes <= 0 || seconds <= 0){
+      throw new Error("No upload data accepted");
+    }
+    return (bytes * 8) / seconds / 1e6;
   }
 
   async function startSpeedTest(){
@@ -757,23 +841,29 @@ footer{
     $("jitterVal").innerHTML = "-<span>ms</span>";
     $("upVal").innerHTML = "-<span>Mbps</span>";
 
+    let phase = "Ping";
     try{
-      // 1. Latency / Ping (~0.1s)
-      setProgress(10, "Measuring Ping...");
+      // 1. Real latency + jitter
+      setProgress(8, "Measuring Ping...");
       const latency = await measurePing();
       $("pingVal").innerHTML = latency.ping.toFixed(0) + "<span>ms</span>";
       $("jitterVal").innerHTML = latency.jitter.toFixed(1) + "<span>ms</span>";
 
-      // 2. Download (~3.5s)
-      setProgress(20, "Measuring Download...");
+      // 2. Real download
+      phase = "Download";
+      setProgress(25, "Measuring Download...");
       const downloadMbps = await measureDownload();
       $("speed").textContent = formatMbps(downloadMbps);
 
-      // 3. Upload (~3.0s)
-      setProgress(60, "Measuring Upload...");
+      $("upVal").innerHTML = "-<span>Mbps</span>";
+      setProgress(62, "Measuring Upload...");
+
+      // 3. Real upload
+      phase = "Upload";
       const uploadMbps = await measureUpload();
       $("upVal").innerHTML = formatMbps(uploadMbps) + "<span>Mbps</span>";
 
+      // Keep the main speed display as the measured download result.
       $("speed").textContent = formatMbps(downloadMbps);
       setProgress(100, "Test Complete");
 
@@ -785,13 +875,14 @@ footer{
       $("restartBtn").style.display = "inline-block";
 
     }catch(err){
-      console.error("Speed test error:", err);
+      console.error("Real speed test error (" + phase + "):", err);
 
+      // Never show invented numbers when a measurement fails.
       $("speed").textContent = "—";
       $("pingVal").innerHTML = "—<span>ms</span>";
       $("jitterVal").innerHTML = "—<span>ms</span>";
       $("upVal").innerHTML = "—<span>Mbps</span>";
-      setProgress(100, "Test failed — please try again");
+      setProgress(100, "Test failed (" + phase + ": " + ((err && err.message) || err) + ") — please try again");
       $("progressWrapper").style.display = "none";
       $("detailsGrid").classList.add("visible");
       $("restartBtn").style.display = "inline-block";
