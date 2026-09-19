@@ -1,4 +1,4 @@
-const CACHE_NAME = "fasqoo-lite-v4";
+const CACHE_NAME = "fasqoo-lite-v5";
 
 const APP_SHELL = [
   "/",
@@ -11,7 +11,12 @@ const APP_SHELL = [
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_SHELL))
+      // Add each file on its own: one missing file must not stop the whole install.
+      .then(cache => Promise.all(
+        APP_SHELL.map(path =>
+          cache.add(path).catch(err => console.warn("SW: could not cache", path, err))
+        )
+      ))
       .then(() => self.skipWaiting())
   );
 });
@@ -28,52 +33,26 @@ self.addEventListener("activate", event => {
   );
 });
 
-function isSpeedTestRequest(request) {
-  const url = new URL(request.url);
-
-  // Upload requests must never be cached.
-  if (request.method !== "GET" && request.method !== "HEAD") {
-    return true;
-  }
-
-  // Real speed-test/API traffic must bypass the Service Worker cache.
-  if (url.origin === "https://speed.cloudflare.com") {
-    return true;
-  }
-
-  if (url.origin === "https://ipwho.is") {
-    return true;
-  }
-
-  const path = url.pathname + url.search;
-
-  return /__down|__up|speed|download|upload|ping|jitter/i.test(path);
-}
-
 self.addEventListener("fetch", event => {
   const request = event.request;
+
+  /*
+   * Only GET requests are handled. Uploads (POST) go straight to the network.
+   * Returning without respondWith() means the browser handles the request
+   * natively, so the Service Worker cannot slow down or distort measurements.
+   */
+  if (request.method !== "GET") return;
+
   const url = new URL(request.url);
 
   /*
-   * IMPORTANT:
-   * Speed-test traffic goes directly to the network.
-   * The Service Worker does not cache or modify measurements.
+   * Only Fasqoo Lite's own files. Everything else
+   * (speed.cloudflare.com, ipwho.is, Google Fonts, ...) is not touched.
    */
-  if (isSpeedTestRequest(request)) {
-    event.respondWith(
-      fetch(request, {
-        cache: "no-store"
-      })
-    );
-    return;
-  }
+  if (url.origin !== self.location.origin) return;
 
-  /*
-   * Only handle Fasqoo Lite's own files.
-   */
-  if (url.origin !== self.location.origin) {
-    return;
-  }
+  // Same-origin speed-test endpoints (if ever used) are never handled either.
+  if (url.pathname.startsWith("/__")) return;
 
   /*
    * HTML pages:
@@ -81,31 +60,25 @@ self.addEventListener("fetch", event => {
    */
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request, {
-        cache: "no-store"
-      })
+      fetch(request, { cache: "no-store" })
         .then(response => {
-
-          if (response && response.ok) {
+          // Only the start page is stored as the offline copy.
+          if (response && response.ok &&
+              (url.pathname === "/" || url.pathname === "/index.html")) {
             const copy = response.clone();
-
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put("/index.html", copy);
-            });
+            caches.open(CACHE_NAME)
+              .then(cache => cache.put("/index.html", copy))
+              .catch(() => {});
           }
-
           return response;
         })
-        .catch(() => {
-          return caches.match(request)
-            .then(cached => {
-              return cached ||
-                     caches.match("/index.html") ||
-                     caches.match("/");
-            });
+        .catch(async () => {
+          return (await caches.match(request)) ||
+                 (await caches.match("/index.html")) ||
+                 (await caches.match("/")) ||
+                 Response.error();
         })
     );
-
     return;
   }
 
@@ -113,27 +86,21 @@ self.addEventListener("fetch", event => {
    * Static files:
    * Use cache first, then update cache from network.
    */
-  if (request.method === "GET") {
-    event.respondWith(
-      caches.match(request).then(cached => {
+  event.respondWith(
+    caches.match(request).then(cached => {
+      const networkRequest = fetch(request)
+        .then(response => {
+          if (response && response.status === 200) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME)
+              .then(cache => cache.put(request, copy))
+              .catch(() => {});
+          }
+          return response;
+        })
+        .catch(() => cached || Response.error());
 
-        const networkRequest = fetch(request)
-          .then(response => {
-
-            if (response && response.ok) {
-              const copy = response.clone();
-
-              caches.open(CACHE_NAME).then(cache => {
-                cache.put(request, copy);
-              });
-            }
-
-            return response;
-          })
-          .catch(() => cached);
-
-        return cached || networkRequest;
-      })
-    );
-  }
+      return cached || networkRequest;
+    })
+  );
 });
