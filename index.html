@@ -449,7 +449,7 @@ footer{
     </div>
 
     <div class="measurement-note" id="measurementNote">
-      Real browser measurement. Final results use multiple samples to reduce short-term network variation.
+      Real browser measurement via Cloudflare edge. Progressive samples are combined into the final result.
     </div>
 
     <div id="detailsGrid" class="details-grid">
@@ -480,651 +480,497 @@ footer{
  </div>
 </footer>
 
-<script>
+<script type="module">
+  import SpeedTest from "https://cdn.jsdelivr.net/npm/@cloudflare/speedtest@1.14.0/dist/speedtest.js";
+
   const $ = id => document.getElementById(id);
+
+  let engine = null;
   let isRunning = false;
   let deferredPrompt = null;
 
-  // Real speed-test engine.
-  // Uses Cloudflare's public speed-test endpoints with adaptive sampling,
-  // per-request timeouts and connection recovery. No speed values are invented.
-  const SPEED_HOST = "https://speed.cloudflare.com";
+  // The official Cloudflare browser measurement engine.
+  // We keep the same public measurement endpoints, but use an adaptive,
+  // progressive test sequence rather than fixed multi-round 16/8 MB bursts.
+  const MEASUREMENTS = [
+    { type: "latency", numPackets: 7 },
 
-  const PARALLEL_STREAMS = 4;
-  const DOWNLOAD_BYTES_PER_REQUEST = 8 * 1024 * 1024;
-  const UPLOAD_BYTES_PER_REQUEST = 4 * 1024 * 1024;
-  const MAX_DOWNLOAD_SECONDS = 8;
-  const MAX_UPLOAD_SECONDS = 7;
-  const MIN_SAMPLE_SECONDS = 0.35;
-  const REQUEST_TIMEOUT_MS = 9000;
+    { type: "download", bytes: 1e5, count: 3, bypassMinDuration: true },
+    { type: "download", bytes: 1e6, count: 3 },
+    { type: "download", bytes: 1e7, count: 4 },
+    { type: "download", bytes: 2.5e7, count: 3 },
 
-  function sleep(ms){
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+    { type: "latency", numPackets: 10 },
 
-  function withTimeout(promise, ms, message = "Request timed out"){
-    let timer;
-    const timeout = new Promise((_, reject) => {
-      timer = setTimeout(() => reject(new Error(message)), ms);
-    });
-    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
-  }
-
-  function makeRandomBody(size){
-    const body = new Uint8Array(size);
-    const chunkSize = 65536;
-    for(let offset = 0; offset < size; offset += chunkSize){
-      crypto.getRandomValues(
-        body.subarray(offset, Math.min(offset + chunkSize, size))
-      );
-    }
-    return body;
-  }
-
-  async function measurePing(){
-    const samples = [];
-    const url = SPEED_HOST + "/__down?bytes=0";
-
-    for(let i = 0; i < 5; i++){
-      const t0 = performance.now();
-
-      const response = await withTimeout(
-        fetch(url + "&r=" + crypto.randomUUID(), {
-          method: "GET",
-          cache: "no-store",
-          credentials: "omit"
-        }),
-        REQUEST_TIMEOUT_MS,
-        "Ping request timed out"
-      );
-
-      if(!response.ok) {
-        throw new Error("Ping endpoint returned HTTP " + response.status);
-      }
-
-      await response.arrayBuffer();
-      samples.push(performance.now() - t0);
-    }
-
-    samples.sort((a,b) => a-b);
-    const useful = samples.length >= 3 ? samples.slice(1, -1) : samples;
-    const ping = useful.reduce((a,b) => a+b, 0) / useful.length;
-
-    const jitterValues = [];
-    for(let i = 1; i < useful.length; i++){
-      jitterValues.push(Math.abs(useful[i] - useful[i-1]));
-    }
-
-    const jitter = jitterValues.length
-      ? jitterValues.reduce((a,b) => a+b, 0) / jitterValues.length
-      : 0;
-
-    return { ping, jitter };
-  }
-
-  function updateLiveSpeed(bytes, started, targetElement = $("speed")){
-    const elapsed = (performance.now() - started) / 1000;
-    if(elapsed < MIN_SAMPLE_SECONDS || bytes <= 0) return;
-
-    const mbps = (bytes * 8) / elapsed / 1e6;
-    targetElement.textContent = formatMbps(mbps);
-  }
-
-  async function measureDownload(){
-    const started = performance.now();
-    let totalBytes = 0;
-    let activeWorkers = 0;
-    let completedWorkers = 0;
-
-    const deadline = started + MAX_DOWNLOAD_SECONDS * 1000;
-
-    async function worker(streamIndex){
-      activeWorkers++;
-
-      try{
-        const url =
-          SPEED_HOST +
-          "/__down?bytes=" + DOWNLOAD_BYTES_PER_REQUEST +
-          "&stream=" + streamIndex +
-          "&r=" + crypto.randomUUID();
-
-        const response = await withTimeout(
-          fetch(url, {
-            method: "GET",
-            cache: "no-store",
-            credentials: "omit"
-          }),
-          REQUEST_TIMEOUT_MS,
-          "Download connection timed out"
-        );
-
-        if(!response.ok || !response.body){
-          throw new Error(
-            "Download endpoint unavailable (HTTP " + response.status + ")"
-          );
-        }
-
-        const reader = response.body.getReader();
-
-        while(true){
-          const result = await withTimeout(
-            reader.read(),
-            REQUEST_TIMEOUT_MS,
-            "Download stream stalled"
-          );
-
-          if(result.done) break;
-
-          if(result.value){
-            totalBytes += result.value.byteLength;
-            updateLiveSpeed(totalBytes, started);
-          }
-
-          const elapsed = performance.now() - started;
-          const progress = Math.min(
-            62,
-            25 + (elapsed / (MAX_DOWNLOAD_SECONDS * 1000)) * 37
-          );
-
-          setProgress(
-            progress,
-            "Measuring Download..."
-          );
-
-          if(performance.now() >= deadline){
-            try { await reader.cancel(); } catch(e) {}
-            break;
-          }
-        }
-      }catch(err){
-        console.warn("Download stream stopped:", err);
-      }finally{
-        activeWorkers--;
-        completedWorkers++;
-      }
-    }
-
-    await Promise.all(
-      Array.from(
-        {length: PARALLEL_STREAMS},
-        (_, i) => worker(i)
-      )
-    );
-
-    const elapsed = (performance.now() - started) / 1000;
-
-    if(totalBytes <= 0 || elapsed <= 0){
-      throw new Error("No download data received");
-    }
-
-    return {
-      mbps: (totalBytes * 8) / elapsed / 1e6,
-      bytes: totalBytes,
-      seconds: elapsed
-    };
-  }
-
-  async function measureUpload(){
-    const started = performance.now();
-    let totalBytes = 0;
-    let nextRequest = 0;
-    const deadline = started + MAX_UPLOAD_SECONDS * 1000;
-
-    async function worker(streamIndex){
-      while(performance.now() < deadline){
-        const requestNumber = nextRequest++;
-
-        const body = makeRandomBody(UPLOAD_BYTES_PER_REQUEST);
-
-        try{
-          const response = await withTimeout(
-            fetch(
-              SPEED_HOST +
-              "/__up?bytes=" + UPLOAD_BYTES_PER_REQUEST +
-              "&stream=" + streamIndex +
-              "&request=" + requestNumber +
-              "&r=" + crypto.randomUUID(),
-              {
-                method: "POST",
-                body,
-                cache: "no-store",
-                credentials: "omit",
-                headers: {
-                  "Content-Type": "application/octet-stream"
-                }
-              }
-            ),
-            REQUEST_TIMEOUT_MS,
-            "Upload request timed out"
-          );
-
-          if(!response.ok){
-            throw new Error(
-              "Upload endpoint returned HTTP " + response.status
-            );
-          }
-
-          await response.arrayBuffer();
-
-          totalBytes += body.byteLength;
-
-          const elapsed = (performance.now() - started) / 1000;
-          if(elapsed >= MIN_SAMPLE_SECONDS){
-            const liveMbps =
-              (totalBytes * 8) / elapsed / 1e6;
-
-            $("upVal").innerHTML =
-              formatMbps(liveMbps) + "<span>Mbps</span>";
-          }
-
-          const progress = Math.min(
-            100,
-            62 + (elapsed / MAX_UPLOAD_SECONDS) * 38
-          );
-
-          setProgress(
-            progress,
-            "Measuring Upload..."
-          );
-        }catch(err){
-          console.warn("Upload request stopped:", err);
-          break;
-        }
-      }
-    }
-
-    await Promise.all(
-      Array.from(
-        {length: PARALLEL_STREAMS},
-        (_, i) => worker(i)
-      )
-    );
-
-    const elapsed = (performance.now() - started) / 1000;
-
-    if(totalBytes <= 0 || elapsed <= 0){
-      throw new Error("No upload data accepted");
-    }
-
-    return {
-      mbps: (totalBytes * 8) / elapsed / 1e6,
-      bytes: totalBytes,
-      seconds: elapsed
-    };
-  }
+    { type: "upload", bytes: 1e5, count: 3, bypassMinDuration: true },
+    { type: "upload", bytes: 1e6, count: 3 },
+    { type: "upload", bytes: 1e7, count: 3 },
+    { type: "upload", bytes: 2.5e7, count: 2 }
+  ];
 
   function toggleTheme(){
     const html = document.documentElement;
     const currentTheme = html.getAttribute("data-theme");
     const newTheme = currentTheme === "dark" ? "light" : "dark";
+
     html.setAttribute("data-theme", newTheme);
-    $("themeColorMeta").setAttribute("content", newTheme === "dark" ? "#0a0a0c" : "#f8fafc");
+    $("themeColorMeta").setAttribute(
+      "content",
+      newTheme === "dark" ? "#0a0a0c" : "#f8fafc"
+    );
+
     localStorage.setItem("fasqoo_theme", newTheme);
     updateThemeIcon(newTheme);
+
     const btn = $("themeToggleBtn");
-    if (btn) btn.setAttribute("aria-pressed", newTheme === "light" ? "true" : "false");
+    if (btn) {
+      btn.setAttribute(
+        "aria-pressed",
+        newTheme === "light" ? "true" : "false"
+      );
+    }
   }
 
   function updateThemeIcon(theme){
     const icon = $("themeIcon");
+
     if(theme === "light"){
-      icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
-    } else {
-      icon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+      icon.innerHTML =
+        '<path d="M21 12.79A9 9 0 1 1 11.21 3 ' +
+        '7 7 0 0 0 21 12.79z"></path>';
+    }else{
+      icon.innerHTML =
+        '<circle cx="12" cy="12" r="5"/>' +
+        '<path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42' +
+        'M18.36 18.36l1.42 1.42M1 12h2M21 12h2' +
+        'M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
     }
   }
 
-  window.addEventListener('beforeinstallprompt', (e) => {
+  window.addEventListener("beforeinstallprompt", e => {
     e.preventDefault();
     deferredPrompt = e;
-    const installBtn = document.getElementById('installBtn');
-    if (installBtn) installBtn.style.display = 'inline-flex';
+
+    const installBtn = $("installBtn");
+    if (installBtn) installBtn.style.display = "inline-flex";
   });
 
-  function installPWA() {
+  window.installPWA = async function(){
     if (!deferredPrompt) return;
+
     const promptEvent = deferredPrompt;
     deferredPrompt = null;
 
-    promptEvent.prompt();
-
-    promptEvent.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('Fasqoo Lite installed');
-      }
-      const installBtn = document.getElementById('installBtn');
-      if (installBtn) installBtn.style.display = 'none';
-    }).catch((err) => {
-      console.log('PWA install prompt was dismissed or unavailable', err);
-    });
-  }
-
-  function updateInstallButtonForDisplayMode() {
-    const standalone = window.matchMedia('(display-mode: standalone)').matches ||
-      window.navigator.standalone === true;
-    const installBtn = document.getElementById('installBtn');
-    if (standalone && installBtn) installBtn.style.display = 'none';
-  }
-
-  window.addEventListener('appinstalled', () => {
-    deferredPrompt = null;
-    const installBtn = document.getElementById('installBtn');
-    if (installBtn) installBtn.style.display = 'none';
-    console.log('Fasqoo Lite appinstalled event fired');
-  });
-
-  window.addEventListener("DOMContentLoaded", () => {
-    const savedTheme = localStorage.getItem("fasqoo_theme") || "dark";
-    document.documentElement.setAttribute("data-theme", savedTheme);
-    updateThemeIcon(savedTheme);
-    const themeBtn = $("themeToggleBtn");
-    if (themeBtn) themeBtn.setAttribute("aria-pressed", savedTheme === "light" ? "true" : "false");
-    updateInstallButtonForDisplayMode();
-
-    startSpeedTest();
-    fetchIpInfo();
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js', { scope: '/' })
-          .then(() => console.log('PWA Service Worker active'))
-          .catch((err) => console.log('SW registration failed', err));
-      });
-    }
-  });
-
-  async function fetchIpInfo(){
     try{
-      const res = await fetch("https://ipwho.is/", { cache: "no-store" });
-      const data = await res.json();
-      if(data.success){
-        $("ipVal").textContent = data.ip;
-      } else {
-        $("ipVal").textContent = "Edge Network";
-      }
-    }catch(e){
-      $("ipVal").textContent = "Edge Network";
+      await promptEvent.prompt();
+      await promptEvent.userChoice;
+    }catch(err){
+      console.log("PWA install prompt unavailable", err);
+    }
+
+    const installBtn = $("installBtn");
+    if (installBtn) installBtn.style.display = "none";
+  };
+
+  function updateInstallButtonForDisplayMode(){
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true;
+
+    const installBtn = $("installBtn");
+    if (standalone && installBtn) {
+      installBtn.style.display = "none";
     }
   }
+
+  window.addEventListener("appinstalled", () => {
+    deferredPrompt = null;
+
+    const installBtn = $("installBtn");
+    if (installBtn) installBtn.style.display = "none";
+  });
 
   function setProgress(percent, statusText){
     $("status").textContent = statusText;
-    $("progressBar").style.width = Math.min(100, Math.max(0, percent)) + "%";
+    $("progressBar").style.width =
+      Math.min(100, Math.max(0, percent)) + "%";
   }
 
   function formatMbps(mbps){
-    if (!Number.isFinite(mbps)) return "0.0";
+    if (!Number.isFinite(mbps) || mbps <= 0) return "0.0";
     if (mbps < 10) return mbps.toFixed(1);
     if (mbps < 100) return mbps.toFixed(1);
     return Math.round(mbps).toString();
   }
 
-  function makeRandomBody(size){
-    // getRandomValues() is limited to 65,536 bytes per call in browsers.
-    // Fill in safe chunks so large upload tests never trigger the Crypto error.
-    const body = new Uint8Array(size);
-    const chunkSize = 65536;
-    for(let offset = 0; offset < size; offset += chunkSize){
-      crypto.getRandomValues(body.subarray(offset, Math.min(offset + chunkSize, size)));
-    }
-    return body;
-  }
+  function updateLiveResults(){
+    if (!engine) return;
 
-  async function measurePing(){
-    const samples = [];
-    const url = SPEED_HOST + "/__down?bytes=0";
+    const results = engine.results;
 
-    // More samples make the result less sensitive to a single delayed request.
-    for(let i = 0; i < 7; i++){
-      const t0 = performance.now();
-      const response = await fetch(url + "&r=" + crypto.randomUUID(), {
-        method: "GET",
-        cache: "no-store",
-        credentials: "omit"
-      });
-      if(!response.ok) throw new Error("Ping endpoint returned HTTP " + response.status);
-      await response.arrayBuffer();
-      samples.push(performance.now() - t0);
-    }
+    const download =
+      typeof results.getDownloadBandwidth === "function"
+        ? results.getDownloadBandwidth()
+        : undefined;
 
-    samples.sort((a,b) => a-b);
-    const trimmed = samples.slice(1, -1);
-    const avg = trimmed.reduce((a,b) => a+b, 0) / trimmed.length;
+    const upload =
+      typeof results.getUploadBandwidth === "function"
+        ? results.getUploadBandwidth()
+        : undefined;
 
-    const jitterSamples = [];
-    for(let i = 1; i < trimmed.length; i++){
-      jitterSamples.push(Math.abs(trimmed[i] - trimmed[i-1]));
-    }
-    const jitter = jitterSamples.length
-      ? jitterSamples.reduce((a,b) => a+b, 0) / jitterSamples.length
-      : 0;
+    const latency =
+      typeof results.getUnloadedLatency === "function"
+        ? results.getUnloadedLatency()
+        : undefined;
 
-    return { ping: avg, jitter };
-  }
+    const jitter =
+      typeof results.getUnloadedJitter === "function"
+        ? results.getUnloadedJitter()
+        : undefined;
 
-  async function measureDownload(){
-    const roundResults = [];
+    if (Number.isFinite(download) && download > 0) {
+      $("speed").textContent =
+        formatMbps(download / 1e6);
+    } else {
+      const points = results.getDownloadBandwidthPoints();
+      const latest = points[points.length - 1];
 
-    async function runRound(roundIndex){
-      const started = performance.now();
-      let totalBytes = 0;
-
-      const workers = Array.from({length: PARALLEL_STREAMS}, async (_, streamIndex) => {
-        const url = SPEED_HOST + "/__down?bytes=" + DOWN_BYTES +
-          "&stream=" + streamIndex + "&round=" + roundIndex +
-          "&r=" + crypto.randomUUID();
-
-        const response = await fetch(url, {
-          method: "GET",
-          cache: "no-store",
-          credentials: "omit"
-        });
-
-        if(!response.ok || !response.body){
-          throw new Error("Download endpoint unavailable (HTTP " + response.status + ")");
-        }
-
-        const reader = response.body.getReader();
-        let streamBytes = 0;
-
-        while(true){
-          const {done, value} = await reader.read();
-          if(done) break;
-
-          streamBytes += value.byteLength;
-          totalBytes += value.byteLength;
-
-          const elapsed = (performance.now() - started) / 1000;
-          if(elapsed >= MIN_STABLE_SAMPLE_SECONDS){
-            const liveMbps = (totalBytes * 8) / elapsed / 1e6;
-            $("speed").textContent = formatMbps(liveMbps);
-          }
-        }
-
-        return streamBytes;
-      });
-
-      await Promise.all(workers);
-
-      const elapsed = (performance.now() - started) / 1000;
-      if(totalBytes <= 0 || elapsed <= 0){
-        throw new Error("No download data received");
-      }
-
-      return (totalBytes * 8) / elapsed / 1e6;
-    }
-
-    for(let round = 0; round < DOWNLOAD_ROUNDS; round++){
-      setProgress(
-        25 + Math.round((round / DOWNLOAD_ROUNDS) * 35),
-        "Measuring Download..."
-      );
-
-      const result = await runRound(round);
-      if(Number.isFinite(result) && result > 0){
-        roundResults.push(result);
+      if (latest && Number.isFinite(latest.bps)) {
+        $("speed").textContent =
+          formatMbps(latest.bps / 1e6);
       }
     }
 
-    if(!roundResults.length){
-      throw new Error("No valid download measurements");
-    }
-
-    // Median is used only to reduce the effect of an unusually short/slow round.
-    // No artificial value is added or substituted.
-    const sorted = [...roundResults].sort((a,b) => a-b);
-    const middle = Math.floor(sorted.length / 2);
-    const result = sorted.length % 2
-      ? sorted[middle]
-      : (sorted[middle - 1] + sorted[middle]) / 2;
-
-    return result;
-  }
-
-  async function measureUpload(){
-    const roundResults = [];
-
-    async function runRound(roundIndex){
-      const started = performance.now();
-      let totalBytes = 0;
-      let requestCount = 0;
-      const totalRequests = PARALLEL_STREAMS * 2;
-
-      const workers = Array.from({length: PARALLEL_STREAMS}, async (_, streamIndex) => {
-        while(true){
-          const myRequest = requestCount++;
-          if(myRequest >= totalRequests) break;
-
-          const body = makeRandomBody(UP_BYTES);
-
-          const response = await fetch(
-            SPEED_HOST + "/__up?bytes=" + UP_BYTES +
-            "&stream=" + streamIndex +
-            "&round=" + roundIndex +
-            "&request=" + myRequest +
-            "&r=" + crypto.randomUUID(),
-            {
-              method: "POST",
-              body,
-              cache: "no-store",
-              credentials: "omit",
-              headers: { "Content-Type": "application/octet-stream" }
-            }
-          );
-
-          if(!response.ok){
-            throw new Error("Upload endpoint returned HTTP " + response.status);
-          }
-
-          // Consume the response before counting the request as completed.
-          await response.arrayBuffer();
-          totalBytes += body.byteLength;
-
-          const elapsed = (performance.now() - started) / 1000;
-          if(elapsed >= MIN_STABLE_SAMPLE_SECONDS){
-            const liveMbps = (totalBytes * 8) / elapsed / 1e6;
-            $("upVal").innerHTML = formatMbps(liveMbps) + "<span>Mbps</span>";
-          }
-        }
-      });
-
-      await Promise.all(workers);
-
-      const elapsed = (performance.now() - started) / 1000;
-      if(totalBytes <= 0 || elapsed <= 0){
-        throw new Error("No upload data accepted");
-      }
-
-      return (totalBytes * 8) / elapsed / 1e6;
-    }
-
-    for(let round = 0; round < UPLOAD_ROUNDS; round++){
-      setProgress(
-        62 + Math.round((round / UPLOAD_ROUNDS) * 34),
-        "Measuring Upload..."
-      );
-
-      const result = await runRound(round);
-      if(Number.isFinite(result) && result > 0){
-        roundResults.push(result);
-      }
-    }
-
-    if(!roundResults.length){
-      throw new Error("No valid upload measurements");
-    }
-
-    const sorted = [...roundResults].sort((a,b) => a-b);
-    const middle = Math.floor(sorted.length / 2);
-    const result = sorted.length % 2
-      ? sorted[middle]
-      : (sorted[middle - 1] + sorted[middle]) / 2;
-
-    return result;
-  }
-
-  async function startSpeedTest(){
-    if(isRunning) return;
-    isRunning = true;
-
-    $("restartBtn").style.display = "none";
-    $("detailsGrid").classList.remove("visible");
-    $("progressWrapper").style.display = "block";
-    $("speed").textContent = "0";
-    $("unit").textContent = "Mbps";
-    $("pingVal").innerHTML = "-<span>ms</span>";
-    $("jitterVal").innerHTML = "-<span>ms</span>";
-    $("upVal").innerHTML = "-<span>Mbps</span>";
-
-    try{
-      // 1. Real latency + jitter
-      setProgress(8, "Measuring Ping...");
-      const latency = await measurePing();
-      $("pingVal").innerHTML = latency.ping.toFixed(0) + "<span>ms</span>";
-      $("jitterVal").innerHTML = latency.jitter.toFixed(1) + "<span>ms</span>";
-
-      // 2. Real download
-      setProgress(25, "Measuring Download...");
-      const downloadResult = await measureDownload();
-      const downloadMbps = downloadResult.mbps;
-      $("speed").textContent = formatMbps(downloadMbps);
-
-      $("upVal").innerHTML = "-<span>Mbps</span>";
-      setProgress(62, "Measuring Upload...");
-
-      // 3. Real upload
-      const uploadResult = await measureUpload();
-      const uploadMbps = uploadResult.mbps;
+    if (Number.isFinite(upload) && upload > 0) {
       $("upVal").innerHTML =
-        formatMbps(uploadMbps) + "<span>Mbps</span>";
+        formatMbps(upload / 1e6) + "<span>Mbps</span>";
+    } else {
+      const points = results.getUploadBandwidthPoints();
+      const latest = points[points.length - 1];
 
-      // Keep the main speed display as the measured download result.
+      if (latest && Number.isFinite(latest.bps)) {
+        $("upVal").innerHTML =
+          formatMbps(latest.bps / 1e6) + "<span>Mbps</span>";
+      }
+    }
+
+    if (Number.isFinite(latency)) {
+      $("pingVal").innerHTML =
+        Math.round(latency) + "<span>ms</span>";
+    }
+
+    if (Number.isFinite(jitter)) {
+      $("jitterVal").innerHTML =
+        jitter.toFixed(1) + "<span>ms</span>";
+    }
+  }
+
+  function phaseLabel(type){
+    switch(type){
+      case "latency":
+        return "Measuring Ping...";
+      case "download":
+        return "Measuring Download...";
+      case "upload":
+        return "Measuring Upload...";
+      case "packetLoss":
+        return "Measuring Packet Loss...";
+      default:
+        return "Measuring Connection...";
+    }
+  }
+
+  function phaseProgress(type){
+    const phases = [
+      "latency",
+      "download",
+      "download",
+      "download",
+      "download",
+      "latency",
+      "upload",
+      "upload",
+      "upload",
+      "upload"
+    ];
+
+    const current = engine?.results?.raw || {};
+    let completed = 0;
+
+    for (const key of Object.keys(current)) {
+      if (
+        key !== "totalDurationMs" &&
+        current[key] &&
+        typeof current[key] === "object" &&
+        current[key].finished
+      ){
+        completed++;
+      }
+    }
+
+    const fallbackByType = {
+      latency: 8,
+      download: 28,
+      upload: 68
+    };
+
+    const base =
+      Math.round(
+        (completed / Math.max(phases.length, 1)) * 86
+      );
+
+    return Math.max(
+      fallbackByType[type] || 10,
+      Math.min(94, base)
+    );
+  }
+
+  function showFailure(error){
+    const message = String(error || "Unknown measurement error");
+    console.error("Fasqoo speed test error:", message);
+
+    $("speed").textContent = "—";
+    $("pingVal").innerHTML = "—<span>ms</span>";
+    $("jitterVal").innerHTML = "—<span>ms</span>";
+    $("upVal").innerHTML = "—<span>Mbps</span>";
+
+    setProgress(100, "Measurement error");
+
+    $("measurementNote").textContent =
+      "Measurement could not be completed: " +
+      message +
+      " Please try again.";
+
+    $("progressWrapper").style.display = "none";
+    $("detailsGrid").classList.add("visible");
+    $("restartBtn").style.display = "inline-block";
+  }
+
+  async function fetchIpInfo(){
+    try{
+      const res = await fetch(
+        "https://ipwho.is/",
+        { cache: "no-store" }
+      );
+
+      if (!res.ok) throw new Error("IP lookup HTTP " + res.status);
+
+      const data = await res.json();
+
+      if(data && data.success && data.ip){
+        $("ipVal").textContent = data.ip;
+      }else{
+        $("ipVal").textContent = "Cloudflare Edge";
+      }
+    }catch(e){
+      $("ipVal").textContent = "Cloudflare Edge";
+    }
+  }
+
+  function createEngine(){
+    return new SpeedTest({
+      autoStart: false,
+      measurements: MEASUREMENTS,
+
+      // Keep the measurement continuous but stop expanding a direction
+      // once individual requests are clearly long enough.
+      bandwidthFinishRequestDuration: 650,
+
+      // A stalled/very slow large request should not force the whole test
+      // to sit indefinitely.
+      bandwidthAbortRequestDuration: 8000,
+
+      bandwidthPercentile: 0.9,
+      latencyPercentile: 0.5,
+      bandwidthMinRequestDuration: 10,
+
+      measureDownloadLoadedLatency: true,
+      measureUploadLoadedLatency: true,
+      loadedLatencyThrottle: 400,
+      loadedLatencyMaxPoints: 20
+    });
+  }
+
+  function connectEngineEvents(){
+    engine.onRunningChange = running => {
+      isRunning = running;
+
+      if(running){
+        $("restartBtn").style.display = "none";
+        $("detailsGrid").classList.remove("visible");
+        $("progressWrapper").style.display = "block";
+      }
+    };
+
+    engine.onPhaseChange = ({ measurement }) => {
+      const type = measurement && measurement.type;
+      if (!type) return;
+
+      setProgress(
+        phaseProgress(type),
+        phaseLabel(type)
+      );
+
+      updateLiveResults();
+    };
+
+    engine.onResultsChange = ({ type }) => {
+      updateLiveResults();
+
+      const label = phaseLabel(type);
+
+      let progress;
+      switch(type){
+        case "latency":
+          progress = 12;
+          break;
+        case "download":
+          progress = 35;
+          break;
+        case "upload":
+          progress = 76;
+          break;
+        default:
+          progress = 15;
+      }
+
+      setProgress(progress, label);
+    };
+
+    engine.onFinish = results => {
+      const summary = results.getSummary();
+
+      const downloadMbps = Number(summary.download) / 1e6;
+      const uploadMbps = Number(summary.upload) / 1e6;
+      const latency = Number(summary.latency);
+      const jitter = Number(summary.jitter);
+
+      if(!Number.isFinite(downloadMbps) || downloadMbps <= 0){
+        showFailure("No valid download measurement was produced.");
+        isRunning = false;
+        return;
+      }
+
       $("speed").textContent = formatMbps(downloadMbps);
+
+      if(Number.isFinite(latency)){
+        $("pingVal").innerHTML =
+          Math.round(latency) + "<span>ms</span>";
+      }
+
+      if(Number.isFinite(jitter)){
+        $("jitterVal").innerHTML =
+          jitter.toFixed(1) + "<span>ms</span>";
+      }
+
+      if(Number.isFinite(uploadMbps) && uploadMbps > 0){
+        $("upVal").innerHTML =
+          formatMbps(uploadMbps) + "<span>Mbps</span>";
+      }
+
       setProgress(100, "Test Complete");
+
+      $("measurementNote").textContent =
+        "Real browser measurement via Cloudflare edge. " +
+        "Final bandwidth uses the 90th percentile of valid samples.";
 
       setTimeout(() => {
         $("progressWrapper").style.display = "none";
-      }, 400);
+      }, 350);
 
       $("detailsGrid").classList.add("visible");
       $("restartBtn").style.display = "inline-block";
+      isRunning = false;
+    };
 
-    }catch(err){
-      console.error("Real speed test error:", err);
+    engine.onError = error => {
+      showFailure(error);
+      isRunning = false;
+    };
+  }
 
-      // Never show invented numbers when a measurement fails.
-      $("speed").textContent = "—";
-      $("pingVal").innerHTML = "—<span>ms</span>";
-      $("jitterVal").innerHTML = "—<span>ms</span>";
-      $("upVal").innerHTML = "—<span>Mbps</span>";
-      setProgress(100, "Test failed — please try again");
-      $("progressWrapper").style.display = "none";
-      $("detailsGrid").classList.add("visible");
-      $("restartBtn").style.display = "inline-block";
-    }finally{
+  window.startSpeedTest = async function(){
+    if(isRunning) return;
+
+    try{
+      if(!engine){
+        setProgress(2, "Starting measurement...");
+
+        engine = createEngine();
+        connectEngineEvents();
+      }
+
+      $("restartBtn").style.display = "none";
+      $("detailsGrid").classList.remove("visible");
+      $("progressWrapper").style.display = "block";
+
+      $("speed").textContent = "0";
+      $("unit").textContent = "Mbps";
+      $("pingVal").innerHTML = "-<span>ms</span>";
+      $("jitterVal").innerHTML = "-<span>ms</span>";
+      $("upVal").innerHTML = "-<span>Mbps</span>";
+
+      $("measurementNote").textContent =
+        "Real browser measurement via Cloudflare edge. " +
+        "Testing your connection...";
+
+      isRunning = true;
+
+      if(engine.isFinished){
+        engine = createEngine();
+        connectEngineEvents();
+      }
+
+      engine.play();
+    }catch(error){
+      showFailure(
+        error && error.message
+          ? error.message
+          : String(error)
+      );
       isRunning = false;
     }
-  }
+  };
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const savedTheme =
+      localStorage.getItem("fasqoo_theme") || "dark";
+
+    document.documentElement.setAttribute(
+      "data-theme",
+      savedTheme
+    );
+
+    updateThemeIcon(savedTheme);
+
+    const themeBtn = $("themeToggleBtn");
+    if(themeBtn){
+      themeBtn.setAttribute(
+        "aria-pressed",
+        savedTheme === "light" ? "true" : "false"
+      );
+    }
+
+    updateInstallButtonForDisplayMode();
+
+    fetchIpInfo();
+
+    if("serviceWorker" in navigator){
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register(
+          "/sw.js",
+          { scope: "/" }
+        ).catch(err => {
+          console.log(
+            "Service worker registration failed:",
+            err
+          );
+        });
+      });
+    }
+
+    startSpeedTest();
+  });
 </script>
 
 </body>
