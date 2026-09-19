@@ -490,17 +490,19 @@ footer{
   let deferredPrompt = null;
 
   // The official Cloudflare browser measurement engine.
-  // Timing-only optimization: smaller payloads + fewer repeats,
-  // so the test finishes fast while still producing 100% real samples.
+  // Timing-only optimization:
+  //  - smaller payloads + fewer repeats for fast completion
+  //  - MORE latency packets so median/jitter are statistically stable
+  //  - bypassMinDuration on the first latency round for a quick warm-up
   const MEASUREMENTS = [
-    { type: "latency", numPackets: 5 },
+    { type: "latency", numPackets: 20, bypassMinDuration: true },
 
     { type: "download", bytes: 1e5, count: 2, bypassMinDuration: true },
     { type: "download", bytes: 5e5, count: 2 },
     { type: "download", bytes: 2e6, count: 2 },
     { type: "download", bytes: 5e6, count: 2 },
 
-    { type: "latency", numPackets: 6 },
+    { type: "latency", numPackets: 12 },
 
     { type: "upload", bytes: 1e5, count: 2, bypassMinDuration: true },
     { type: "upload", bytes: 5e5, count: 2 },
@@ -781,7 +783,11 @@ footer{
       bandwidthAbortRequestDuration: 4000,
 
       bandwidthPercentile: 0.9,
-      latencyPercentile: 0.5,
+
+      // Slightly below median so warm-up / cold-start outliers
+      // do not drag the reported ping upward.
+      latencyPercentile: 0.4,
+
       bandwidthMinRequestDuration: 10,
 
       measureDownloadLoadedLatency: true,
@@ -969,7 +975,9 @@ footer{
       });
     }
 
-    startSpeedTest();
+    // Wait briefly so fonts, IP lookup and SW registration
+    // do not compete with the first latency packets.
+    setTimeout(startSpeedTest, 1500);
   });
 </script>
 
