@@ -489,25 +489,35 @@ footer{
   let isRunning = false;
   let deferredPrompt = null;
 
-  // The official Cloudflare browser measurement engine.
-  // Timing-only optimization:
-  //  - smaller payloads + fewer repeats for fast completion
-  //  - MORE latency packets so median/jitter are statistically stable
-  //  - bypassMinDuration on the first latency round for a quick warm-up
+  // KEY INSIGHT:
+  // The Cloudflare engine applies `latencyPercentile` to the reported ping,
+  // but it computes jitter from ALL raw latency samples WITHOUT filtering.
+  // A single cold-start packet (DNS + TCP + TLS handshake on the very first
+  // request to the Cloudflare edge) can therefore poison the jitter value.
+  //
+  // FIX: run a tiny "warm-up" download FIRST, on the SAME /__down endpoint
+  // that the latency probes use. After that, TCP/TLS/DNS are already
+  // established, so every latency packet measures pure round-trip time.
+  //
+  // Also reduced total rounds so the whole test finishes faster while still
+  // producing 100% real samples.
   const MEASUREMENTS = [
-    { type: "latency", numPackets: 20, bypassMinDuration: true },
+    // --- Warm-up: establish connection to Cloudflare edge (no cold start) ---
+    { type: "download", bytes: 5e5, count: 1, bypassMinDuration: true },
 
-    { type: "download", bytes: 1e5, count: 2, bypassMinDuration: true },
-    { type: "download", bytes: 5e5, count: 2 },
-    { type: "download", bytes: 2e6, count: 2 },
-    { type: "download", bytes: 5e6, count: 2 },
-
+    // --- Latency: measured on a warm connection -> jitter is real ---
     { type: "latency", numPackets: 12 },
 
-    { type: "upload", bytes: 1e5, count: 2, bypassMinDuration: true },
-    { type: "upload", bytes: 5e5, count: 2 },
-    { type: "upload", bytes: 2e6, count: 2 },
-    { type: "upload", bytes: 5e6, count: 2 }
+    // --- Download: small warm-up + main run ---
+    { type: "download", bytes: 1e6, count: 2, bypassMinDuration: true },
+    { type: "download", bytes: 5e6, count: 3 },
+
+    // --- Second latency round (still warm, no handshake) ---
+    { type: "latency", numPackets: 8 },
+
+    // --- Upload: warm-up + main run ---
+    { type: "upload", bytes: 1e6, count: 2, bypassMinDuration: true },
+    { type: "upload", bytes: 5e6, count: 3 }
   ];
 
   function toggleTheme(){
@@ -684,14 +694,11 @@ footer{
 
   function phaseProgress(type){
     const phases = [
-      "latency",
-      "download",
-      "download",
-      "download",
       "download",
       "latency",
-      "upload",
-      "upload",
+      "download",
+      "download",
+      "latency",
       "upload",
       "upload"
     ];
@@ -711,9 +718,9 @@ footer{
     }
 
     const fallbackByType = {
-      latency: 8,
-      download: 28,
-      upload: 68
+      latency: 12,
+      download: 30,
+      upload: 70
     };
 
     const base =
@@ -776,7 +783,7 @@ footer{
 
       // Stop requesting more data once a single request has clearly
       // produced enough samples for a stable rate.
-      bandwidthFinishRequestDuration: 400,
+      bandwidthFinishRequestDuration: 500,
 
       // Abort a stalled / very slow single request much earlier,
       // so the whole test cannot hang for many seconds.
@@ -828,13 +835,13 @@ footer{
       let progress;
       switch(type){
         case "latency":
-          progress = 12;
+          progress = 15;
           break;
         case "download":
-          progress = 35;
+          progress = 40;
           break;
         case "upload":
-          progress = 76;
+          progress = 78;
           break;
         default:
           progress = 15;
