@@ -46,9 +46,48 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
 .details-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:13px}.detail-box{padding:14px 8px;border:1px solid var(--border);border-radius:15px;background:rgba(127,127,127,.045);text-align:center}.detail-label{font-size:8px;color:var(--muted);font-weight:800;letter-spacing:1px;text-transform:uppercase}.detail-value{margin-top:6px;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}.detail-value span{font-size:9px;color:var(--muted);font-weight:600;margin-left:2px}.metric-status{margin-top:4px;font-size:8px;color:var(--good);font-weight:800;text-transform:uppercase}
 .dashboard{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}.dash-card{padding:14px;border:1px solid var(--border);border-radius:15px;background:rgba(127,127,127,.035)}.dash-label{font-size:8px;color:var(--muted);font-weight:800;letter-spacing:1px;text-transform:uppercase}.dash-main{font-size:13px;font-weight:800;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dash-sub{font-size:9px;color:var(--muted);margin-top:3px}.controls{text-align:center;margin-top:17px}.restart-btn{border:0;border-radius:999px;background:var(--btn);color:var(--btntext);padding:12px 25px;font-size:10px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 25px rgba(0,0,0,.13)}.restart-btn:hover{transform:translateY(-1px)}.fasqoo-info-wrap{margin-top:9px;text-align:center}.fasqoo-info{position:relative;width:24px;height:24px;border:1px solid var(--border);border-radius:50%;background:transparent;color:var(--muted);cursor:help}.fasqoo-tooltip{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);width:min(320px,calc(100vw - 35px));padding:10px 12px;border-radius:11px;background:#18181b;color:#fff;font:500 10px/1.5 system-ui;text-align:left;opacity:0;visibility:hidden;transition:.15s;z-index:30}.fasqoo-info:hover .fasqoo-tooltip,.fasqoo-info:focus-visible .fasqoo-tooltip{opacity:1;visibility:visible}.trust{text-align:center;margin:13px auto 0;max-width:650px;color:var(--muted);font-size:9px;line-height:1.5}.trust strong{color:var(--text)}footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:14px 0;text-align:center;color:var(--muted);font-size:9px;background:var(--panel)}.footer-title{color:var(--text);font-weight:800;font-size:10px}.footer-sub{margin-top:3px}.footer-links{display:flex;justify-content:center;gap:13px;margin-top:6px}.footer-link{color:var(--muted);text-decoration:none}.footer-link:hover{color:var(--accent)}.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 @media(max-width:650px){.wrap{width:calc(100% - 18px)}main{padding:17px 0 22px}.test-panel{padding:14px 10px;border-radius:21px}.hero h1{font-size:27px}.hero p{font-size:10px}.speedometer{width:min(280px,80vw)}.details-grid{grid-template-columns:repeat(2,1fr)}.dashboard{grid-template-columns:1fr}.nav-link{padding:7px 9px;font-size:9px}.brandname{font-size:15px}.live-chart{height:95px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== Ad banner layout ===== */
+.ad-side{display:none;position:fixed;top:50%;transform:translateY(-50%);z-index:4;padding:6px;border:1px solid var(--border);border-radius:14px;background:var(--panel);overflow:hidden;line-height:0;box-shadow:0 18px 45px rgba(0,0,0,.18)}
+.ad-side-left{left:12px}
+.ad-side-right{right:12px}
+.ad-side iframe{display:block;max-width:100%;border:0}
+@media(min-width:1420px){.ad-side{display:block}}
+
+.ad-mobile{display:none;width:320px;max-width:100%;margin:14px auto 2px;padding:6px;border:1px solid var(--border);border-radius:12px;background:var(--panel);text-align:center;line-height:0;min-height:62px;overflow:hidden}
+.ad-mobile iframe{display:block;margin:0 auto;max-width:100%;border:0}
+@media(max-width:650px){.ad-mobile{display:block}}
 </style>
 </head>
 <body>
+
+<!-- Desktop Left Banner (160x600) -->
+<aside class="ad-side ad-side-left" aria-label="Advertisement">
+  <script type="text/javascript">
+    atOptions = {
+      'key' : '8184a4310a84538b244c3e3c36655033',
+      'format' : 'iframe',
+      'height' : 600,
+      'width' : 160,
+      'params' : {}
+    };
+  </script>
+  <script src="https://www.highrevenueformat.com/8184a4310a84538b244c3e3c36655033/invoke.js"></script>
+</aside>
+
+<!-- Desktop Right Banner (160x300) -->
+<aside class="ad-side ad-side-right" aria-label="Advertisement">
+  <script type="text/javascript">
+    atOptions = {
+      'key' : '6a3bb6fd5c7550c1a3d6db12e116379a',
+      'format' : 'iframe',
+      'height' : 300,
+      'width' : 160,
+      'params' : {}
+    };
+  </script>
+  <script src="https://www.highrevenueformat.com/6a3bb6fd5c7550c1a3d6db12e116379a/invoke.js"></script>
+</aside>
 
 <header>
   <div class="wrap nav">
@@ -95,6 +134,21 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
       <div id="status" class="status-text" role="status" aria-live="polite">Ready to test</div>
       <div class="progress-bar-wrapper" id="progressWrapper"><div id="progressBar" class="progress-bar-fill"></div></div>
     </div>
+
+    <!-- Mobile-only Banner (320x50) – appears between "Ready to test" and "Live throughput" -->
+    <div class="ad-mobile" aria-label="Advertisement">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : 'e3aee951b1e53f147b9d3182bdbee0c9',
+          'format' : 'iframe',
+          'height' : 50,
+          'width' : 320,
+          'params' : {}
+        };
+      </script>
+      <script src="https://www.highrevenueformat.com/e3aee951b1e53f147b9d3182bdbee0c9/invoke.js"></script>
+    </div>
+
     <div class="live-chart"><span class="chart-label">Live throughput</span><canvas id="speedChart" aria-label="Live measured throughput"></canvas></div>
     <div id="detailsGrid" class="details-grid">
       <div class="detail-box"><div class="detail-label">Latency</div><div class="detail-value" id="pingVal">-<span>ms</span></div><div class="metric-status" id="pingStatus">Waiting</div></div>
