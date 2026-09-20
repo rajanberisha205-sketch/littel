@@ -48,15 +48,48 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
 @media(max-width:650px){.wrap{width:calc(100% - 18px)}main{padding:17px 0 22px}.test-panel{padding:14px 10px;border-radius:21px}.hero h1{font-size:27px}.hero p{font-size:10px}.speedometer{width:min(280px,80vw)}.details-grid{grid-template-columns:repeat(2,1fr)}.dashboard{grid-template-columns:1fr}.nav-link{padding:7px 9px;font-size:9px}.brandname{font-size:15px}.live-chart{height:95px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
 /* ===== Ad banner layout ===== */
-.ad-side{display:none;position:fixed;top:50%;transform:translateY(-50%);z-index:4;padding:6px;border:1px solid var(--border);border-radius:14px;background:var(--panel);overflow:hidden;line-height:0;box-shadow:0 18px 45px rgba(0,0,0,.18)}
-.ad-side-left{left:12px}
-.ad-side-right{right:12px}
-.ad-side iframe{display:block;max-width:100%;border:0}
-@media(min-width:1420px){.ad-side{display:block}}
+.ad-side{
+  display:none;
+  position:fixed;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:4;
+  padding:6px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:var(--panel);
+  box-shadow:0 18px 45px rgba(0,0,0,.18);
+  box-sizing:content-box;
+  text-align:center;
+}
+.ad-side-left{ left:8px; }
+.ad-side-right{ right:8px; }
+.ad-side iframe{ display:block; margin:0 auto; border:0; }
+.ad-side-left iframe{ width:160px; height:600px; }
+.ad-side-right iframe{ width:160px; height:300px; }
 
-.ad-mobile{display:none;width:320px;max-width:100%;margin:14px auto 2px;padding:6px;border:1px solid var(--border);border-radius:12px;background:var(--panel);text-align:center;line-height:0;min-height:62px;overflow:hidden}
-.ad-mobile iframe{display:block;margin:0 auto;max-width:100%;border:0}
-@media(max-width:650px){.ad-mobile{display:block}}
+/* Desktop: Banner ab 1280px (passt auch auf 1366er Laptops) */
+@media(min-width:1280px){
+  .ad-side{ display:block; }
+}
+
+/* Mobile Banner – zwischen "Ready to test" und "Live throughput" */
+.ad-mobile{
+  display:none;
+  width:320px;
+  max-width:100%;
+  margin:14px auto 2px;
+  padding:6px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:var(--panel);
+  text-align:center;
+  min-height:62px;
+}
+.ad-mobile iframe{ display:block; margin:0 auto; border:0; width:320px; height:50px; }
+@media(max-width:650px){
+  .ad-mobile{ display:block; }
+}
 </style>
 </head>
 <body>
