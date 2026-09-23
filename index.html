@@ -10,13 +10,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Fasqoo Lite">
   
-  <!-- SEO Meta Tags -->
   <title>Fast & Free Internet Speed Test | Fasqoo Lite</title>
   <meta name="description" content="Test your internet speed instantly with Fasqoo Lite. Accurate download, upload, ping, and jitter measurements powered by global edge CDNs.">
   <meta name="keywords" content="internet speed test, broadband speed test, wifi speed test, check internet speed, fasqoo lite, ping test, Fasqoo">
   <link rel="canonical" href="https://lite.fasqoo.com/">
 
-  <!-- Open Graph / Social Media SEO -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://lite.fasqoo.com/">
   <meta property="og:title" content="Fast & Free Internet Speed Test | Fasqoo Lite">
@@ -140,6 +138,12 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
   const MAX_TEST_BYTES = 512 * 1024 * 1024;
   const TICK_MS = SAMPLE_MS;
 
+  // Sliding window used for the on-screen rate.
+  // Rate is computed over real elapsed time and real bytes in the last 1.8 s.
+  // This absorbs irregular XHR progress events and produces a smooth value.
+  const RATE_WINDOW_MS = 1800;
+  const DISPLAY_MEDIAN_SAMPLES = 5;
+
   function toggleTheme(){
     const html = document.documentElement;
     const currentTheme = html.getAttribute("data-theme");
@@ -211,8 +215,6 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
       });
     }
 
-    // Auto-start the test shortly after the page is ready (like fast.com).
-    // 800 ms lets the fonts, layout and IP lookup finish first.
     setTimeout(() => {
       if (!isRunning) startSpeedTest();
     }, 800);
@@ -245,7 +247,6 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
 
   function formatMbps(mbps){
     if (!Number.isFinite(mbps)) return "0.0";
-    if (mbps < 10) return mbps.toFixed(1);
     if (mbps < 100) return mbps.toFixed(1);
     return Math.round(mbps).toString();
   }
@@ -284,6 +285,31 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
     const i = (a.length - 1) * p;
     const lo = Math.floor(i), hi = Math.ceil(i);
     return lo === hi ? a[lo] : a[lo] + (a[hi] - a[lo]) * (i - lo);
+  }
+
+  // Sliding-window rate helper.
+  // Keeps a small buffer of {t, b} samples and returns the average Mbps
+  // over the last RATE_WINDOW_MS. This is immune to irregular progress events.
+  function createRateTracker(){
+    const buf = [];
+    return {
+      reset(){ buf.length = 0; },
+      push(totalBytes, nowMs, warmTime){
+        buf.push({t: nowMs, b: totalBytes});
+        const cutoff = nowMs - RATE_WINDOW_MS;
+        while(buf.length > 2 && buf[0].t < cutoff) buf.shift();
+        if(!warmTime || buf.length < 3) return NaN;
+        // Use only samples that fall inside the actual measurement window.
+        const samples = buf.filter(s => s.t >= warmTime);
+        if(samples.length < 3) return NaN;
+        const first = samples[0];
+        const last = samples[samples.length - 1];
+        const dbytes = last.b - first.b;
+        const dtime = (last.t - first.t) / 1000;
+        if(dtime <= 0.5 || dbytes <= 0) return NaN;
+        return (dbytes * 8) / dtime / 1e6;
+      }
+    };
   }
 
   function chooseStreams(estimatedMbps){
@@ -374,9 +400,7 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
     let completed = false;
     let lastAdapt = started;
 
-    // Instantaneous-rate tracking for a smooth display.
-    let lastSampleBytes = 0;
-    let lastSampleTime = started;
+    const rateTracker = createRateTracker();
 
     const ticker = setInterval(() => {
       const now = performance.now();
@@ -384,34 +408,23 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
 
       if(!warm && elapsed >= WARMUP_SECONDS){
         warm = {bytes: totalBytes, time: now};
-        lastSampleBytes = totalBytes;
-        lastSampleTime = now;
+        rateTracker.reset();
       }
 
-      // Instantaneous rate per tick (smoothed with a rolling median for display).
-      if(warm){
-        const dbytes = totalBytes - lastSampleBytes;
-        const dtime = (now - lastSampleTime) / 1000;
+      // Sliding-window rate: immune to bursty fetch data.
+      const rate = rateTracker.push(totalBytes, now, warm ? warm.time : 0);
 
-        if(dtime >= 0.08){
-          const instantMbps = (dbytes * 8) / dtime / 1e6;
-          lastSampleBytes = totalBytes;
-          lastSampleTime = now;
+      if(Number.isFinite(rate) && rate > 0){
+        recentRates.push(rate);
+        if(recentRates.length > 12) recentRates.shift();
 
-          if(Number.isFinite(instantMbps) && instantMbps > 0){
-            recentRates.push(instantMbps);
-            if(recentRates.length > 12) recentRates.shift();
+        const win = Math.min(DISPLAY_MEDIAN_SAMPLES, recentRates.length);
+        const displayRate = median(recentRates.slice(-win));
 
-            // Rolling median of the last 5 samples = very stable display value.
-            const windowSize = Math.min(5, recentRates.length);
-            const displayRate = median(recentRates.slice(-windowSize));
-
-            if(Number.isFinite(displayRate) && displayRate > 0){
-              $("speed").textContent = formatMbps(displayRate);
-              updateSpeedArc(displayRate);
-              pushChartSample(displayRate);
-            }
-          }
+        if(Number.isFinite(displayRate) && displayRate > 0){
+          $("speed").textContent = formatMbps(displayRate);
+          updateSpeedArc(displayRate);
+          pushChartSample(displayRate);
         }
       }
 
@@ -558,9 +571,7 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
     let workers = [];
     let lastAdapt = started;
 
-    // Instantaneous-rate tracking for a smooth display.
-    let lastSampleBytes = 0;
-    let lastSampleTime = started;
+    const rateTracker = createRateTracker();
 
     const body = makeRandomBody(UP_BYTES);
 
@@ -570,34 +581,25 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
 
       if(!warm && elapsed >= WARMUP_SECONDS){
         warm = {bytes: totalBytes, time: now};
-        lastSampleBytes = totalBytes;
-        lastSampleTime = now;
+        rateTracker.reset();
       }
 
-      if(warm){
-        const dbytes = totalBytes - lastSampleBytes;
-        const dtime = (now - lastSampleTime) / 1000;
+      // Sliding-window rate: the XHR progress events can arrive very
+      // irregularly, so we average over real time and real bytes.
+      const rate = rateTracker.push(totalBytes, now, warm ? warm.time : 0);
 
-        if(dtime >= 0.08){
-          const instantMbps = (dbytes * 8) / dtime / 1e6;
-          lastSampleBytes = totalBytes;
-          lastSampleTime = now;
+      if(Number.isFinite(rate) && rate > 0){
+        recentRates.push(rate);
+        if(recentRates.length > 12) recentRates.shift();
 
-          if(Number.isFinite(instantMbps) && instantMbps > 0){
-            recentRates.push(instantMbps);
-            if(recentRates.length > 12) recentRates.shift();
+        const win = Math.min(DISPLAY_MEDIAN_SAMPLES, recentRates.length);
+        const displayRate = median(recentRates.slice(-win));
 
-            // Rolling median of the last 5 samples = very stable display value.
-            const windowSize = Math.min(5, recentRates.length);
-            const displayRate = median(recentRates.slice(-windowSize));
-
-            if(Number.isFinite(displayRate) && displayRate > 0){
-              $("speed").textContent = formatMbps(displayRate);
-              updateSpeedArc(displayRate);
-              pushChartSample(displayRate);
-              $("upVal").innerHTML = formatMbps(displayRate) + "<span>Mbps</span>";
-            }
-          }
+        if(Number.isFinite(displayRate) && displayRate > 0){
+          $("speed").textContent = formatMbps(displayRate);
+          updateSpeedArc(displayRate);
+          pushChartSample(displayRate);
+          $("upVal").innerHTML = formatMbps(displayRate) + "<span>Mbps</span>";
         }
       }
 
