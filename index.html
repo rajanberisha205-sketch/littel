@@ -11,19 +11,14 @@
   <meta name="apple-mobile-web-app-title" content="Fasqoo Lite">
   
   <title>Fast & Free Internet Speed Test | Fasqoo Lite</title>
-  <meta name="description" content="Test your internet speed instantly with Fasqoo Lite. Accurate download, upload, ping, and jitter measurements powered by global edge CDNs.">
-  <meta name="keywords" content="internet speed test, broadband speed test, wifi speed test, check internet speed, fasqoo lite, ping test, Fasqoo">
+  <meta name="description" content="Test your internet speed instantly with Fasqoo Lite.">
   <link rel="canonical" href="https://lite.fasqoo.com/">
-
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://lite.fasqoo.com/">
   <meta property="og:title" content="Fast & Free Internet Speed Test | Fasqoo Lite">
-  <meta property="og:description" content="Check your download speed, upload speed, and latency instantly with our lightweight internet speed test.">
   <meta property="og:image" content="https://lite.fasqoo.com/fasqoologo.png">
   <link rel="preload" as="image" href="fasqoologo.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
 
   <link rel="preconnect" href="https://speed.cloudflare.com" crossorigin>
@@ -39,14 +34,68 @@ header{position:relative;z-index:5;padding:13px 0;border-bottom:1px solid var(--
 main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;margin-bottom:16px}.eyebrow{display:inline-flex;gap:7px;align-items:center;padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:var(--panel);font-size:9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}.dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 4px color-mix(in srgb,var(--good) 15%,transparent)}.hero h1{margin:11px 0 5px;font-size:clamp(27px,5vw,40px);line-height:1.05;letter-spacing:-1.7px}.hero p{margin:0;color:var(--muted);font-size:12px}
 .test-panel{width:min(790px,100%);margin:auto;padding:21px;border:1px solid var(--border);border-radius:27px;background:linear-gradient(145deg,var(--panel),var(--panel2));box-shadow:0 25px 70px rgba(0,0,0,.18)}
 
-/* SPEEDOMETER – identisch zu fasqoo.com (SVG, lineare Skala) */
-.speedometer{width:min(310px,78vw);aspect-ratio:1;margin:auto;position:relative;display:grid;place-items:center}
-.speedometer:after{content:"";position:absolute;inset:12%;border-radius:50%;border:1px solid var(--border);box-shadow:inset 0 0 50px rgba(0,0,0,.12);pointer-events:none}
-.speedometer svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-135deg);z-index:1;pointer-events:none}
-.speedometer .ring{fill:none;stroke:rgba(148,163,184,.18);stroke-width:13;stroke-linecap:round;stroke-dasharray:816;stroke-dashoffset:204}
-.speedometer .progress{fill:none;stroke:url(#liteGaugeGradient);stroke-width:12;stroke-linecap:round;stroke-dasharray:816;stroke-dashoffset:816;transition:stroke-dashoffset .45s cubic-bezier(.22,.61,.36,1)}
-.speed-content{position:relative;z-index:2;text-align:center}
-.speed-number{font-size:clamp(56px,12vw,91px);font-weight:800;line-height:.92;letter-spacing:-5px;font-variant-numeric:tabular-nums}
+/* ============================================================
+   OOKLA-STYLE SPEEDOMETER
+   - voller Kreis
+   - getönter Track-Ring
+   - farbiger Fortschrittsbogen mit Glow
+   - Punkt ("handle") am Ende des Bogens
+   ============================================================ */
+.speedometer{
+  width:min(310px,78vw);
+  aspect-ratio:1;
+  margin:auto;
+  position:relative;
+  display:grid;
+  place-items:center;
+}
+.speedometer svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:1;
+  pointer-events:none;
+  overflow:visible;
+}
+.speedometer .gauge-track{
+  fill:none;
+  stroke:rgba(148,163,184,.16);
+  stroke-width:8;
+  stroke-linecap:round;
+}
+.speedometer .gauge-progress{
+  fill:none;
+  stroke:url(#ooklaGradient);
+  stroke-width:8;
+  stroke-linecap:round;
+  stroke-dasharray:816.81;
+  stroke-dashoffset:816.81;
+  transition:stroke-dashoffset .55s cubic-bezier(.22,.61,.36,1);
+  filter:url(#ooklaGlow);
+}
+.speedometer .gauge-dot{
+  fill:#00c2ff;
+  filter:url(#ooklaGlow);
+  transition:cx .55s cubic-bezier(.22,.61,.36,1), cy .55s cubic-bezier(.22,.61,.36,1);
+}
+.speedometer .gauge-inner-ring{
+  fill:none;
+  stroke:rgba(148,163,184,.10);
+  stroke-width:1;
+}
+.speed-content{
+  position:relative;
+  z-index:2;
+  text-align:center;
+}
+.speed-number{
+  font-size:clamp(56px,12vw,91px);
+  font-weight:800;
+  line-height:.92;
+  letter-spacing:-5px;
+  font-variant-numeric:tabular-nums;
+}
 .speed-unit{margin-top:8px;color:var(--accent);font-size:13px;font-weight:800;letter-spacing:3px}
 .speed-caption{margin-top:7px;font-size:9px;color:var(--muted);font-weight:800;letter-spacing:1.3px;text-transform:uppercase}
 
@@ -87,27 +136,50 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
   <section class="test-panel" aria-label="Fasqoo Lite Internet Speed Test">
     <h2 class="sr-only">Fasqoo Lite Speed Test</h2>
 
+    <!-- ============ OOKLA-STYLE SPEEDOMETER ============ -->
     <div class="speedometer">
       <svg viewBox="0 0 300 300" aria-hidden="true">
         <defs>
-          <linearGradient id="liteGaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ef4444"/>
-            <stop offset="100%" stop-color="#fb7185"/>
+          <linearGradient id="ooklaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00c2ff"/>
+            <stop offset="50%" stop-color="#0078d4"/>
+            <stop offset="100%" stop-color="#00c2ff"/>
           </linearGradient>
+          <filter id="ooklaGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3.5" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
         </defs>
-        <circle class="ring" cx="150" cy="150" r="130"></circle>
-        <circle id="prog" class="progress" cx="150" cy="150" r="130"></circle>
+
+        <!-- Track ring -->
+        <circle class="gauge-track" cx="150" cy="150" r="130"
+                transform="rotate(-90 150 150)"/>
+
+        <!-- Progress arc -->
+        <circle id="prog" class="gauge-progress" cx="150" cy="150" r="130"
+                transform="rotate(-90 150 150)"/>
+
+        <!-- End dot / handle -->
+        <circle id="gaugeDot" class="gauge-dot" cx="150" cy="20" r="6"/>
+
+        <!-- Inner decorative ring -->
+        <circle class="gauge-inner-ring" cx="150" cy="150" r="108"/>
       </svg>
+
       <div class="speed-content">
         <div id="speed" class="speed-number">0</div>
         <div id="unit" class="speed-unit">Mbps</div>
         <div id="speedCaption" class="speed-caption">Starting test...</div>
       </div>
     </div>
+    <!-- ============ END SPEEDOMETER ============ -->
 
     <div class="controls">
       <button id="restartBtn" class="restart-btn" onclick="startSpeedTest()" style="display:none">Test Again</button>
-      <div class="fasqoo-info-wrap"><button class="fasqoo-info" type="button" aria-label="About this measurement">i<span class="fasqoo-tooltip">Real browser-based measurement through Cloudflare Edge. No invented fallback speed values are shown.</span></button></div>
+      <div class="fasqoo-info-wrap"><button class="fasqoo-info" type="button" aria-label="About this measurement">i<span class="fasqoo-tooltip">Real browser-based measurement through Cloudflare Edge.</span></button></div>
     </div>
     <div class="status-container">
       <div id="status" class="status-text" role="status" aria-live="polite">Starting test...</div>
@@ -286,21 +358,30 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
   }
 
   /* ============================================================
-     GAUGE  (1:1 wie fasqoo.com – lineare Skala, SVG, exp. Smoothing)
+     OOKLA-STYLE GAUGE
+     - voller Kreis, Fortschrittsbogen ab 12-Uhr-Position im
+       Uhrzeigersinn
+     - Punkt am Ende des Bogens
+     - logarithmische Skala (damit auch bei 100 Mbps der Bogen
+       sichtbar wächst)
+     - Zahl wird weich nachgezogen (exponentielles Smoothing)
      ============================================================ */
-  let gaugeMax = 100;
+  const GAUGE_CIRCUMFERENCE = 2 * Math.PI * 130; // ≈ 816.81
+  const GAUGE_LOG_MAX = Math.log10(1 + 1000);    // Deckel bei 1000 Mbps
   let gaugeNumberRaf = 0;
   let gaugeNumberDisplay = 0;
   let gaugeNumberTarget = 0;
 
-  function getGaugeMax(v){
-    return v <= 100  ? 100  :
-           v <= 300  ? 300  :
-           v <= 500  ? 500  :
-           v <= 1000 ? 1000 :
-           v <= 2500 ? 2500 :
-           v <= 5000 ? 5000 : 10000;
+  function updateGaugeDot(ratio){
+    const dot = $("gaugeDot");
+    if(!dot) return;
+    const angleRad = ratio * 2 * Math.PI;
+    const cx = 150 + 130 * Math.sin(angleRad);
+    const cy = 150 - 130 * Math.cos(angleRad);
+    dot.setAttribute("cx", cx.toFixed(2));
+    dot.setAttribute("cy", cy.toFixed(2));
   }
+
   function animateGaugeNumber(){
     const diff = gaugeNumberTarget - gaugeNumberDisplay;
     if(Math.abs(diff) < 0.03){
@@ -313,34 +394,45 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
     const n = gaugeNumberDisplay;
     $("speed").textContent = n < 10 ? n.toFixed(1) : Math.round(n);
   }
+
   function gauge(v){
     if(!Number.isFinite(v)) return;
-    gaugeMax = Math.max(gaugeMax, getGaugeMax(v));
-    const p = Math.max(0, Math.min(v / gaugeMax, 1));
-    const c = 816, vis = c * 0.75;
+    const safe = Math.max(0, v);
+    const ratio = Math.min(1, Math.log10(1 + safe) / GAUGE_LOG_MAX);
+
     const prog = $("prog");
-    if(prog) prog.style.strokeDashoffset = c - vis * p;
-    gaugeNumberTarget = v;
+    if(prog) prog.style.strokeDashoffset = (GAUGE_CIRCUMFERENCE * (1 - ratio)).toFixed(2);
+
+    updateGaugeDot(ratio);
+
+    gaugeNumberTarget = safe;
     if(!gaugeNumberRaf) gaugeNumberRaf = requestAnimationFrame(animateGaugeNumber);
   }
+
   function resetGauge(){
-    gaugeMax = 100;
     gaugeNumberTarget = 0;
     gaugeNumberDisplay = 0;
     if(gaugeNumberRaf){ cancelAnimationFrame(gaugeNumberRaf); gaugeNumberRaf = 0; }
     $("speed").textContent = "0";
+
     const prog = $("prog");
-    if(prog) prog.style.strokeDashoffset = 816;
+    if(prog) prog.style.strokeDashoffset = GAUGE_CIRCUMFERENCE.toFixed(2);
+
+    updateGaugeDot(0);
   }
+
   function finishGauge(v){
     if(!Number.isFinite(v)) return;
-    gaugeMax = Math.max(gaugeMax, getGaugeMax(v));
-    const p = Math.max(0, Math.min(v / gaugeMax, 1));
-    const c = 816, vis = c * 0.75;
+    const safe = Math.max(0, v);
+    const ratio = Math.min(1, Math.log10(1 + safe) / GAUGE_LOG_MAX);
+
     const prog = $("prog");
-    if(prog) prog.style.strokeDashoffset = c - vis * p;
-    gaugeNumberTarget = v;
-    gaugeNumberDisplay = v;
+    if(prog) prog.style.strokeDashoffset = (GAUGE_CIRCUMFERENCE * (1 - ratio)).toFixed(2);
+
+    updateGaugeDot(ratio);
+
+    gaugeNumberTarget = safe;
+    gaugeNumberDisplay = safe;
     if(gaugeNumberRaf){ cancelAnimationFrame(gaugeNumberRaf); gaugeNumberRaf = 0; }
     const n = gaugeNumberDisplay;
     $("speed").textContent = n < 10 ? n.toFixed(1) : Math.round(n);
@@ -382,7 +474,7 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
   addEventListener("resize",resizeChart);setTimeout(resizeChart,60);
 
   /* ============================================================
-     MEASUREMENT ENGINE v7.2 (1:1 aus fasqoo.com/index.html)
+     MEASUREMENT ENGINE v7.2 (unverändert)
      ============================================================ */
 
   async function pingTest(){
@@ -501,20 +593,17 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
     $("speedCaption").textContent = "Measuring download...";
     chartSamples.length = 0; drawChart();
 
-    // Warm-up (nicht gewertet) – genau wie fasqoo.com
     let mbps = 25;
     try{
       const warm = await parallelDownload(512*1024, 2, 5000);
       const warmMbps = warm.bytes*8/warm.seconds/1e6;
       if(Number.isFinite(warmMbps) && warmMbps > 0){
         mbps = warmMbps;
-        console.log("Download warm-up:", warmMbps.toFixed(2), "Mbps (nicht gewertet)");
       }
     }catch(e){
       console.warn("Download warm-up failed:", e.message);
     }
 
-    // 8-Sekunden-Messphase (identisch zu fasqoo.com: MEASUREMENT_V7.phaseMs)
     const TARGET=MEASUREMENT_V7.phaseMs, startTime=performance.now();
     const measured=[];
     let streams=2, bytesPerStream=512*1024;
@@ -551,14 +640,12 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
     $("speedCaption").textContent = "Measuring upload...";
     chartSamples.length = 0; drawChart();
 
-    // Warm-up (nicht gewertet) – genau wie fasqoo.com
     let mbps = 25;
     try{
       const warm = await parallelUpload(512*1024, 2, 5000);
       const warmMbps = warm.bytes*8/warm.seconds/1e6;
       if(Number.isFinite(warmMbps) && warmMbps > 0){
         mbps = warmMbps;
-        console.log("Upload warm-up:", warmMbps.toFixed(2), "Mbps (nicht gewertet)");
       }
     }catch(e){
       console.warn("Upload warm-up failed:", e.message);
@@ -596,8 +683,7 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
   }
 
   /* ============================================================
-     MAIN FLOW (1:1 wie fasqoo.com: Ping → 2s Pause → 8s Download
-                → 2s Pause → 8s Upload)
+     MAIN FLOW – UNVERÄNDERT (Ping → 2s → 8s Download → 2s → 8s Upload)
      ============================================================ */
   async function startSpeedTest(){
     if(isRunning) return;
@@ -628,7 +714,7 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
       $("pingStatus").textContent = latency.ping < 30 ? "Excellent" : latency.ping < 60 ? "Good" : "High";
       $("jitterStatus").textContent = latency.jitter < 10 ? "Stable" : latency.jitter < 25 ? "Fair" : "Variable";
 
-      /* -------- 2s PAUSE (identisch zu fasqoo.com) -------- */
+      /* -------- 2s PAUSE -------- */
       setProgress(15, "Preparing download...");
       $("speedCaption").textContent = "Preparing download...";
       await sleep(2000);
@@ -642,7 +728,7 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
       $("speedCaption").textContent = "Download complete";
       setProgress(55, "Download complete");
 
-      /* -------- 2s PAUSE (identisch zu fasqoo.com) -------- */
+      /* -------- 2s PAUSE -------- */
       $("speedCaption").textContent = "Preparing upload...";
       await sleep(2000);
 
