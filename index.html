@@ -531,8 +531,7 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
         const displayRate = median(recentRates.slice(-win));
 
         if(Number.isFinite(displayRate) && displayRate > 0){
-          $("speed").textContent = formatMbps(displayRate);
-          updateSpeedArc(displayRate);
+          setLiveTarget(displayRate, "download");
           pushChartSample(displayRate);
         }
       }
@@ -705,10 +704,8 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
         const displayRate = median(recentRates.slice(-win));
 
         if(Number.isFinite(displayRate) && displayRate > 0){
-          $("speed").textContent = formatMbps(displayRate);
-          updateSpeedArc(displayRate);
+          setLiveTarget(displayRate, "upload");
           pushChartSample(displayRate);
-          $("upVal").innerHTML = formatMbps(displayRate) + "<span>Mbps</span>";
         }
       }
 
@@ -894,7 +891,7 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
     $("restartBtn").style.display = "none";
     $("detailsGrid").classList.remove("visible");
     $("progressWrapper").style.display = "block";
-    $("speed").textContent = "0";
+    resetLiveDisplay("download");
     $("unit").textContent = "Mbps";
     $("pingVal").innerHTML = "-<span>ms</span>";
     $("jitterVal").innerHTML = "-<span>ms</span>";
@@ -921,40 +918,32 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
         downloadMbps >= 100 ? "Strong" :
         downloadMbps >= 25 ? "Good" : "Limited";
 
-      // Download ist fertig: Tacho sofort auf 0 setzen.
-      $("speed").textContent = "0";
-      $("unit").textContent = "Mbps";
+      // Download ist fertig: Tacho sanft (animiert) auf 0 zurückschwingen lassen.
       $("speedCaption").textContent = "Download complete";
-      updateSpeedArc(0);
-
       $("upVal").innerHTML = "-<span>Mbps</span>";
       setProgress(55, "Download complete");
+      await animateMeterToZero(550);
 
-      // 2 Sekunden Pause bei 0 Mbps, bevor der echte Upload-Test startet.
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Kurze Pause bei 0 Mbps, bevor der echte Upload-Test startet.
+      await new Promise(resolve => setTimeout(resolve, 1450));
 
       // Echter Upload-Test: Der Tacho startet wieder bei 0 und
       // wird während der Messung durch measureUpload() live aktualisiert.
       phase = "Upload";
-      $("speed").textContent = "0";
-      $("unit").textContent = "Mbps";
+      resetLiveDisplay("upload");
       $("speedCaption").textContent = "Measuring upload...";
-      updateSpeedArc(0);
       setProgress(60, "Measuring Upload...");
 
       const uploadMbps = await measureUpload();
 
-      $("upVal").innerHTML = formatMbps(uploadMbps) + "<span>Mbps</span>";
       $("uploadStatus").textContent =
         uploadMbps >= 25 ? "Strong" :
         uploadMbps >= 5 ? "Good" : "Limited";
 
       // Nach dem Test bleibt der Tacho auf dem tatsächlich gemessenen
       // Upload-Wert stehen – nicht auf dem Download-Wert.
-      $("speed").textContent = formatMbps(uploadMbps);
-      $("unit").textContent = "Mbps";
       $("speedCaption").textContent = "Upload speed";
-      updateSpeedArc(uploadMbps);
+      finishLiveDisplay(uploadMbps, "upload");
       setProgress(100, "Test Complete");
 
       setTimeout(() => {
@@ -967,6 +956,7 @@ main{position:relative;z-index:1;padding:23px 0 30px}.hero{text-align:center;mar
     }catch(err){
       console.error("Real speed test error (" + phase + "):", err);
 
+      resetLiveDisplay();
       $("speed").textContent = "—";
       $("pingVal").innerHTML = "—<span>ms</span>";
       $("jitterVal").innerHTML = "—<span>ms</span>";
