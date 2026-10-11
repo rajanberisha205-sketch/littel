@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
@@ -30,21 +30,26 @@
 html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',system-ui,sans-serif;-webkit-text-size-adjust:100%}
 body{overflow-x:hidden}
 .wrap{width:min(1000px,calc(100% - 24px));margin:auto}
+
 header{position:relative;z-index:5;padding:12px 0;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(15px)}
-.nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);flex-shrink:0}
 .brandmark{height:28px;width:auto}
 .brandname{font-weight:800;font-size:16px;letter-spacing:-.5px}
-.nav-right{display:flex;gap:7px;align-items:center}
-.nav-link,.theme-toggle{border:1px solid var(--border);background:var(--panel);color:var(--text);font-weight:700;cursor:pointer}
+.nav-right{display:flex;gap:6px;align-items:center}
+.nav-link,.theme-toggle,.lang-select{border:1px solid var(--border);background:var(--panel);color:var(--text);font-weight:700;cursor:pointer;font-family:inherit}
 .nav-link{padding:7px 11px;border-radius:999px;text-decoration:none;font-size:11px}
-.theme-toggle{width:34px;height:34px;border-radius:50%;display:grid;place-items:center}
+.theme-toggle{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.lang-select{padding:6px 8px;border-radius:999px;font-size:11px;letter-spacing:.3px;-webkit-appearance:none;appearance:none;max-width:130px;text-overflow:ellipsis;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:22px}
+:root[data-theme="light"] .lang-select{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")}
+
 main{position:relative;z-index:1;padding:25px 0 40px}
 .test-panel{width:min(640px,100%);margin:auto;padding:15px;text-align:center}
 .start-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 0;gap:18px}
-.start-btn-circle{width:clamp(190px,45vw,240px);height:clamp(190px,45vw,240px);border-radius:50%;border:4px solid var(--accent);background:transparent;color:var(--accent);font-size:clamp(34px,7vw,44px);font-weight:800;letter-spacing:3px;cursor:pointer;transition:transform .25s ease,background .25s ease,color .25s ease,box-shadow .25s ease;box-shadow:0 0 35px var(--accent-glow);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+.start-btn-circle{width:clamp(190px,45vw,240px);height:clamp(190px,45vw,240px);border-radius:50%;border:4px solid var(--accent);background:transparent;color:var(--accent);font-size:clamp(30px,6vw,42px);font-weight:800;letter-spacing:2px;cursor:pointer;transition:transform .25s ease,background .25s ease,color .25s ease,box-shadow .25s ease;box-shadow:0 0 35px var(--accent-glow);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;text-align:center;padding:0 14px;line-height:1.1}
 .start-btn-circle:hover{transform:scale(1.03);background:var(--accent);color:#fff;box-shadow:0 0 50px var(--accent-glow)}
-.start-hint{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.5px}
+.start-hint{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.3px;max-width:320px;line-height:1.4}
+
 .gauge-container{display:none;position:relative;width:min(340px,85vw);margin:0 auto}
 .gauge-container.active{display:block;animation:gaugeIn .4s ease}
 @keyframes gaugeIn{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
@@ -53,7 +58,7 @@ main{position:relative;z-index:1;padding:25px 0 40px}
 .gauge-prog-arc{fill:none;stroke:var(--accent);stroke-width:20;stroke-linecap:round;stroke-dasharray:392.70;stroke-dashoffset:392.70;transition:stroke-dashoffset .12s linear}
 .gauge-needle{stroke:var(--text);stroke-width:5;stroke-linecap:round;transform-origin:150px 170px;will-change:transform}
 .gauge-center-dot{fill:var(--text)}
-.gauge-label-text{fill:var(--muted);font-size:10px;font-weight:700;text-anchor:middle;dominant-baseline:central;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.gauge-label-text{fill:var(--muted);font-size:9px;font-weight:700;text-anchor:middle;dominant-baseline:central;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 .speed-display-box{margin-top:-14px;text-align:center}
 .speed-num{font-size:clamp(48px,10vw,64px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-1px}
 .speed-unit-lbl{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:2px;margin-top:4px;text-transform:uppercase}
@@ -65,25 +70,28 @@ main{position:relative;z-index:1;padding:25px 0 40px}
 .retest-container.active{display:block;animation:gaugeIn .4s ease}
 .retest-btn{padding:12px 32px;border-radius:999px;border:2px solid var(--accent);background:transparent;color:var(--accent);font-size:13px;font-weight:800;letter-spacing:2px;cursor:pointer;transition:all .2s ease;font-family:inherit}
 .retest-btn:hover{background:var(--accent);color:#fff;box-shadow:0 0 25px var(--accent-glow)}
+
 .results-grid{display:grid;grid-template-columns:1fr 1fr;gap:25px 20px;margin-top:40px;text-align:left}
 .result-item{padding:5px}
 .result-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
 .result-val{font-size:clamp(26px,6vw,34px);font-weight:800;margin-top:3px;font-variant-numeric:tabular-nums}
 .result-unit{font-size:11px;font-weight:600;color:var(--muted);margin-top:1px}
+
 .network-info-box{margin-top:35px;text-align:left;display:flex;flex-direction:column;gap:12px;padding-top:20px;border-top:1px solid var(--border)}
 .net-row{display:flex;align-items:center;gap:12px}
 .net-icon{width:22px;height:22px;stroke:var(--muted);flex-shrink:0}
 .net-details{display:flex;flex-direction:column;min-width:0}
 .net-title{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .net-sub{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
 .comparison-section{margin-top:30px;padding:20px;border:1px solid var(--border);border-radius:16px;background:var(--panel);text-align:left;display:none}
 .comparison-section.active{display:block;animation:gaugeIn .45s ease}
-.comparison-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.comparison-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;flex-wrap:wrap}
 .comparison-title{font-size:11px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--muted)}
 .comparison-country{font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--accent);padding:3px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 12%,transparent);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent)}
 .comparison-subtitle{font-size:12px;color:var(--muted);margin:0 0 18px;line-height:1.5}
 .compare-row{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin-bottom:14px}
-.compare-name{font-size:11.5px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px;line-height:1.3}
+.compare-name{font-size:11.5px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px;line-height:1.3;flex-wrap:wrap}
 .compare-name .badge{font-size:9px;font-weight:800;letter-spacing:.5px;padding:2px 6px;border-radius:5px;background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent);text-transform:uppercase}
 .compare-val{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
 .compare-bar-track{grid-column:1/-1;height:8px;background:rgba(148,163,184,.13);border-radius:999px;overflow:hidden}
@@ -93,16 +101,39 @@ main{position:relative;z-index:1;padding:25px 0 40px}
 .insight-box{margin-top:8px;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--accent) 8%,transparent);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);font-size:12px;font-weight:600;line-height:1.5;color:var(--text)}
 .insight-box strong{color:var(--accent);font-weight:800}
 .insight-delta{font-variant-numeric:tabular-nums}
-.comparison-note{margin-top:14px;font-size:10.5px;line-height:1.55;color:var(--muted);padding-top:12px;border-top:1px dashed var(--border)}
-.comparison-note a{color:var(--accent);text-decoration:none}
+.comparison-note{margin-top:14px;font-size:10.5px;line-height:1.6;color:var(--muted);padding-top:12px;border-top:1px dashed var(--border)}
+.comparison-note a{color:var(--accent);text-decoration:none;font-weight:700}
 .comparison-note a:hover{text-decoration:underline}
-footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:18px 0;text-align:center;color:var(--muted);font-size:10px;background:var(--panel);margin-top:40px}
-.footer-title{color:var(--text);font-weight:800;font-size:11px}
-.footer-sub{margin-top:2px}
-.footer-links{display:flex;justify-content:center;gap:15px;margin-top:6px}
-.footer-link{color:var(--muted);text-decoration:none}
+
+footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:26px 0 30px;background:var(--panel);margin-top:40px}
+.footer-inner{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.footer-title{color:var(--text);font-weight:800;font-size:12px;letter-spacing:-.3px}
+.footer-sub{font-size:10.5px;color:var(--muted);font-weight:600}
+.footer-notice{max-width:660px;width:100%;font-size:10.5px;line-height:1.55;color:var(--muted);padding:10px 14px;border:1px dashed var(--border);border-radius:12px;background:color-mix(in srgb,var(--bg) 60%,transparent);font-weight:600}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 20px;margin-top:6px;width:100%}
+.footer-link{color:var(--muted);text-decoration:none;font-size:11px;font-weight:700;padding:4px 0}
 .footer-link:hover{color:var(--accent)}
-@media(max-width:500px){.results-grid{gap:15px 10px}}
+
+/* RTL support (Arabic) */
+[dir="rtl"] body { text-align: right; }
+[dir="rtl"] .result-val,
+[dir="rtl"] .speed-num,
+[dir="rtl"] .compare-val { direction: ltr; text-align: left; }
+[dir="rtl"] .compare-val { text-align: left; }
+[dir="rtl"] .net-title,
+[dir="rtl"] .net-sub { text-align: right; }
+
+@media(max-width:520px){
+  .results-grid{gap:15px 10px}
+  .brandname{display:none}
+  .nav-link{padding:6px 9px;font-size:10.5px}
+  .lang-select{font-size:10.5px;padding:6px 6px;padding-right:20px;background-position:right 5px center;max-width:110px}
+  .theme-toggle{width:30px;height:30px}
+  header{padding:10px 0}
+  footer{padding:22px 0 26px}
+  .footer-notice{font-size:10px;padding:9px 11px}
+  .footer-title{font-size:11px}
+}
 </style>
 </head>
 <body>
@@ -115,7 +146,19 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:18
     </a>
     <div class="nav-right">
       <button type="button" class="nav-link" id="installBtn" style="display:none" onclick="installPWA()"><span>Install App</span></button>
-      <a href="https://fasqoo.com" class="nav-link" title="Main Website"><span>Fasqoo.com</span></a>
+      <a href="https://fasqoo.com" class="nav-link" title="Fasqoo.com"><span>Fasqoo.com</span></a>
+      <select id="langSelect" class="lang-select" aria-label="Language">
+        <option value="en">🇺🇸 English</option>
+        <option value="de">🇩🇪 Deutsch</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="es">🇪🇸 Español</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="pt">🇵🇹 Português</option>
+        <option value="nl">🇳🇱 Nederlands</option>
+        <option value="tr">🇹🇷 Türkçe</option>
+        <option value="sq">🇦🇱 Shqip</option>
+        <option value="ar">🇸🇦 العربية</option>
+      </select>
       <button type="button" class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle theme">
         <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       </button>
@@ -128,7 +171,7 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:18
     <section class="test-panel">
       <div id="startContainer" class="start-container">
         <button class="start-btn-circle" id="startBtn" onclick="startSpeedTest()">GO</button>
-        <div class="start-hint">Tap GO to begin the Cloudflare speed test</div>
+        <div id="startHint" class="start-hint">Tap GO to begin the Cloudflare speed test</div>
       </div>
 
       <div id="gaugeContainer" class="gauge-container">
@@ -148,14 +191,30 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:18
       </div>
 
       <div id="retestContainer" class="retest-container">
-        <button class="retest-btn" onclick="startSpeedTest()">TEST AGAIN</button>
+        <button class="retest-btn" id="retestBtn" onclick="startSpeedTest()">TEST AGAIN</button>
       </div>
 
       <div class="results-grid">
-        <div class="result-item"><div class="result-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>PING</div><div id="pingVal" class="result-val">--</div><div class="result-unit">ms</div></div>
-        <div class="result-item"><div class="result-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>DOWNLOAD</div><div id="downVal" class="result-val">--</div><div class="result-unit">Mbps</div></div>
-        <div class="result-item"><div class="result-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>JITTER</div><div id="jitterVal" class="result-val">--</div><div class="result-unit">ms</div></div>
-        <div class="result-item"><div class="result-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>UPLOAD</div><div id="upVal" class="result-val">--</div><div class="result-unit">Mbps</div></div>
+        <div class="result-item">
+          <div class="result-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span id="lblPing">PING</span></div>
+          <div id="pingVal" class="result-val">--</div>
+          <div class="result-unit">ms</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg><span id="lblDownload">DOWNLOAD</span></div>
+          <div id="downVal" class="result-val">--</div>
+          <div class="result-unit">Mbps</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span id="lblJitter">JITTER</span></div>
+          <div id="jitterVal" class="result-val">--</div>
+          <div class="result-unit">ms</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg><span id="lblUpload">UPLOAD</span></div>
+          <div id="upVal" class="result-val">--</div>
+          <div class="result-unit">Mbps</div>
+        </div>
       </div>
 
       <div class="network-info-box">
@@ -184,11 +243,12 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:18
 </main>
 
 <footer>
-  <div class="wrap">
-    <div class="footer-title">Fasqoo Lite • Speedtest Engine v9.2</div>
-    <div class="footer-sub">Real Cloudflare Edge measurement</div>
+  <div class="wrap footer-inner">
+    <div class="footer-title">Fasqoo Lite • Speedtest Engine v10.1</div>
+    <div class="footer-sub" id="footerSub">Real Cloudflare Edge measurement</div>
+    <div class="footer-notice" id="footerNotice">Fasqoo is an independent speed-test platform and is not an official Cloudflare product.</div>
     <div class="footer-links">
-      <a href="https://www.fasqoo.com/privacy-policy.html" class="footer-link">Privacy Policy</a>
+      <a href="https://www.fasqoo.com/privacy-policy.html" class="footer-link" id="footerPrivacy">Privacy Policy</a>
       <a href="https://www.fasqoo.com" class="footer-link">Fasqoo.com</a>
     </div>
   </div>
@@ -197,18 +257,44 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:18
 <script>
 const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-let isRunning = false;
-let deferredPrompt = null;
+let isRunning = false, deferredPrompt = null;
 let userCountry = "", userCountryCode = "", userIspName = "";
 
 const SPEED_BASE = "https://speed.cloudflare.com";
 const DOWN_BYTES = 50 * 1024 * 1024;
 const UP_BYTES = 15 * 1024 * 1024;
-const DOWN_MS = 12000;
-const UP_MS = 12000;
-const PING_COUNT = 6;
+const DOWN_MS = 12000, UP_MS = 12000, PING_COUNT = 6;
 
+/* =========================================================
+   TRANSLATIONS — same 10 languages as www.fasqoo.com
+   ========================================================= */
+const I18N = {
+  en:{startHint:"Tap GO to begin the Cloudflare speed test",go:"GO",testAgain:"TEST AGAIN",phaseWarmup:"Warming up connection…",phaseLatency:"Measuring latency…",phaseDownload:"Measuring download…",phaseUpload:"Measuring upload…",phaseComplete:"Test complete",phaseFailed:"Test failed",phaseReady:"Ready",ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",detecting:"Detecting internet provider...",cloudflareEdge:"Cloudflare Edge Server",cloudflareEndpoint:"Cloudflare Edge endpoint",providerUnavailable:"Provider unavailable",ipUnavailable:"IP information unavailable",locationUnavailable:"Location unavailable",howYouCompare:"How you compare",compareSubtitle:"Your measured download speed compared to regional averages.",yourResult:"Your result",yourProvider:"your provider",yourMeasuredDownload:"Your measured download",countryAvg:"{country} average",noValid:"No valid measurement for comparison.",avgAbove:"You're <strong>{pct}</strong> above the {country} national average ({speed} vs {avg}).",avgBelow:"You're <strong>{pct}</strong> below the {country} national average ({speed} vs {avg}).",avgNear:"You're near the {country} national average ({speed} vs {avg}).",vsProvider:"vs. {name} ({avg} Mbps avg): ",noRegionData:"Regional comparison data is not yet available for {country}.",measuredIn:"Measured download speed in {country}.",privacy:"Privacy Policy",footerSub:"Real Cloudflare Edge measurement",disclaimer:'National and provider averages are based on publicly reported broadband data from sources such as <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, the <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a>, and national regulators (<strong>2023–2024</strong>). These figures represent <strong>typical national averages</strong> and are <strong>not live measurements</strong> of any single provider\'s current network performance. Individual results may vary by plan, time of day, and network load.',footerNotice:"Fasqoo is an independent speed-test platform and is not an official Cloudflare product."},
+
+  de:{startHint:"Tippe auf LOS, um den Cloudflare-Speedtest zu starten",go:"LOS",testAgain:"ERNEUT TESTEN",phaseWarmup:"Verbindung wird aufgebaut…",phaseLatency:"Latenz wird gemessen…",phaseDownload:"Download wird gemessen…",phaseUpload:"Upload wird gemessen…",phaseComplete:"Test abgeschlossen",phaseFailed:"Test fehlgeschlagen",phaseReady:"Bereit",ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",detecting:"Internetanbieter wird erkannt...",cloudflareEdge:"Cloudflare Edge Server",cloudflareEndpoint:"Cloudflare Edge Endpunkt",providerUnavailable:"Anbieter nicht verfügbar",ipUnavailable:"IP-Information nicht verfügbar",locationUnavailable:"Standort nicht verfügbar",howYouCompare:"Dein Vergleich",compareSubtitle:"Deine gemessene Download-Geschwindigkeit im Vergleich zu regionalen Durchschnitten.",yourResult:"Dein Ergebnis",yourProvider:"dein Anbieter",yourMeasuredDownload:"Dein gemessener Download",countryAvg:"Durchschnitt {country}",noValid:"Keine gültige Messung für den Vergleich.",avgAbove:"Du liegst <strong>{pct}</strong> über dem Landesdurchschnitt von {country} ({speed} vs. {avg}).",avgBelow:"Du liegst <strong>{pct}</strong> unter dem Landesdurchschnitt von {country} ({speed} vs. {avg}).",avgNear:"Du liegst etwa auf dem Landesdurchschnitt von {country} ({speed} vs. {avg}).",vsProvider:"vs. {name} ({avg} Mbps Ø): ",noRegionData:"Regionale Vergleichsdaten für {country} sind noch nicht verfügbar.",measuredIn:"Gemessene Download-Geschwindigkeit in {country}.",privacy:"Datenschutz",footerSub:"Echte Cloudflare-Edge-Messung",disclaimer:'Nationale und Anbieter-Durchschnitte basieren auf öffentlich gemeldeten Breitband-Daten von Quellen wie <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, dem <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> und nationalen Regulierungsbehörden (<strong>2023–2024</strong>). Diese Werte sind <strong>typische nationale Durchschnitte</strong> und <strong>keine Live-Messungen</strong> der aktuellen Netzwerkleistung eines einzelnen Anbieters. Individuelle Ergebnisse können je nach Tarif, Tageszeit und Netzauslastung variieren.',footerNotice:"Fasqoo ist eine unabhängige Speedtest-Plattform und kein offizielles Cloudflare-Produkt."},
+
+  fr:{startHint:"Appuyez sur GO pour lancer le test de vitesse Cloudflare",go:"GO",testAgain:"RETESTER",phaseWarmup:"Préparation de la connexion…",phaseLatency:"Mesure de la latence…",phaseDownload:"Mesure du téléchargement…",phaseUpload:"Mesure de l'envoi…",phaseComplete:"Test terminé",phaseFailed:"Test échoué",phaseReady:"Prêt",ping:"PING",download:"TÉLÉCHARGEMENT",jitter:"GIGUE",upload:"ENVOI",detecting:"Détection du fournisseur d'accès...",cloudflareEdge:"Serveur Cloudflare Edge",cloudflareEndpoint:"Point de terminaison Cloudflare Edge",providerUnavailable:"Fournisseur indisponible",ipUnavailable:"Informations IP indisponibles",locationUnavailable:"Localisation indisponible",howYouCompare:"Votre comparaison",compareSubtitle:"Votre débit descendant mesuré comparé aux moyennes régionales.",yourResult:"Votre résultat",yourProvider:"votre fournisseur",yourMeasuredDownload:"Votre téléchargement mesuré",countryAvg:"Moyenne {country}",noValid:"Aucune mesure valide pour la comparaison.",avgAbove:"Vous êtes <strong>{pct}</strong> au-dessus de la moyenne nationale de {country} ({speed} vs {avg}).",avgBelow:"Vous êtes <strong>{pct}</strong> en dessous de la moyenne nationale de {country} ({speed} vs {avg}).",avgNear:"Vous êtes proche de la moyenne nationale de {country} ({speed} vs {avg}).",vsProvider:"vs {name} ({avg} Mbps moy.) : ",noRegionData:"Les données de comparaison régionale pour {country} ne sont pas encore disponibles.",measuredIn:"Débit descendant mesuré en {country}.",privacy:"Confidentialité",footerSub:"Mesure réelle de Cloudflare Edge",disclaimer:'Les moyennes nationales et des fournisseurs sont basées sur des données de haut débit publiquement rapportées provenant de sources telles que <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, l\'<a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> et les régulateurs nationaux (<strong>2023–2024</strong>). Ces chiffres représentent des <strong>moyennes nationales typiques</strong> et ne sont <strong>pas des mesures en direct</strong> de la performance actuelle du réseau d\'un fournisseur particulier. Les résultats individuels peuvent varier selon le forfait, l\'heure de la journée et la charge du réseau.',footerNotice:"Fasqoo est une plateforme de test de vitesse indépendante et n'est pas un produit officiel de Cloudflare."},
+
+  es:{startHint:"Toca IR para comenzar la prueba de velocidad de Cloudflare",go:"IR",testAgain:"REPETIR",phaseWarmup:"Preparando la conexión…",phaseLatency:"Midiendo la latencia…",phaseDownload:"Midiendo la descarga…",phaseUpload:"Midiendo la subida…",phaseComplete:"Prueba completada",phaseFailed:"Prueba fallida",phaseReady:"Listo",ping:"PING",download:"DESCARGA",jitter:"JITTER",upload:"SUBIDA",detecting:"Detectando el proveedor de Internet...",cloudflareEdge:"Servidor Cloudflare Edge",cloudflareEndpoint:"Punto final Cloudflare Edge",providerUnavailable:"Proveedor no disponible",ipUnavailable:"Información de IP no disponible",locationUnavailable:"Ubicación no disponible",howYouCompare:"Tu comparación",compareSubtitle:"Tu velocidad de descarga medida frente a las medias regionales.",yourResult:"Tu resultado",yourProvider:"tu proveedor",yourMeasuredDownload:"Tu descarga medida",countryAvg:"Media de {country}",noValid:"No hay medición válida para comparar.",avgAbove:"Estás <strong>{pct}</strong> por encima de la media nacional de {country} ({speed} vs {avg}).",avgBelow:"Estás <strong>{pct}</strong> por debajo de la media nacional de {country} ({speed} vs {avg}).",avgNear:"Estás cerca de la media nacional de {country} ({speed} vs {avg}).",vsProvider:"vs {name} ({avg} Mbps media): ",noRegionData:"Los datos de comparación regional para {country} aún no están disponibles.",measuredIn:"Velocidad de descarga medida en {country}.",privacy:"Privacidad",footerSub:"Medición real de Cloudflare Edge",disclaimer:'Las medias nacionales y de proveedores se basan en datos de banda ancha reportados públicamente de fuentes como <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, el <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> y los reguladores nacionales (<strong>2023–2024</strong>). Estas cifras representan <strong>medias nacionales típicas</strong> y <strong>no son mediciones en vivo</strong> del rendimiento actual de la red de ningún proveedor individual. Los resultados individuales pueden variar según el plan, la hora del día y la carga de la red.',footerNotice:"Fasqoo es una plataforma independiente de pruebas de velocidad y no es un producto oficial de Cloudflare."},
+
+  it:{startHint:"Tocca VIA per iniziare il test di velocità Cloudflare",go:"VIA",testAgain:"RIPROVA",phaseWarmup:"Preparazione della connessione…",phaseLatency:"Misurazione della latenza…",phaseDownload:"Misurazione del download…",phaseUpload:"Misurazione dell'upload…",phaseComplete:"Test completato",phaseFailed:"Test non riuscito",phaseReady:"Pronto",ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",detecting:"Rilevamento del provider Internet...",cloudflareEdge:"Server Cloudflare Edge",cloudflareEndpoint:"Endpoint Cloudflare Edge",providerUnavailable:"Provider non disponibile",ipUnavailable:"Informazioni IP non disponibili",locationUnavailable:"Posizione non disponibile",howYouCompare:"Il tuo confronto",compareSubtitle:"La tua velocità di download misurata rispetto alle medie regionali.",yourResult:"Il tuo risultato",yourProvider:"il tuo provider",yourMeasuredDownload:"Il tuo download misurato",countryAvg:"Media {country}",noValid:"Nessuna misurazione valida per il confronto.",avgAbove:"Sei <strong>{pct}</strong> sopra la media nazionale di {country} ({speed} vs {avg}).",avgBelow:"Sei <strong>{pct}</strong> sotto la media nazionale di {country} ({speed} vs {avg}).",avgNear:"Sei vicino alla media nazionale di {country} ({speed} vs {avg}).",vsProvider:"vs {name} ({avg} Mbps media): ",noRegionData:"I dati di confronto regionale per {country} non sono ancora disponibili.",measuredIn:"Velocità di download misurata in {country}.",privacy:"Privacy",footerSub:"Misurazione reale Cloudflare Edge",disclaimer:'Le medie nazionali e dei provider si basano su dati broadband resi pubblicamente disponibili da fonti come <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, l\'<a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> e i regolatori nazionali (<strong>2023–2024</strong>). Questi valori rappresentano <strong>medie nazionali tipiche</strong> e <strong>non sono misurazioni in tempo reale</strong> delle prestazioni attuali della rete di un singolo provider. I risultati individuali possono variare in base al piano, all\'ora del giorno e al carico della rete.',footerNotice:"Fasqoo è una piattaforma di speed test indipendente e non è un prodotto ufficiale di Cloudflare."},
+
+  pt:{startHint:"Toque em IR para iniciar o teste de velocidade Cloudflare",go:"IR",testAgain:"TESTAR NOVAMENTE",phaseWarmup:"Preparando conexão…",phaseLatency:"Medindo latência…",phaseDownload:"Medindo download…",phaseUpload:"Medindo upload…",phaseComplete:"Teste concluído",phaseFailed:"Teste falhou",phaseReady:"Pronto",ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",detecting:"Detectando provedor de internet...",cloudflareEdge:"Servidor Cloudflare Edge",cloudflareEndpoint:"Endpoint Cloudflare Edge",providerUnavailable:"Provedor indisponível",ipUnavailable:"Informação de IP indisponível",locationUnavailable:"Localização indisponível",howYouCompare:"Sua comparação",compareSubtitle:"Sua velocidade de download medida em comparação com as médias regionais.",yourResult:"Seu resultado",yourProvider:"seu provedor",yourMeasuredDownload:"Seu download medido",countryAvg:"Média {country}",noValid:"Nenhuma medição válida para comparação.",avgAbove:"Você está <strong>{pct}</strong> acima da média nacional de {country} ({speed} vs {avg}).",avgBelow:"Você está <strong>{pct}</strong> abaixo da média nacional de {country} ({speed} vs {avg}).",avgNear:"Você está próximo da média nacional de {country} ({speed} vs {avg}).",vsProvider:"vs {name} ({avg} Mbps média): ",noRegionData:"Dados de comparação regional para {country} ainda não disponíveis.",measuredIn:"Velocidade de download medida em {country}.",privacy:"Privacidade",footerSub:"Medição real do Cloudflare Edge",disclaimer:'As médias nacionais e de provedores são baseadas em dados de banda larga publicamente relatados de fontes como <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, o <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> e reguladores nacionais (<strong>2023–2024</strong>). Esses números representam <strong>médias nacionais típicas</strong> e <strong>não são medições ao vivo</strong> do desempenho atual da rede de qualquer provedor individual. Os resultados individuais podem variar de acordo com o plano, a hora do dia e a carga da rede.',footerNotice:"A Fasqoo é uma plataforma independente de teste de velocidade e não é um produto oficial do Cloudflare."},
+
+  nl:{startHint:"Tik op START om de Cloudflare-snelheidstest te beginnen",go:"START",testAgain:"OPNIEUW TESTEN",phaseWarmup:"Verbinding voorbereiden…",phaseLatency:"Latentie meten…",phaseDownload:"Download meten…",phaseUpload:"Upload meten…",phaseComplete:"Test voltooid",phaseFailed:"Test mislukt",phaseReady:"Gereed",ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",detecting:"Internetprovider detecteren...",cloudflareEdge:"Cloudflare Edge-server",cloudflareEndpoint:"Cloudflare Edge-eindpunt",providerUnavailable:"Provider niet beschikbaar",ipUnavailable:"IP-informatie niet beschikbaar",locationUnavailable:"Locatie niet beschikbaar",howYouCompare:"Jouw vergelijking",compareSubtitle:"Je gemeten downloadsnelheid vergeleken met regionale gemiddelden.",yourResult:"Jouw resultaat",yourProvider:"jouw provider",yourMeasuredDownload:"Je gemeten download",countryAvg:"Gemiddelde {country}",noValid:"Geen geldige meting voor vergelijking.",avgAbove:"Je zit <strong>{pct}</strong> boven het landelijk gemiddelde van {country} ({speed} vs {avg}).",avgBelow:"Je zit <strong>{pct}</strong> onder het landelijk gemiddelde van {country} ({speed} vs {avg}).",avgNear:"Je zit ongeveer op het landelijk gemiddelde van {country} ({speed} vs {avg}).",vsProvider:"vs {name} ({avg} Mbps gem.): ",noRegionData:"Regionale vergelijkingsgegevens voor {country} zijn nog niet beschikbaar.",measuredIn:"Gemeten downloadsnelheid in {country}.",privacy:"Privacy",footerSub:"Echte Cloudflare Edge-meting",disclaimer:'Nationale en provider-gemiddelden zijn gebaseerd op openbaar gerapporteerde breedbandgegevens van bronnen zoals <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, de <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> en nationale regulators (<strong>2023–2024</strong>). Deze cijfers vertegenwoordigen <strong>typische nationale gemiddelden</strong> en zijn <strong>geen live metingen</strong> van de huidige netwerkprestaties van een individuele provider. Individuele resultaten kunnen variëren op basis van abonnement, tijdstip en netwerkbelasting.',footerNotice:"Fasqoo is een onafhankelijk snelheidstestplatform en is geen officieel Cloudflare-product."},
+
+  tr:{startHint:"Cloudflare hız testini başlatmak için BAŞLA'ya dokunun",go:"BAŞLA",testAgain:"TEKRAR DENE",phaseWarmup:"Bağlantı hazırlanıyor…",phaseLatency:"Gecikme ölçülüyor…",phaseDownload:"İndirme ölçülüyor…",phaseUpload:"Yükleme ölçülüyor…",phaseComplete:"Test tamamlandı",phaseFailed:"Test başarısız",phaseReady:"Hazır",ping:"PING",download:"İNDİRME",jitter:"JITTER",upload:"YÜKLEME",detecting:"İnternet sağlayıcısı algılanıyor...",cloudflareEdge:"Cloudflare Edge Sunucusu",cloudflareEndpoint:"Cloudflare Edge uç noktası",providerUnavailable:"Sağlayıcı kullanılamıyor",ipUnavailable:"IP bilgisi kullanılamıyor",locationUnavailable:"Konum kullanılamıyor",howYouCompare:"Karşılaştırmanız",compareSubtitle:"Ölçülen indirme hızınız bölgesel ortalamalarla karşılaştırıldı.",yourResult:"Sonucunuz",yourProvider:"sağlayıcınız",yourMeasuredDownload:"Ölçülen indirmeniz",countryAvg:"{country} ortalaması",noValid:"Karşılaştırma için geçerli ölçüm yok.",avgAbove:"{country} ulusal ortalamasının <strong>{pct}</strong> üzerindesiniz ({speed} vs. {avg}).",avgBelow:"{country} ulusal ortalamasının <strong>{pct}</strong> altındasınız ({speed} vs. {avg}).",avgNear:"{country} ulusal ortalamasına yakınsınız ({speed} vs. {avg}).",vsProvider:"vs. {name} ({avg} Mbps ort.): ",noRegionData:"{country} için bölgesel karşılaştırma verileri henüz mevcut değil.",measuredIn:"{country} içinde ölçülen indirme hızı.",privacy:"Gizlilik",footerSub:"Gerçek Cloudflare Edge ölçümü",disclaimer:'Ulusal ve sağlayıcı ortalamaları, <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> ve ulusal düzenleyiciler (<strong>2023–2024</strong>) gibi kaynaklardan kamuya açıklanmış geniş bant verilerine dayanmaktadır. Bu rakamlar <strong>tipik ulusal ortalamaları</strong> temsil eder ve herhangi bir sağlayıcının mevcut ağ performansının <strong>canlı ölçümleri değildir</strong>. Bireysel sonuçlar tarifeye, günün saatine ve ağ yüküne göre değişebilir.',footerNotice:"Fasqoo bağımsız bir hız testi platformudur ve resmi bir Cloudflare ürünü değildir."},
+
+  sq:{startHint:"Shtyp FILLO për të nisur testin e shpejtësisë Cloudflare",go:"FILLO",testAgain:"PROVO PËRSËRI",phaseWarmup:"Lidhja po përgatitet…",phaseLatency:"Matja e vonesës…",phaseDownload:"Matja e shkarkimit…",phaseUpload:"Matja e ngarkimit…",phaseComplete:"Testi përfundoi",phaseFailed:"Testi dështoi",phaseReady:"Gati",ping:"PING",download:"SHKARKIM",jitter:"JITTER",upload:"NGARKIM",detecting:"Zbulimi i ofruesit të internetit...",cloudflareEdge:"Serveri Cloudflare Edge",cloudflareEndpoint:"Pika Cloudflare Edge",providerUnavailable:"Ofruesi i padisponueshëm",ipUnavailable:"Informacioni i IP-së i padisponueshëm",locationUnavailable:"Vendndodhja e padisponueshme",howYouCompare:"Krahasimi juaj",compareSubtitle:"Shpejtësia juaj e matur e shkarkimit në krahasim me mesataret rajonale.",yourResult:"Rezultati juaj",yourProvider:"ofruesi juaj",yourMeasuredDownload:"Shkarkimi i matur",countryAvg:"Mesatarja e {country}",noValid:"Nuk ka matje të vlefshme për krahasim.",avgAbove:"Ju jeni <strong>{pct}</strong> mbi mesataren kombëtare të {country} ({speed} vs. {avg}).",avgBelow:"Ju jeni <strong>{pct}</strong> nën mesataren kombëtare të {country} ({speed} vs. {avg}).",avgNear:"Ju jeni afër mesatares kombëtare të {country} ({speed} vs. {avg}).",vsProvider:"vs. {name} ({avg} Mbps mes.): ",noRegionData:"Të dhënat e krahasimit rajonal për {country} nuk janë ende të disponueshme.",measuredIn:"Shpejtësia e matur e shkarkimit në {country}.",privacy:"Politika e privatësisë",footerSub:"Matje reale e Cloudflare Edge",disclaimer:'Mesataret kombëtare dhe të ofruesve bazohen në të dhëna publike të raportuara për broadband nga burime si <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> dhe rregullatorët kombëtarë (<strong>2023–2024</strong>). Këto shifra përfaqësojnë <strong>mesatare tipike kombëtare</strong> dhe <strong>nuk janë matje të drejtpërdrejta</strong> të performancës aktuale të rrjetit të një ofruesi të vetëm. Rezultatet individuale mund të ndryshojnë sipas planit, kohës së ditës dhe ngarkesës së rrjetit.',footerNotice:"Fasqoo është një platformë e pavarur e testit të shpejtësisë dhe nuk është produkt zyrtar i Cloudflare."},
+
+  ar:{startHint:"اضغط على ابدأ لبدء اختبار سرعة Cloudflare",go:"ابدأ",testAgain:"إعادة الاختبار",phaseWarmup:"جاري تحضير الاتصال…",phaseLatency:"قياس زمن الاستجابة…",phaseDownload:"قياس التنزيل…",phaseUpload:"قياس الرفع…",phaseComplete:"اكتمل الاختبار",phaseFailed:"فشل الاختبار",phaseReady:"جاهز",ping:"PING",download:"تنزيل",jitter:"JITTER",upload:"رفع",detecting:"جاري اكتشاف مزود الإنترنت...",cloudflareEdge:"خادم Cloudflare Edge",cloudflareEndpoint:"نقطة نهاية Cloudflare Edge",providerUnavailable:"المزود غير متاح",ipUnavailable:"معلومات IP غير متاحة",locationUnavailable:"الموقع غير متاح",howYouCompare:"مقارنتك",compareSubtitle:"سرعة التنزيل التي قمت بقياسها مقارنة بالمتوسطات الإقليمية.",yourResult:"نتيجتك",yourProvider:"مزودك",yourMeasuredDownload:"تنزيلك المقاس",countryAvg:"متوسط {country}",noValid:"لا يوجد قياس صالح للمقارنة.",avgAbove:"أنت <strong>{pct}</strong> فوق المتوسط الوطني لـ {country} ({speed} مقابل {avg}).",avgBelow:"أنت <strong>{pct}</strong> تحت المتوسط الوطني لـ {country} ({speed} مقابل {avg}).",avgNear:"أنت قريب من المتوسط الوطني لـ {country} ({speed} مقابل {avg}).",vsProvider:"مقابل {name} (متوسط {avg} Mbps): ",noRegionData:"بيانات المقارنة الإقليمية لـ {country} غير متاحة بعد.",measuredIn:"سرعة التنزيل المقاسة في {country}.",privacy:"سياسة الخصوصية",footerSub:"قياس حقيقي لـ Cloudflare Edge",disclaimer:'تستند المتوسطات الوطنية ومتوسطات المزودين إلى بيانات النطاق العريض المعلنة علنًا من مصادر مثل <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a> و <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> والجهات التنظيمية الوطنية (<strong>2023–2024</strong>). تمثل هذه الأرقام <strong>متوسطات وطنية نموذجية</strong> وليست <strong>قياسات حية</strong> لأداء شبكة أي مزود فردي. قد تختلف النتائج الفردية حسب الخطة والوقت من اليوم وحمل الشبكة.',footerNotice:"Fasqoo هي منصة اختبار سرعة مستقلة وليست منتجًا رسميًا لـ Cloudflare."}
+};
+
+let currentT = I18N.en;
+
+/* =========================================================
+   ISP DATA
+   ========================================================= */
 const ISP_DATA = {
   XK:{name:"Kosovo",avg:38,providers:[{name:"Kujtesa",avg:52,aliases:["kujtesa"]},{name:"IPKO",avg:45,aliases:["ipko"]},{name:"Artmotion",avg:31,aliases:["artmotion","art motion"]},{name:"Telekom Kosova",avg:28,aliases:["telekom","vala","kosova"]}]},
   AL:{name:"Albania",avg:40,providers:[{name:"Digicom",avg:52,aliases:["digicom"]},{name:"One Albania",avg:44,aliases:["one"]},{name:"Vodafone Albania",avg:38,aliases:["vodafone"]}]},
@@ -249,16 +335,22 @@ const ISP_DATA = {
   SA:{name:"Saudi Arabia",avg:90,providers:[{name:"STC",avg:105,aliases:["stc"]},{name:"Mobily",avg:92,aliases:["mobily"]},{name:"Zain SA",avg:85,aliases:["zain"]}]}
 };
 
+/* =========================================================
+   HELPERS
+   ========================================================= */
 const debugLines = [];
-function dbgLog(line){
-  debugLines.push(line);
-  if (debugLines.length > 20) debugLines.shift();
-  const box = $("debugBox");
-  if (box){ box.textContent = debugLines.join("\n"); box.classList.add("show"); box.classList.remove("ok"); box.scrollTop = box.scrollHeight; }
-}
-function dbgClear(){ debugLines.length = 0; const b=$("debugBox"); if(b){b.textContent="";b.classList.remove("show","ok");} }
+function dbgLog(line){ debugLines.push(line); if(debugLines.length>20) debugLines.shift(); const box=$("debugBox"); if(box){box.textContent=debugLines.join("\n");box.classList.add("show");box.classList.remove("ok");box.scrollTop=box.scrollHeight;} }
+function dbgClear(){ debugLines.length=0; const b=$("debugBox"); if(b){b.textContent="";b.classList.remove("show","ok");} }
 function dbgOk(msg){ const b=$("debugBox"); if(b){ b.textContent=msg; b.classList.add("show","ok"); } }
+function fmt(tpl, vars){ return String(tpl).replace(/\{(\w+)\}/g, (_, k) => vars[k] !== undefined ? vars[k] : ""); }
+function escapeHtml(v){ return String(v).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch])); }
+function formatMbps(v){ if(!Number.isFinite(v)) return "--"; if(v<10) return v.toFixed(2); if(v<100) return v.toFixed(1); return Math.round(v).toString(); }
+function robustMedian(vals){ if(!vals.length) return 0; const a=[...vals].sort((x,y)=>x-y); const mid=Math.floor(a.length/2); return a.length%2!==0?a[mid]:(a[mid-1]+a[mid])/2; }
+function percentile(vals, p){ if(!vals.length) return 0; const a=[...vals].sort((x,y)=>x-y); const idx=Math.min(a.length-1,Math.max(0,Math.round((p/100)*(a.length-1)))); return a[idx]; }
 
+/* =========================================================
+   THEME
+   ========================================================= */
 function toggleTheme(){
   const html = document.documentElement;
   const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -271,18 +363,68 @@ function updateThemeIcon(theme){
   if(theme === "light"){ icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'; }
   else { icon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>'; }
 }
-window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; if ($('installBtn')) $('installBtn').style.display = 'inline-flex'; });
+
+/* =========================================================
+   LANGUAGE
+   ========================================================= */
+function detectLang(){
+  const saved = localStorage.getItem("fasqoo_lang");
+  if (saved && I18N[saved]) return saved;
+  const nav = (navigator.language || "en").slice(0,2).toLowerCase();
+  if (I18N[nav]) return nav;
+  return "en";
+}
+function applyLanguage(code){
+  const t = I18N[code] || I18N.en;
+  currentT = t;
+  document.documentElement.lang = code;
+  document.documentElement.dir = (code === "ar") ? "rtl" : "ltr";
+  $("startBtn").textContent = t.go;
+  $("startHint").textContent = t.startHint;
+  $("retestBtn").textContent = t.testAgain;
+  $("lblPing").textContent = t.ping;
+  $("lblDownload").textContent = t.download;
+  $("lblJitter").textContent = t.jitter;
+  $("lblUpload").textContent = t.upload;
+  $("footerSub").textContent = t.footerSub;
+  $("footerNotice").textContent = t.footerNotice;
+  $("footerPrivacy").textContent = t.privacy;
+  if (!$("phaseLabel").dataset.running) $("phaseLabel").textContent = t.phaseReady;
+  if (!userIspName) $("ispVal").textContent = t.detecting;
+  $("serverVal").textContent = t.cloudflareEdge;
+  if (!userCountry && $("locationVal").textContent.trim() === "--") $("locationVal").textContent = t.cloudflareEndpoint;
+  if ($("comparisonSection").classList.contains("active") && $("downVal").dataset.value) {
+    const v = parseFloat($("downVal").dataset.value);
+    if (Number.isFinite(v) && v > 0) renderProviderComparison(v);
+  }
+}
+function setLanguage(code){ localStorage.setItem("fasqoo_lang", code); applyLanguage(code); $("langSelect").value = code; }
+
+/* =========================================================
+   PWA
+   ========================================================= */
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; if($('installBtn')) $('installBtn').style.display = 'inline-flex'; });
 function installPWA() { if (!deferredPrompt) return; deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => { $('installBtn').style.display = 'none'; }); }
 
+/* =========================================================
+   INIT
+   ========================================================= */
 window.addEventListener("DOMContentLoaded", () => {
   const savedTheme = localStorage.getItem("fasqoo_theme") || "dark";
   document.documentElement.setAttribute("data-theme", savedTheme);
   updateThemeIcon(savedTheme);
+  const lang = detectLang();
+  $("langSelect").value = lang;
+  applyLanguage(lang);
+  $("langSelect").addEventListener("change", (e) => setLanguage(e.target.value));
   buildGaugeLabels();
   renderGauge(0);
   fetchIpInfo();
 });
 
+/* =========================================================
+   IP LOOKUP
+   ========================================================= */
 async function fetchIpInfo(){
   try{
     const res = await fetch("https://ipwho.is/", {cache:"no-store"});
@@ -292,31 +434,34 @@ async function fetchIpInfo(){
     userIspName = data.connection?.isp || data.connection?.org || "";
     userCountry = data.country || "";
     userCountryCode = (data.country_code || "").toUpperCase();
-    $("ispVal").textContent = userIspName || "Provider unavailable";
+    $("ispVal").textContent = userIspName || currentT.providerUnavailable;
     $("ipVal").textContent = [data.ip, data.city].filter(Boolean).join(" • ") || "IP unavailable";
-    $("locationVal").textContent = [data.region, userCountry].filter(Boolean).join(", ") || "Location unavailable";
+    $("locationVal").textContent = [data.region, userCountry].filter(Boolean).join(", ") || currentT.locationUnavailable;
     const badge = $("compCountryBadge");
     if (userCountryCode) { badge.textContent = userCountryCode; badge.style.display = "inline-block"; }
   }catch(e){
-    $("ispVal").textContent = "Provider unavailable";
-    $("ipVal").textContent = "IP information unavailable";
-    $("locationVal").textContent = "Location unavailable";
+    $("ispVal").textContent = currentT.providerUnavailable;
+    $("ipVal").textContent = currentT.ipUnavailable;
+    $("locationVal").textContent = currentT.locationUnavailable;
   }
 }
 
-function escapeHtml(v){ return String(v).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch])); }
-function formatMbps(v){
-  if(!Number.isFinite(v)) return "--";
-  if (v < 10) return v.toFixed(2);
-  if (v < 100) return v.toFixed(1);
-  return Math.round(v).toString();
-}
-function robustMedian(vals){ if(!vals.length) return 0; const a=[...vals].sort((x,y)=>x-y); const mid=Math.floor(a.length/2); return a.length%2!==0?a[mid]:(a[mid-1]+a[mid])/2; }
-function percentile(vals, p){ if(!vals.length) return 0; const a=[...vals].sort((x,y)=>x-y); const idx=Math.min(a.length-1,Math.max(0,Math.round((p/100)*(a.length-1)))); return a[idx]; }
-
-/* ---------- GAUGE ---------- */
+/* =========================================================
+   GAUGE — 0 → 1000 Mbps
+   ========================================================= */
 const GAUGE_CIRCUMFERENCE = Math.PI * 125;
-const GAUGE_TICKS = [{v:0,a:180},{v:1,a:205},{v:5,a:230},{v:10,a:250},{v:20,a:270},{v:30,a:290},{v:50,a:315},{v:75,a:340},{v:100,a:360}];
+const GAUGE_TICKS = [
+  {v:0,    a:180},
+  {v:1,    a:196},
+  {v:5,    a:210},
+  {v:10,   a:222},
+  {v:25,   a:234},
+  {v:50,   a:246},
+  {v:100,  a:258},
+  {v:250,  a:278},
+  {v:500,  a:302},
+  {v:1000, a:360}
+];
 function buildGaugeLabels(){
   const group = $("gaugeLabels");
   if(!group || group.childElementCount) return;
@@ -333,7 +478,7 @@ function buildGaugeLabels(){
   });
 }
 function getGaugeAngle(val){
-  const speed = Math.max(0, Math.min(100, Number(val) || 0));
+  const speed = Math.max(0, Math.min(1000, Number(val) || 0));
   for (let i = 1; i < GAUGE_TICKS.length; i++) {
     const left = GAUGE_TICKS[i-1], right = GAUGE_TICKS[i];
     if (speed <= right.v) { const f=(speed-left.v)/(right.v-left.v); return left.a + f*(right.a-left.a); }
@@ -341,7 +486,7 @@ function getGaugeAngle(val){
   return 360;
 }
 function renderGauge(val){
-  const safe = Math.max(0, Math.min(100, Number(val) || 0));
+  const safe = Math.max(0, Math.min(1000, Number(val) || 0));
   const angle = getGaugeAngle(safe);
   const ratio = (angle - 180) / 180;
   const offset = GAUGE_CIRCUMFERENCE * (1 - ratio);
@@ -351,7 +496,7 @@ function renderGauge(val){
 }
 let needleTarget = 0, needleCurrent = 0, needleRAF = null;
 function setGaugeValue(val){
-  needleTarget = Math.max(0, Math.min(100, Number(val) || 0));
+  needleTarget = Math.max(0, Math.min(1000, Number(val) || 0));
   if (needleRAF) return;
   const step = () => {
     const diff = needleTarget - needleCurrent;
@@ -364,11 +509,13 @@ function setGaugeValue(val){
 }
 function resetGauge(){ needleTarget = 0; needleCurrent = 0; if (needleRAF){cancelAnimationFrame(needleRAF);needleRAF=null;} renderGauge(0); }
 
-/* ---------- PING ---------- */
+/* =========================================================
+   PING
+   ========================================================= */
 async function pingTest(){
   const vals = [];
   for (let i=0; i<PING_COUNT && isRunning; i++){
-    $("phaseLabel").textContent = `Measuring latency… ${i+1}/${PING_COUNT}`;
+    $("phaseLabel").textContent = `${currentT.phaseLatency} ${i+1}/${PING_COUNT}`;
     try {
       const t0 = performance.now();
       const ctrl = new AbortController();
@@ -380,9 +527,7 @@ async function pingTest(){
       clearTimeout(to);
       const dt = performance.now() - t0;
       if (dt > 0) { vals.push(dt); dbgLog(`✓ ping ${i+1}: ${dt.toFixed(0)} ms`); }
-    } catch(e){
-      dbgLog(`✗ ping ${i+1}: ${e.message}`);
-    }
+    } catch(e){ dbgLog(`✗ ping ${i+1}: ${e.message}`); }
     await sleep(60);
   }
   if (!vals.length) throw new Error("Ping failed");
@@ -394,45 +539,32 @@ async function pingTest(){
   return { ping, jitter };
 }
 
-/* ---------- DOWNLOAD (streaming, never aborts) ---------- */
+/* =========================================================
+   DOWNLOAD
+   ========================================================= */
 async function downloadStream(){
   const url = SPEED_BASE + "/__down?bytes=" + DOWN_BYTES + "&r=" + Math.random();
   dbgLog(`↓ streaming download…`);
-
   const samples = [];
-  let total = 0;
-  let lastReport = 0;
+  let total = 0, lastReport = 0;
   const start = performance.now();
   const ctrl = new AbortController();
-
   try {
-    const response = await fetch(url, {
-      cache: "no-store", credentials: "omit", signal: ctrl.signal
-    });
+    const response = await fetch(url, {cache:"no-store", credentials:"omit", signal: ctrl.signal});
     if (!response.ok) throw new Error("HTTP " + response.status);
     if (!response.body) throw new Error("Streaming not supported");
-
     const reader = response.body.getReader();
-
     while (isRunning) {
-      if (performance.now() - start >= DOWN_MS) {
-        dbgLog(`⏱ download phase time up`);
-        break;
-      }
-
+      if (performance.now() - start >= DOWN_MS) { dbgLog(`⏱ download phase time up`); break; }
       const readPromise = reader.read();
       const softTimeout = new Promise(res => setTimeout(() => res({ __timeout: true }), 500));
       const result = await Promise.race([readPromise, softTimeout]);
-
       if (result && result.__timeout) continue;
-
       const { done, value } = result;
       if (done) break;
       total += value.length;
-
       const elapsed = (performance.now() - start) / 1000;
       if (elapsed < 0.3) continue;
-
       const now = performance.now();
       if (now - lastReport > 150) {
         lastReport = now;
@@ -440,12 +572,11 @@ async function downloadStream(){
         samples.push(mbps);
         setGaugeValue(mbps);
         $("downVal").textContent = formatMbps(mbps);
-        $("phaseLabel").textContent = `Downloading… ${(total/1048576).toFixed(1)} MB`;
+        $("phaseLabel").textContent = `${currentT.phaseDownload} ${(total/1048576).toFixed(1)} MB`;
       }
     }
-  } catch (e) {
-    dbgLog(`download stopped: ${e.message}`);
-  } finally {
+  } catch (e) { dbgLog(`download stopped: ${e.message}`); }
+  finally {
     const elapsed = (performance.now() - start) / 1000;
     if (total > 0 && elapsed > 0.3) {
       const finalMbps = (total * 8) / elapsed / 1e6;
@@ -454,13 +585,14 @@ async function downloadStream(){
       $("downVal").textContent = formatMbps(finalMbps);
     }
   }
-
   if (!samples.length) throw new Error("No download samples");
   dbgLog(`✓ download: ${(total/1048576).toFixed(2)} MB / ${samples.length} samples`);
   return percentile(samples, 85) || robustMedian(samples);
 }
 
-/* ---------- UPLOAD (XHR streaming) ---------- */
+/* =========================================================
+   UPLOAD
+   ========================================================= */
 async function uploadStream(){
   const payload = new Uint8Array(UP_BYTES);
   const chunk = 64 * 1024;
@@ -469,34 +601,22 @@ async function uploadStream(){
   }
   const url = SPEED_BASE + "/__up?r=" + Math.random();
   dbgLog(`↑ streaming upload…`);
-
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
     xhr.timeout = UP_MS;
     xhr.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
-
     const start = performance.now();
     let lastReport = 0;
     const samples = [];
-    let sentMax = 0;
-    let finished = false;
-
+    let sentMax = 0, finished = false;
     const finish = (reason) => {
-      if (finished) return;
-      finished = true;
+      if (finished) return; finished = true;
       const elapsed = (performance.now() - start) / 1000;
-      if (sentMax > 0 && elapsed > 0.3) {
-        samples.push((sentMax * 8) / elapsed / 1e6);
-      }
-      if (samples.length) {
-        dbgLog(`✓ upload: ${(sentMax/1048576).toFixed(2)} MB / ${samples.length} samples`);
-        resolve(percentile(samples, 85) || robustMedian(samples));
-      } else {
-        reject(new Error("No upload samples (" + reason + ")"));
-      }
+      if (sentMax > 0 && elapsed > 0.3) samples.push((sentMax * 8) / elapsed / 1e6);
+      if (samples.length) { dbgLog(`✓ upload: ${(sentMax/1048576).toFixed(2)} MB / ${samples.length} samples`); resolve(percentile(samples, 85) || robustMedian(samples)); }
+      else reject(new Error("No upload samples (" + reason + ")"));
     };
-
     xhr.upload.onprogress = (e) => {
       if (!e.lengthComputable) return;
       sentMax = Math.max(sentMax, e.loaded);
@@ -509,10 +629,9 @@ async function uploadStream(){
         samples.push(mbps);
         setGaugeValue(mbps);
         $("upVal").textContent = formatMbps(mbps);
-        $("phaseLabel").textContent = `Uploading… ${(sentMax/1048576).toFixed(1)} MB`;
+        $("phaseLabel").textContent = `${currentT.phaseUpload} ${(sentMax/1048576).toFixed(1)} MB`;
       }
     };
-
     xhr.onload = () => finish("done");
     xhr.onerror = () => finish("error");
     xhr.ontimeout = () => finish("timeout");
@@ -520,7 +639,9 @@ async function uploadStream(){
   });
 }
 
-/* ---------- COMPARISON ---------- */
+/* =========================================================
+   COMPARISON
+   ========================================================= */
 function matchProvider(ispName, providers){
   if (!ispName) return null;
   const lower = ispName.toLowerCase();
@@ -540,6 +661,7 @@ function buildBarRow({name, value, maxValue, highlight, badge}){
 }
 
 function renderProviderComparison(measuredMbps){
+  const t = currentT;
   const list = $("providerList"), insight = $("insightBox"), note = $("compNote");
   const title = $("compHeaderTitle"), subtitle = $("compSubtitle"), badge = $("compCountryBadge");
   const section = $("comparisonSection");
@@ -547,26 +669,26 @@ function renderProviderComparison(measuredMbps){
   const data = ISP_DATA[cc];
 
   if (!data){
-    title.textContent = "Your result";
+    title.textContent = t.howYouCompare;
     if (cc){ badge.textContent = cc; badge.style.display = "inline-block"; } else { badge.style.display = "none"; }
-    subtitle.textContent = `Measured download speed in ${userCountry || "your region"}.`;
+    subtitle.textContent = fmt(t.measuredIn, {country: userCountry || "—"});
     const maxV = Math.max(measuredMbps || 0, 1);
-    list.innerHTML = buildBarRow({name:"Your measured download", value: measuredMbps, maxValue: maxV, highlight: true, badge: userIspName ? truncate(userIspName, 20) : null});
+    list.innerHTML = buildBarRow({name: t.yourMeasuredDownload, value: measuredMbps, maxValue: maxV, highlight: true, badge: userIspName ? truncate(userIspName, 20) : null});
     insight.style.display = "none"; note.style.display = "block";
-    note.textContent = `Regional comparison data is not yet available for ${userCountry || "this country"}.`;
+    note.textContent = fmt(t.noRegionData, {country: userCountry || "—"});
     section.classList.add("active"); return;
   }
 
-  title.textContent = `How you compare in ${data.name}`;
+  title.textContent = t.howYouCompare;
   badge.textContent = cc; badge.style.display = "inline-block";
-  subtitle.textContent = `Your measured download vs. ${data.name} national average and major providers.`;
+  subtitle.textContent = t.compareSubtitle;
 
   const matched = matchProvider(userIspName, data.providers);
   const measuredSafe = Number.isFinite(measuredMbps) && measuredMbps > 0 ? measuredMbps : 0;
   const rows = [];
-  rows.push({name:"Your result", value: measuredSafe, highlight: true, badge: userIspName ? truncate(userIspName, 20) : null});
-  rows.push({name:`${data.name} average`, value: data.avg});
-  if (matched) rows.push({name: matched.name, value: matched.avg, badge:"your provider"});
+  rows.push({name: t.yourResult, value: measuredSafe, highlight: true, badge: userIspName ? truncate(userIspName, 20) : null});
+  rows.push({name: fmt(t.countryAvg, {country: data.name}), value: data.avg});
+  if (matched) rows.push({name: matched.name, value: matched.avg, badge: t.yourProvider});
   data.providers.filter(p => p !== matched).slice(0, 3).forEach(p => rows.push({name: p.name, value: p.avg}));
   const maxV = Math.max(...rows.map(r => r.value), 1) * 1.05;
   list.innerHTML = rows.map(r => buildBarRow({ ...r, maxValue: maxV })).join("");
@@ -578,56 +700,53 @@ function renderProviderComparison(measuredMbps){
   const deltaPct = data.avg > 0 ? (delta / data.avg) * 100 : 0;
   const sign = delta >= 0 ? "+" : "";
   let html = "";
-  if (measuredSafe <= 0) html = `No valid measurement for comparison.`;
-  else if (deltaPct >= 15) html = `You're <strong>${sign}${deltaPct.toFixed(0)}%</strong> above the ${escapeHtml(data.name)} national average (<span class="insight-delta">${formatMbps(measuredSafe)} Mbps</span> vs <span class="insight-delta">${formatMbps(data.avg)} Mbps</span>).`;
-  else if (deltaPct <= -15) html = `You're <strong>${deltaPct.toFixed(0)}%</strong> below the ${escapeHtml(data.name)} national average (<span class="insight-delta">${formatMbps(measuredSafe)} Mbps</span> vs <span class="insight-delta">${formatMbps(data.avg)} Mbps</span>).`;
-  else html = `You're near the ${escapeHtml(data.name)} national average (<span class="insight-delta">${formatMbps(measuredSafe)} Mbps</span> vs <span class="insight-delta">${formatMbps(data.avg)} Mbps</span>).`;
+  if (measuredSafe <= 0) {
+    html = t.noValid;
+  } else {
+    const vars = { pct: sign + deltaPct.toFixed(0) + "%", country: escapeHtml(data.name), speed: formatMbps(measuredSafe) + " Mbps", avg: formatMbps(data.avg) + " Mbps" };
+    if (deltaPct >= 15) html = fmt(t.avgAbove, vars);
+    else if (deltaPct <= -15) html = fmt(t.avgBelow, vars);
+    else html = fmt(t.avgNear, vars);
+  }
   if (matched && measuredSafe > 0){
     const ispDelta = measuredSafe - matched.avg;
     const ispPct = matched.avg > 0 ? (ispDelta / matched.avg) * 100 : 0;
     const ispSign = ispDelta >= 0 ? "+" : "";
-    html += `<br><span style="color:var(--muted);font-weight:600">vs. ${escapeHtml(matched.name)} (${formatMbps(matched.avg)} Mbps avg): </span><strong class="insight-delta">${ispSign}${ispPct.toFixed(0)}%</strong>`;
+    html += `<br><span style="color:var(--muted);font-weight:600">${fmt(t.vsProvider, {name: escapeHtml(matched.name), avg: formatMbps(matched.avg)})}</span><strong class="insight-delta">${ispSign}${ispPct.toFixed(0)}%</strong>`;
   }
   insight.innerHTML = html; insight.style.display = "block";
-
-  /* ====== DISCLAIMER ====== */
   note.style.display = "block";
-  note.innerHTML =
-    "National and provider averages are based on publicly reported broadband data " +
-    'from sources such as <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, the ' +
-    '<a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a>, ' +
-    "and national regulators (<strong>2023–2024</strong>). " +
-    "These figures represent <strong>typical national averages</strong> and are " +
-    "<strong>not live measurements</strong> of any single provider's current network performance. " +
-    "Individual results may vary by plan, time of day, and network load.";
-
+  note.innerHTML = t.disclaimer;
   section.classList.add("active");
 }
 
-/* ---------- MAIN ---------- */
+/* =========================================================
+   MAIN
+   ========================================================= */
 async function startSpeedTest(){
   if (isRunning) return;
   isRunning = true;
+  $("phaseLabel").dataset.running = "1";
   dbgClear();
   $("comparisonSection").classList.remove("active");
   $("retestContainer").classList.remove("active");
   $("startContainer").style.display = "none";
   $("gaugeContainer").classList.add("active");
   $("pingVal").textContent = "--"; $("jitterVal").textContent = "--";
-  $("downVal").textContent = "--"; $("upVal").textContent = "--";
+  $("downVal").textContent = "--"; $("downVal").dataset.value = "0";
+  $("upVal").textContent = "--";
   resetGauge();
 
-  let finalDown = 0;
-  let finalPing = null;
+  let finalDown = 0, finalPing = null;
 
   try {
-    $("phaseLabel").textContent = "Warming up connection…";
+    $("phaseLabel").textContent = currentT.phaseWarmup;
     try {
       await fetch(SPEED_BASE + "/__down?bytes=0&r=" + Math.random(), {cache:"no-store", credentials:"omit"});
       dbgLog("✓ connection warmed up");
     } catch(e){ dbgLog("warmup: " + e.message); }
 
-    $("phaseLabel").textContent = "Measuring latency…";
+    $("phaseLabel").textContent = currentT.phaseLatency;
     try {
       const latency = await pingTest();
       if (Number.isFinite(latency.ping) && latency.ping > 0) {
@@ -637,40 +756,38 @@ async function startSpeedTest(){
       }
     } catch(e){ dbgLog("ping phase: " + e.message); }
 
-    $("phaseLabel").textContent = "Measuring download…";
+    $("phaseLabel").textContent = currentT.phaseDownload;
     try {
       finalDown = await downloadStream();
       if (!Number.isFinite(finalDown) || finalDown <= 0) finalDown = 0;
       $("downVal").textContent = formatMbps(finalDown);
+      $("downVal").dataset.value = String(finalDown);
       setGaugeValue(finalDown);
     } catch(e){ dbgLog("download phase: " + e.message); }
 
-    $("phaseLabel").textContent = "Measuring upload…";
+    $("phaseLabel").textContent = currentT.phaseUpload;
     try {
       const finalUp = await uploadStream();
       if (Number.isFinite(finalUp) && finalUp > 0) $("upVal").textContent = formatMbps(finalUp);
       else $("upVal").textContent = "n/a";
-    } catch(e){
-      dbgLog("upload: " + e.message);
-      $("upVal").textContent = "n/a";
-    }
+    } catch(e){ dbgLog("upload: " + e.message); $("upVal").textContent = "n/a"; }
 
     if (finalDown > 0) {
       setGaugeValue(finalDown);
-      $("phaseLabel").textContent = "Test complete";
+      $("phaseLabel").textContent = currentT.phaseComplete;
       dbgOk(`✓ Done\nDownload: ${formatMbps(finalDown)} Mbps\nPing: ${finalPing !== null ? finalPing.toFixed(0) + " ms" : "n/a"}`);
       renderProviderComparison(finalDown);
     } else {
-      $("phaseLabel").textContent = "Test failed";
+      $("phaseLabel").textContent = currentT.phaseFailed;
       dbgLog("✗ No download samples collected");
     }
-
   } catch(err){
     console.error(err);
-    $("phaseLabel").textContent = "Test failed";
+    $("phaseLabel").textContent = currentT.phaseFailed;
     dbgLog("✗ " + (err?.message || err));
   } finally {
     isRunning = false;
+    delete $("phaseLabel").dataset.running;
     $("retestContainer").classList.add("active");
   }
 }
