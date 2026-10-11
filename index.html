@@ -109,6 +109,173 @@ header{position:sticky;top:0;z-index:100;padding:12px 0;border-bottom:1px solid 
   background-color: #14181f;
 }
 
+/* ============================================================ */
+/* MODAL / BOTTOM SHEET FÜR INSTALL APP                         */
+/* ============================================================ */
+.install-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.install-modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+.install-modal-content {
+  background: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 24px 24px 0 0;
+  padding: 32px 24px 40px;
+  text-align: center;
+  position: relative;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+  color: #1f2937;
+}
+.install-modal-overlay.active .install-modal-content {
+  transform: translateY(0);
+}
+.install-modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #9ca3af;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+  transition: color 0.2s;
+}
+.install-modal-close:hover { color: #1f2937; }
+.install-modal-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0 0 12px;
+  color: #111827;
+  letter-spacing: -0.5px;
+}
+.install-modal-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0 0 24px;
+}
+.install-modal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: #1a1e26;
+  color: #ffffff;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 50px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+.install-modal-btn:hover {
+  background-color: #2a313d;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+.install-modal-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.install-modal-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Handy-Grafik im Modal (wie auf dem Foto) */
+.install-modal-phone {
+  margin: 30px auto 0;
+  width: 180px;
+  height: 320px;
+  background: #1a1e26;
+  border-radius: 28px;
+  border: 4px solid #2a313d;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.phone-gauge-ring {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 8px solid #a855f7;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  transform: rotate(-45deg);
+  position: absolute;
+  top: 80px;
+}
+.phone-gauge-text {
+  position: absolute;
+  top: 105px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -1px;
+}
+.phone-gauge-unit {
+  position: absolute;
+  top: 140px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #8b949e;
+  text-transform: uppercase;
+}
+.phone-bar-container {
+  position: absolute;
+  bottom: 60px;
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.phone-bar-label {
+  font-size: 8px;
+  font-weight: 800;
+  color: #8b949e;
+  text-align: left;
+  margin-bottom: 2px;
+}
+.phone-bar-track {
+  height: 6px;
+  background: #2a313d;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.phone-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+}
+.phone-bar-fill.download { width: 60%; background: #a855f7; }
+.phone-bar-fill.upload { width: 30%; background: #06b6d4; }
+
 main{position:relative;z-index:1;padding:25px 0 40px}
 .test-panel{width:min(640px,100%);margin:auto;padding:15px;text-align:center}
 .start-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 0;gap:18px}
@@ -219,6 +386,9 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:26
   .share-btn svg{width:14px;height:14px}
   .seo-content h2{font-size:16px}
   .seo-content p,.seo-content ul{font-size:12.5px}
+  .install-modal-content { padding: 24px 16px 32px; }
+  .install-modal-title { font-size: 19px; }
+  .install-modal-text { font-size: 13px; }
 }
 
 /* Feedback Survey Styles */
@@ -253,10 +423,9 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:26
     </a>
     <div class="nav-right">
       <!-- ============================================================ -->
-      <!-- INSTALL APP Button – ruft den nativen Browser-Install-Dialog  -->
-      <!-- auf (Chrome/Edge/Samsung). Bei iOS/Safari → Anleitung.       -->
+      <!-- INSTALL APP Button – öffnet jetzt das neue Modal              -->
       <!-- ============================================================ -->
-      <button type="button" class="nav-install-btn" id="installBtn" onclick="installPWA()">
+      <button type="button" class="nav-install-btn" id="installBtn" onclick="openInstallModal()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
           <polyline points="7 10 12 15 17 10"></polyline>
@@ -449,6 +618,44 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:26
   </div>
 </footer>
 
+<!-- ============================================================ -->
+<!-- INSTALL MODAL (Bottom Sheet) – wird geöffnet durch den Button -->
+<!-- ============================================================ -->
+<div id="installModal" class="install-modal-overlay" onclick="if(event.target===this) closeInstallModal()">
+  <div class="install-modal-content">
+    <button class="install-modal-close" onclick="closeInstallModal()">✕</button>
+    <h2 class="install-modal-title">Fasqoo is better on the app.</h2>
+    <p class="install-modal-text">Get the full experience with our dedicated mobile application. Faster testing, better accuracy, and more features. Download directly from your browser.</p>
+    
+    <!-- Der Button, der die eigentliche Installation auslöst -->
+    <button class="install-modal-btn" onclick="triggerInstall()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Download App (APK)
+    </button>
+
+    <!-- Handy-Grafik wie auf dem Foto -->
+    <div class="install-modal-phone">
+      <div class="phone-gauge-ring"></div>
+      <div class="phone-gauge-text">185</div>
+      <div class="phone-gauge-unit">Mbps</div>
+      <div class="phone-bar-container">
+        <div>
+          <div class="phone-bar-label">DOWNLOAD</div>
+          <div class="phone-bar-track"><div class="phone-bar-fill download"></div></div>
+        </div>
+        <div>
+          <div class="phone-bar-label">UPLOAD</div>
+          <div class="phone-bar-track"><div class="phone-bar-fill upload"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -612,6 +819,32 @@ function applyLanguage(code){
   }
 }
 function setLanguage(code){ localStorage.setItem("fasqoo_lang", code); applyLanguage(code); $("langSelect").value = code; }
+
+// ============================================================
+// INSTALL MODAL FUNKTIONEN
+// ============================================================
+function openInstallModal() {
+  const modal = $("installModal");
+  if (modal) {
+    modal.classList.add("active");
+    // Verhindert Scrollen im Hintergrund
+    document.body.style.overflow = "hidden";
+  }
+}
+
+function closeInstallModal() {
+  const modal = $("installModal");
+  if (modal) {
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+}
+
+// Löst die eigentliche Installation aus (wird vom Button im Modal aufgerufen)
+function triggerInstall() {
+  closeInstallModal();
+  installPWA();
+}
 
 // ============================================================
 // INSTALL APP — ruft den nativen Browser-Install-Dialog auf
