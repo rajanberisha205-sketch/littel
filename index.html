@@ -94,6 +94,8 @@ main{position:relative;z-index:1;padding:25px 0 40px}
 .insight-box strong{color:var(--accent);font-weight:800}
 .insight-delta{font-variant-numeric:tabular-nums}
 .comparison-note{margin-top:14px;font-size:10.5px;line-height:1.55;color:var(--muted);padding-top:12px;border-top:1px dashed var(--border)}
+.comparison-note a{color:var(--accent);text-decoration:none}
+.comparison-note a:hover{text-decoration:underline}
 footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:18px 0;text-align:center;color:var(--muted);font-size:10px;background:var(--panel);margin-top:40px}
 .footer-title{color:var(--text);font-weight:800;font-size:11px}
 .footer-sub{margin-top:2px}
@@ -183,7 +185,7 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:18
 
 <footer>
   <div class="wrap">
-    <div class="footer-title">Fasqoo Lite • Speedtest Engine v9.1</div>
+    <div class="footer-title">Fasqoo Lite • Speedtest Engine v9.2</div>
     <div class="footer-sub">Real Cloudflare Edge measurement</div>
     <div class="footer-links">
       <a href="https://www.fasqoo.com/privacy-policy.html" class="footer-link">Privacy Policy</a>
@@ -201,10 +203,10 @@ let deferredPrompt = null;
 let userCountry = "", userCountryCode = "", userIspName = "";
 
 const SPEED_BASE = "https://speed.cloudflare.com";
-const DOWN_BYTES = 50 * 1024 * 1024;   // 50 MB
-const UP_BYTES = 15 * 1024 * 1024;     // 15 MB
-const DOWN_MS = 12000;                 // download phase max
-const UP_MS = 12000;                   // upload phase max
+const DOWN_BYTES = 50 * 1024 * 1024;
+const UP_BYTES = 15 * 1024 * 1024;
+const DOWN_MS = 12000;
+const UP_MS = 12000;
 const PING_COUNT = 6;
 
 const ISP_DATA = {
@@ -362,9 +364,7 @@ function setGaugeValue(val){
 }
 function resetGauge(){ needleTarget = 0; needleCurrent = 0; if (needleRAF){cancelAnimationFrame(needleRAF);needleRAF=null;} renderGauge(0); }
 
-/* =========================================================
-   PING
-   ========================================================= */
+/* ---------- PING ---------- */
 async function pingTest(){
   const vals = [];
   for (let i=0; i<PING_COUNT && isRunning; i++){
@@ -394,9 +394,7 @@ async function pingTest(){
   return { ping, jitter };
 }
 
-/* =========================================================
-   DOWNLOAD – streaming, NEVER throws when it has samples
-   ========================================================= */
+/* ---------- DOWNLOAD (streaming, never aborts) ---------- */
 async function downloadStream(){
   const url = SPEED_BASE + "/__down?bytes=" + DOWN_BYTES + "&r=" + Math.random();
   dbgLog(`↓ streaming download…`);
@@ -406,9 +404,6 @@ async function downloadStream(){
   let lastReport = 0;
   const start = performance.now();
   const ctrl = new AbortController();
-
-  // Our own timeout just flips the flag; it does NOT abort the stream
-  const timeoutHandle = setTimeout(() => { /* no-op, loop checks time */ }, DOWN_MS);
 
   try {
     const response = await fetch(url, {
@@ -420,13 +415,11 @@ async function downloadStream(){
     const reader = response.body.getReader();
 
     while (isRunning) {
-      // End phase when time is up — cleanly, no abort
       if (performance.now() - start >= DOWN_MS) {
         dbgLog(`⏱ download phase time up`);
         break;
       }
 
-      // Read with a soft timeout so we can check the clock regularly
       const readPromise = reader.read();
       const softTimeout = new Promise(res => setTimeout(() => res({ __timeout: true }), 500));
       const result = await Promise.race([readPromise, softTimeout]);
@@ -453,8 +446,6 @@ async function downloadStream(){
   } catch (e) {
     dbgLog(`download stopped: ${e.message}`);
   } finally {
-    clearTimeout(timeoutHandle);
-    // Take one last sample
     const elapsed = (performance.now() - start) / 1000;
     if (total > 0 && elapsed > 0.3) {
       const finalMbps = (total * 8) / elapsed / 1e6;
@@ -469,9 +460,7 @@ async function downloadStream(){
   return percentile(samples, 85) || robustMedian(samples);
 }
 
-/* =========================================================
-   UPLOAD – XHR streaming, NEVER throws when it has samples
-   ========================================================= */
+/* ---------- UPLOAD (XHR streaming) ---------- */
 async function uploadStream(){
   const payload = new Uint8Array(UP_BYTES);
   const chunk = 64 * 1024;
@@ -564,7 +553,7 @@ function renderProviderComparison(measuredMbps){
     const maxV = Math.max(measuredMbps || 0, 1);
     list.innerHTML = buildBarRow({name:"Your measured download", value: measuredMbps, maxValue: maxV, highlight: true, badge: userIspName ? truncate(userIspName, 20) : null});
     insight.style.display = "none"; note.style.display = "block";
-    note.textContent = `Regional comparison data is not yet available for ${escapeHtml(userCountry || "this country")}.`;
+    note.textContent = `Regional comparison data is not yet available for ${userCountry || "this country"}.`;
     section.classList.add("active"); return;
   }
 
@@ -600,8 +589,18 @@ function renderProviderComparison(measuredMbps){
     html += `<br><span style="color:var(--muted);font-weight:600">vs. ${escapeHtml(matched.name)} (${formatMbps(matched.avg)} Mbps avg): </span><strong class="insight-delta">${ispSign}${ispPct.toFixed(0)}%</strong>`;
   }
   insight.innerHTML = html; insight.style.display = "block";
+
+  /* ====== DISCLAIMER ====== */
   note.style.display = "block";
-  note.textContent = "National averages are based on publicly reported broadband data (Cable.co.uk, Ookla, regulators, 2023–2024). Provider speeds are typical averages, not live values.";
+  note.innerHTML =
+    "National and provider averages are based on publicly reported broadband data " +
+    'from sources such as <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, the ' +
+    '<a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a>, ' +
+    "and national regulators (<strong>2023–2024</strong>). " +
+    "These figures represent <strong>typical national averages</strong> and are " +
+    "<strong>not live measurements</strong> of any single provider's current network performance. " +
+    "Individual results may vary by plan, time of day, and network load.";
+
   section.classList.add("active");
 }
 
