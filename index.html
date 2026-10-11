@@ -73,7 +73,7 @@ header{position:sticky;top:0;z-index:100;padding:12px 0;border-bottom:1px solid 
 .lang-select{padding:6px 8px;border-radius:999px;font-size:11px;-webkit-appearance:none;appearance:none;max-width:130px;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:22px}
 
 /* ============================================================ */
-/* NEUER INSTALL APP BUTTON – PROFFESIONELLES DESIGN            */
+/* INSTALL APP BUTTON – PROFFESIONELLES DESIGN                  */
 /* ============================================================ */
 .nav-install-btn {
   display: inline-flex;
@@ -1070,12 +1070,17 @@ function updateVerification(){
   $("verifyDownStreams").textContent = verifyStats.downStreams + (verifyStats.downStreams === 1 ? " stream" : " streams");
   $("verifyUpStreams").textContent = verifyStats.upStreams > 0 ? verifyStats.upStreams + (verifyStats.upStreams === 1 ? " stream" : " streams") : "n/a";
   $("verifySamples").textContent = (verifyStats.pingSamples + verifyStats.downSamples + verifyStats.upSamples) + " (ping " + verifyStats.pingSamples + " + down " + verifyStats.downSamples + " + up " + verifyStats.upSamples + ")";
-  const downActiveSec = verifyStats.downActiveMs / 1000;
-  const upActiveSec = verifyStats.upActiveMs / 1000;
-  const downAvgActive = downActiveSec > 0 ? (verifyStats.downBytes * 8) / downActiveSec / 1e6 : 0;
-  const upAvgActive = upActiveSec > 0 ? (verifyStats.upBytes * 8) / upActiveSec / 1e6 : 0;
-  $("verifyDuration").textContent = `${downActiveSec.toFixed(1)} s (↓) / ${upActiveSec > 0 ? upActiveSec.toFixed(1) + ' s (↑)' : 'n/a'}`;
-  $("verifyAvgSpeed").textContent = `${formatMbps(downAvgActive)} (↓) / ${verifyStats.upBytes > 0 ? formatMbps(upAvgActive) + ' (↑)' : 'n/a'} Mbps`;
+  
+  // ============================================================
+  // KORREKTUR: Exakt dieselben Werte verwenden wie oben im Grid
+  // ============================================================
+  const downAvgActive = lastResults.down || 0;
+  const upAvgActive = lastResults.up || 0;
+  
+  // Zeigt die gesamte Testdauer an, aber die korrekten Durchschnittswerte
+  $("verifyDuration").textContent = `${verifyStats.duration.toFixed(1)} s`;
+  $("verifyAvgSpeed").textContent = `${formatMbps(downAvgActive)} (↓) / ${upAvgActive > 0 ? formatMbps(upAvgActive) + ' (↑)' : 'n/a'} Mbps`;
+  
   $("verifyPanel").classList.add("active");
 }
 
