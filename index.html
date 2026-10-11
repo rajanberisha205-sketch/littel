@@ -82,7 +82,7 @@ main{position:relative;z-index:1;padding:25px 0 40px}
   display:none;margin-top:14px;padding:10px 12px;border-radius:10px;
   background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.35);color:#f87171;
   font-size:11px;font-weight:600;font-family:ui-monospace,Menlo,Consolas,monospace;
-  text-align:left;line-height:1.5;word-break:break-word;
+  text-align:left;line-height:1.5;word-break:break-word;max-height:180px;overflow-y:auto;
 }
 .debug-box.show{display:block}
 .debug-box.ok{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.35);color:#4ade80}
@@ -109,7 +109,6 @@ main{position:relative;z-index:1;padding:25px 0 40px}
 .net-title{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .net-sub{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* ============ PROVIDER COMPARISON ============ */
 .comparison-section{
   margin-top:30px;padding:20px;border:1px solid var(--border);border-radius:16px;
   background:var(--panel);text-align:left;display:none;
@@ -126,24 +125,15 @@ main{position:relative;z-index:1;padding:25px 0 40px}
 .comparison-subtitle{font-size:12px;color:var(--muted);margin:0 0 18px;line-height:1.5}
 
 .compare-row{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin-bottom:14px}
-.compare-name{
-  font-size:11.5px;font-weight:700;color:var(--muted);
-  display:flex;align-items:center;gap:6px;line-height:1.3;
-}
+.compare-name{font-size:11.5px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px;line-height:1.3}
 .compare-name .badge{
-  font-size:9px;font-weight:800;letter-spacing:.5px;
-  padding:2px 6px;border-radius:5px;
-  background:color-mix(in srgb,var(--accent) 15%,transparent);
-  color:var(--accent);text-transform:uppercase;
+  font-size:9px;font-weight:800;letter-spacing:.5px;padding:2px 6px;border-radius:5px;
+  background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent);text-transform:uppercase;
 }
 .compare-val{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
-.compare-bar-track{
-  grid-column:1/-1;height:8px;background:rgba(148,163,184,.13);
-  border-radius:999px;overflow:hidden;
-}
+.compare-bar-track{grid-column:1/-1;height:8px;background:rgba(148,163,184,.13);border-radius:999px;overflow:hidden}
 .compare-bar-fill{
-  height:100%;width:0;border-radius:999px;
-  background:rgba(148,163,184,.55);
+  height:100%;width:0;border-radius:999px;background:rgba(148,163,184,.55);
   transition:width .8s cubic-bezier(.2,.8,.2,1);
 }
 .compare-row.highlight .compare-bar-fill{
@@ -278,15 +268,12 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:18
         </div>
       </div>
 
-      <!-- AUTOMATIC PROVIDER COMPARISON -->
       <div id="comparisonSection" class="comparison-section">
         <div class="comparison-header">
           <div class="comparison-title" id="compHeaderTitle">How you compare</div>
           <div class="comparison-country" id="compCountryBadge" style="display:none">--</div>
         </div>
-        <p class="comparison-subtitle" id="compSubtitle">
-          Your measured download speed compared to regional averages.
-        </p>
+        <p class="comparison-subtitle" id="compSubtitle">Your measured download speed compared to regional averages.</p>
         <div id="providerList" class="provider-comparison-list"></div>
         <div id="insightBox" class="insight-box" style="display:none"></div>
         <div class="comparison-note" id="compNote" style="display:none"></div>
@@ -298,7 +285,7 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:18
 
 <footer>
   <div class="wrap">
-    <div class="footer-title">Fasqoo Lite • Speedtest Engine v8.2</div>
+    <div class="footer-title">Fasqoo Lite • Speedtest Engine v8.3</div>
     <div class="footer-sub">Real Cloudflare Edge measurement</div>
     <div class="footer-links">
       <a href="https://www.fasqoo.com/privacy-policy.html" class="footer-link">Privacy Policy</a>
@@ -313,73 +300,67 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 let isRunning = false;
 let deferredPrompt = null;
-let userCountry = "";       // country name
-let userCountryCode = "";   // ISO country code
+let userCountry = "";
+let userCountryCode = "";
 let userIspName = "";
 
 const SPEED_BASE = "https://speed.cloudflare.com";
 const PHASE_MS = 8000;
-const PING_COUNT = 10;
+const PING_COUNT = 8;
 const PING_BYTES = 1000;
 
-/* =========================================================
-   REGIONAL ISP DATASET
-   Approximate national broadband averages (Mbps) based on
-   publicly reported data (Cable.co.uk, Ookla Speedtest
-   Global Index, national regulator reports, 2023–2024).
-   For guidance only — not a live feed.
-   ========================================================= */
+/* ---------- ISP data (Kosovo focus + international) ---------- */
 const ISP_DATA = {
   XK:{name:"Kosovo",avg:38,providers:[
     {name:"Kujtesa",avg:52,aliases:["kujtesa"]},
     {name:"IPKO",avg:45,aliases:["ipko"]},
-    {name:"Artmotion",avg:31,aliases:["artmotion"]},
-    {name:"Telekom Kosova",avg:28,aliases:["telekom","vala","kosova"]}
+    {name:"Artmotion",avg:31,aliases:["artmotion","art motion"]},
+    {name:"Telekom Kosova",avg:28,aliases:["telekom","vala","kosova","kosovo telecom"]}
   ]},
   AL:{name:"Albania",avg:40,providers:[
     {name:"Digicom",avg:52,aliases:["digicom"]},
-    {name:"One Albania",avg:44,aliases:["one","albania"]},
+    {name:"One Albania",avg:44,aliases:["one"]},
     {name:"Vodafone Albania",avg:38,aliases:["vodafone"]}
   ]},
   MK:{name:"North Macedonia",avg:42,providers:[
     {name:"Makedonski Telekom",avg:50,aliases:["makedonski","telekom"]},
-    {name:"A1 Makedonija",avg:46,aliases:["a1","makedonija"]},
+    {name:"A1 Makedonija",avg:46,aliases:["a1"]},
     {name:"Neotel",avg:38,aliases:["neotel"]}
   ]},
   RS:{name:"Serbia",avg:55,providers:[
-    {name:"SBB",avg:65,aliases:["sbb","united"]},
+    {name:"SBB",avg:65,aliases:["sbb"]},
     {name:"Telekom Srbija",avg:52,aliases:["telekom","srbija","mts"]},
-    {name:"Yettel",avg:48,aliases:["yettel"]}
+    {name:"Yettel",avg:48,aliases:["yettel","telenor"]}
   ]},
   HR:{name:"Croatia",avg:60,providers:[
-    {name:"A1 Hrvatska",avg:72,aliases:["a1","hrvatska"]},
-    {name:"HT",avg:64,aliases:["ht","hrvatski telekom"]},
+    {name:"A1 Hrvatska",avg:72,aliases:["a1"]},
+    {name:"HT",avg:64,aliases:["ht","hrvatski"]},
     {name:"Telemach",avg:55,aliases:["telemach"]}
   ]},
   BA:{name:"Bosnia & Herzegovina",avg:35,providers:[
-    {name:"BH Telecom",avg:42,aliases:["bh telecom","bhtelecom"]},
-    {name:"M:tel",avg:38,aliases:["mtel","m:tel","m-tel"]},
-    {name:"HT Eronet",avg:30,aliases:["eronet","ht"]}
+    {name:"BH Telecom",avg:42,aliases:["bh telecom"]},
+    {name:"M:tel",avg:38,aliases:["mtel","m:tel"]},
+    {name:"HT Eronet",avg:30,aliases:["eronet"]}
   ]},
   ME:{name:"Montenegro",avg:55,providers:[
-    {name:"Crnogorski Telekom",avg:62,aliases:["crnogorski","telekom"]},
+    {name:"Crnogorski Telekom",avg:62,aliases:["crnogorski"]},
     {name:"M:tel CG",avg:55,aliases:["mtel","m:tel"]},
     {name:"One CG",avg:50,aliases:["one"]}
   ]},
   SI:{name:"Slovenia",avg:75,providers:[
-    {name:"Telekom Slovenije",avg:85,aliases:["telekom","slovenije"]},
-    {name:"A1 Slovenija",avg:78,aliases:["a1","slovenija"]},
+    {name:"Telekom Slovenije",avg:85,aliases:["telekom"]},
+    {name:"A1 Slovenija",avg:78,aliases:["a1"]},
     {name:"Telemach",avg:68,aliases:["telemach"]}
   ]},
   AT:{name:"Austria",avg:78,providers:[
-    {name:"A1 Telekom Austria",avg:90,aliases:["a1","telekom"]},
-    {name:"Magenta",avg:80,aliases:["magenta","t-mobile"]},
-    {name:"Drei",avg:70,aliases:["drei","3"]}
+    {name:"A1 Telekom Austria",avg:90,aliases:["a1"]},
+    {name:"Magenta",avg:80,aliases:["magenta"]},
+    {name:"Drei",avg:70,aliases:["drei"]}
   ]},
   DE:{name:"Germany",avg:92,providers:[
-    {name:"Deutsche Telekom",avg:100,aliases:["telekom","deutsche"]},
-    {name:"Vodafone",avg:95,aliases:["vodafone","unitymedia"]},
-    {name:"1&1",avg:85,aliases:["1&1","1und1","ionos"]},
+    {name:"Deutsche Telekom",avg:100,aliases:["telekom"]},
+    {name:"Vodafone",avg:95,aliases:["vodafone"]},
+    {name:"1&1",avg:85,aliases:["1&1","1und1"]},
     {name:"O2",avg:78,aliases:["o2","telefonica"]}
   ]},
   CH:{name:"Switzerland",avg:165,providers:[
@@ -388,10 +369,10 @@ const ISP_DATA = {
     {name:"Salt",avg:150,aliases:["salt"]}
   ]},
   IT:{name:"Italy",avg:70,providers:[
-    {name:"TIM",avg:78,aliases:["tim","telecom italia"]},
+    {name:"TIM",avg:78,aliases:["tim"]},
     {name:"Vodafone IT",avg:72,aliases:["vodafone"]},
     {name:"Fastweb",avg:80,aliases:["fastweb"]},
-    {name:"WindTre",avg:60,aliases:["wind","tre","windtre"]}
+    {name:"WindTre",avg:60,aliases:["wind","tre"]}
   ]},
   FR:{name:"France",avg:135,providers:[
     {name:"Orange",avg:150,aliases:["orange"]},
@@ -403,7 +384,7 @@ const ISP_DATA = {
     {name:"Movistar",avg:170,aliases:["movistar"]},
     {name:"Vodafone ES",avg:160,aliases:["vodafone"]},
     {name:"Orange ES",avg:150,aliases:["orange"]},
-    {name:"Yoigo",avg:130,aliases:["yoigo","masmovil"]}
+    {name:"Yoigo",avg:130,aliases:["yoigo"]}
   ]},
   GB:{name:"United Kingdom",avg:115,providers:[
     {name:"BT",avg:120,aliases:["bt"]},
@@ -413,8 +394,8 @@ const ISP_DATA = {
   ]},
   NL:{name:"Netherlands",avg:130,providers:[
     {name:"KPN",avg:145,aliases:["kpn"]},
-    {name:"Ziggo",avg:150,aliases:["ziggo","vodafone"]},
-    {name:"T-Mobile NL",avg:120,aliases:["t-mobile","odido"]}
+    {name:"Ziggo",avg:150,aliases:["ziggo"]},
+    {name:"Odido",avg:120,aliases:["odido","t-mobile"]}
   ]},
   BE:{name:"Belgium",avg:105,providers:[
     {name:"Proximus",avg:115,aliases:["proximus"]},
@@ -424,8 +405,7 @@ const ISP_DATA = {
   PL:{name:"Poland",avg:95,providers:[
     {name:"Orange PL",avg:105,aliases:["orange"]},
     {name:"Play",avg:100,aliases:["play"]},
-    {name:"UPC",avg:90,aliases:["upc"]},
-    {name:"Netia",avg:85,aliases:["netia"]}
+    {name:"UPC",avg:90,aliases:["upc"]}
   ]},
   CZ:{name:"Czechia",avg:90,providers:[
     {name:"O2 CZ",avg:95,aliases:["o2"]},
@@ -433,7 +413,7 @@ const ISP_DATA = {
     {name:"Vodafone CZ",avg:88,aliases:["vodafone"]}
   ]},
   HU:{name:"Hungary",avg:90,providers:[
-    {name:"Magyar Telekom",avg:100,aliases:["telekom","magyar"]},
+    {name:"Magyar Telekom",avg:100,aliases:["magyar","telekom"]},
     {name:"Vodafone HU",avg:92,aliases:["vodafone"]},
     {name:"Digi HU",avg:85,aliases:["digi"]}
   ]},
@@ -445,7 +425,7 @@ const ISP_DATA = {
   BG:{name:"Bulgaria",avg:80,providers:[
     {name:"Vivacom",avg:90,aliases:["vivacom"]},
     {name:"A1 BG",avg:85,aliases:["a1"]},
-    {name:"Telenor BG",avg:75,aliases:["telenor","yettel"]}
+    {name:"Yettel BG",avg:75,aliases:["yettel","telenor"]}
   ]},
   GR:{name:"Greece",avg:55,providers:[
     {name:"Cosmote",avg:65,aliases:["cosmote","ote"]},
@@ -474,21 +454,16 @@ const ISP_DATA = {
     {name:"Totalplay",avg:70,aliases:["totalplay"]}
   ]},
   BR:{name:"Brazil",avg:130,providers:[
-    {name:"Vivo",avg:145,aliases:["vivo","telefonica"]},
+    {name:"Vivo",avg:145,aliases:["vivo"]},
     {name:"Claro",avg:140,aliases:["claro"]},
     {name:"TIM BR",avg:125,aliases:["tim"]},
     {name:"Oi",avg:100,aliases:["oi"]}
-  ]},
-  AR:{name:"Argentina",avg:60,providers:[
-    {name:"Telecom AR",avg:65,aliases:["telecom","personal"]},
-    {name:"Telefónica AR",avg:62,aliases:["telefonica","movistar"]},
-    {name:"Claro AR",avg:58,aliases:["claro"]}
   ]},
   IN:{name:"India",avg:65,providers:[
     {name:"Jio",avg:80,aliases:["jio","reliance"]},
     {name:"Airtel",avg:72,aliases:["airtel","bharti"]},
     {name:"BSNL",avg:45,aliases:["bsnl"]},
-    {name:"Vi",avg:55,aliases:["vi","vodafone idea"]}
+    {name:"Vi",avg:55,aliases:["vodafone idea"]}
   ]},
   CN:{name:"China",avg:155,providers:[
     {name:"China Telecom",avg:170,aliases:["china telecom"]},
@@ -496,23 +471,23 @@ const ISP_DATA = {
     {name:"China Mobile",avg:150,aliases:["china mobile","cmcc"]}
   ]},
   JP:{name:"Japan",avg:180,providers:[
-    {name:"NTT",avg:200,aliases:["ntt","docomo","flest"]},
-    {name:"KDDI",avg:185,aliases:["kddi","au"]},
+    {name:"NTT",avg:200,aliases:["ntt","docomo"]},
+    {name:"KDDI",avg:185,aliases:["kddi"]},
     {name:"SoftBank",avg:175,aliases:["softbank"]}
   ]},
   KR:{name:"South Korea",avg:200,providers:[
     {name:"Korea Telecom",avg:220,aliases:["kt","korea telecom"]},
-    {name:"SK Broadband",avg:210,aliases:["sk","skb"]},
-    {name:"LG U+",avg:195,aliases:["lg","u+"]}
+    {name:"SK Broadband",avg:210,aliases:["sk"]},
+    {name:"LG U+",avg:195,aliases:["lg"]}
   ]},
   AU:{name:"Australia",avg:90,providers:[
     {name:"Telstra",avg:100,aliases:["telstra"]},
     {name:"Optus",avg:92,aliases:["optus"]},
-    {name:"TPG",avg:85,aliases:["tpg","iinet","vodafone"]}
+    {name:"TPG",avg:85,aliases:["tpg","iinet"]}
   ]},
   NZ:{name:"New Zealand",avg:115,providers:[
     {name:"Spark",avg:125,aliases:["spark"]},
-    {name:"Vodafone NZ",avg:120,aliases:["vodafone","one nz"]},
+    {name:"One NZ",avg:120,aliases:["one nz","vodafone"]},
     {name:"2degrees",avg:110,aliases:["2degrees"]}
   ]},
   ZA:{name:"South Africa",avg:45,providers:[
@@ -521,7 +496,7 @@ const ISP_DATA = {
     {name:"Vodacom",avg:48,aliases:["vodacom"]}
   ]},
   AE:{name:"United Arab Emirates",avg:180,providers:[
-    {name:"Etisalat",avg:200,aliases:["etisalat","e&"]},
+    {name:"Etisalat",avg:200,aliases:["etisalat"]},
     {name:"du",avg:175,aliases:["du"]}
   ]},
   SA:{name:"Saudi Arabia",avg:90,providers:[
@@ -531,14 +506,17 @@ const ISP_DATA = {
   ]}
 };
 
-/* ---- DEBUG ---- */
-function dbgShow(msg, ok=false){
-  const box = $("debugBox"); if(!box) return;
-  box.textContent = msg; box.classList.add("show"); box.classList.toggle("ok", ok);
+/* ---------- Debug log ---------- */
+const debugLines = [];
+function dbgLog(line){
+  debugLines.push(line);
+  if (debugLines.length > 20) debugLines.shift();
+  const box = $("debugBox");
+  if (box) { box.textContent = debugLines.join("\n"); box.classList.add("show"); box.classList.remove("ok"); }
 }
-function dbgClear(){ $("debugBox").classList.remove("show","ok"); }
+function dbgClear(){ debugLines.length = 0; const b=$("debugBox"); if(b){b.textContent="";b.classList.remove("show","ok");} }
+function dbgOk(msg){ const b=$("debugBox"); if(b){ b.textContent=msg; b.classList.add("show","ok"); } }
 
-/* ---- Theme ---- */
 function toggleTheme(){
   const html = document.documentElement;
   const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -548,14 +526,10 @@ function toggleTheme(){
 }
 function updateThemeIcon(theme){
   const icon = $("themeIcon");
-  if(theme === "light"){
-    icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
-  } else {
-    icon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
-  }
+  if(theme === "light"){ icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'; }
+  else { icon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>'; }
 }
 
-/* ---- PWA ---- */
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault(); deferredPrompt = e;
   if ($('installBtn')) $('installBtn').style.display = 'inline-flex';
@@ -566,7 +540,6 @@ function installPWA() {
   deferredPrompt.userChoice.then(() => { $('installBtn').style.display = 'none'; });
 }
 
-/* ---- Init ---- */
 window.addEventListener("DOMContentLoaded", () => {
   const savedTheme = localStorage.getItem("fasqoo_theme") || "dark";
   document.documentElement.setAttribute("data-theme", savedTheme);
@@ -574,43 +547,29 @@ window.addEventListener("DOMContentLoaded", () => {
   buildGaugeLabels();
   renderGauge(0);
   fetchIpInfo();
-
-  if (location.protocol === "file:" || location.protocol === "content:") {
-    dbgShow("Warning: This page is running from a local file. External requests to Cloudflare will likely be blocked. Please host the file on a real web server (http/https).");
-  }
 });
 
-/* ---- IP / ISP detection via ipwho.is ---- */
 async function fetchIpInfo(){
   try{
     const res = await fetch("https://ipwho.is/", {cache:"no-store"});
     if(!res.ok) throw new Error("IP lookup HTTP " + res.status);
     const data = await res.json();
     if(!data || !data.success) throw new Error("IP lookup failed");
-
-    userIspName     = data.connection?.isp || data.connection?.org || "";
-    userCountry     = data.country || "";
+    userIspName = data.connection?.isp || data.connection?.org || "";
+    userCountry = data.country || "";
     userCountryCode = (data.country_code || "").toUpperCase();
-
     $("ispVal").textContent = userIspName || "Provider unavailable";
-    $("ipVal").textContent  = [data.ip, data.city].filter(Boolean).join(" • ") || "IP unavailable";
+    $("ipVal").textContent = [data.ip, data.city].filter(Boolean).join(" • ") || "IP unavailable";
     $("locationVal").textContent = [data.region, userCountry].filter(Boolean).join(", ") || "Location unavailable";
-
-    // Preload comparison badge
     const badge = $("compCountryBadge");
-    if (userCountryCode) {
-      badge.textContent = userCountryCode;
-      badge.style.display = "inline-block";
-    }
+    if (userCountryCode) { badge.textContent = userCountryCode; badge.style.display = "inline-block"; }
   }catch(e){
-    userIspName = ""; userCountry = ""; userCountryCode = "";
     $("ispVal").textContent = "Provider unavailable";
     $("ipVal").textContent = "IP information unavailable";
     $("locationVal").textContent = "Location unavailable";
   }
 }
 
-/* ---- Helpers ---- */
 function escapeHtml(v){
   return String(v).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
 }
@@ -638,7 +597,7 @@ function testTimeout(ms){
   return {signal:c.signal, clear:()=>clearTimeout(t)};
 }
 
-/* ---- Gauge ---- */
+/* ---------- Gauge ---------- */
 const GAUGE_CIRCUMFERENCE = Math.PI * 125;
 const GAUGE_TICKS = [
   {v:0,a:180},{v:1,a:205},{v:5,a:230},{v:10,a:250},{v:20,a:270},
@@ -698,8 +657,8 @@ function resetGauge(){
   renderGauge(0);
 }
 
-/* ---- XHR fallback ---- */
-function xhrGetBytes(url, timeoutMs){
+/* ---------- XHR fallback ---------- */
+function xhrDownload(url, timeoutMs){
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
@@ -707,13 +666,13 @@ function xhrGetBytes(url, timeoutMs){
     xhr.timeout = timeoutMs;
     xhr.onload = () => xhr.status >= 200 && xhr.status < 300
       ? resolve(xhr.response ? xhr.response.byteLength : 0)
-      : reject(new Error("XHR HTTP " + xhr.status));
-    xhr.onerror = () => reject(new Error("XHR network error"));
-    xhr.ontimeout = () => reject(new Error("XHR timeout"));
+      : reject(new Error("HTTP " + xhr.status));
+    xhr.onerror = () => reject(new Error("network error"));
+    xhr.ontimeout = () => reject(new Error("timeout"));
     xhr.send();
   });
 }
-function xhrPostBytes(url, payload, timeoutMs){
+function xhrUpload(url, payload, timeoutMs){
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
@@ -721,56 +680,55 @@ function xhrPostBytes(url, payload, timeoutMs){
     xhr.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
     xhr.onload = () => xhr.status >= 200 && xhr.status < 300
       ? resolve(payload.byteLength)
-      : reject(new Error("XHR HTTP " + xhr.status));
-    xhr.onerror = () => reject(new Error("XHR network error"));
-    xhr.ontimeout = () => reject(new Error("XHR timeout"));
+      : reject(new Error("HTTP " + xhr.status));
+    xhr.onerror = () => reject(new Error("network error"));
+    xhr.ontimeout = () => reject(new Error("timeout"));
     xhr.send(payload);
   });
 }
 
-/* ---- Pre-check ---- */
+/* ---------- Pre-check with growing sizes ---------- */
 async function preCheck(){
-  const url = SPEED_BASE + "/__down?bytes=1&cacheBust=" + Date.now();
-  try{
-    const r = await fetch(url, {method:"GET", cache:"no-store", credentials:"omit"});
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    await r.arrayBuffer();
-    return true;
-  } catch(fetchErr){
-    try { await xhrGetBytes(url, 5000); return true; }
-    catch(xhrErr){
-      throw new Error("Cannot reach Cloudflare (fetch: " + fetchErr.message + " / xhr: " + xhrErr.message + ")");
+  // Try tiny first, then medium
+  const sizes = [1000, 100000, 1000000];
+  for (const size of sizes){
+    const url = SPEED_BASE + "/__down?bytes=" + size + "&r=" + Math.random();
+    try {
+      const t0 = performance.now();
+      const r = await fetch(url, {cache:"no-store", credentials:"omit"});
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const buf = await r.arrayBuffer();
+      const dt = performance.now() - t0;
+      dbgLog(`✓ fetch ${size} B in ${dt.toFixed(0)} ms (got ${buf.byteLength} B)`);
+      return true;
+    } catch(e){
+      dbgLog(`✗ fetch ${size} B: ${e.message}`);
     }
   }
+  throw new Error("Cloudflare unreachable from your network");
 }
 
-/* ---- PING ---- */
+/* ---------- PING ---------- */
 async function pingTest(){
   const vals = [];
   for(let i=0; i<PING_COUNT && isRunning; i++){
     try{
-      const start = performance.now();
-      const timer = testTimeout(4000);
+      const t0 = performance.now();
+      const timer = testTimeout(6000);
       const r = await fetch(
-        SPEED_BASE + "/__down?bytes=" + PING_BYTES + "&cacheBust=" + Date.now() + Math.random(),
+        SPEED_BASE + "/__down?bytes=" + PING_BYTES + "&r=" + Math.random(),
         {cache:"no-store", credentials:"omit", signal: timer.signal}
       );
       if (!r.ok) throw new Error("HTTP " + r.status);
       await r.arrayBuffer();
-      const duration = performance.now() - start;
-      if (duration > 0) vals.push(duration);
+      const dt = performance.now() - t0;
+      if (dt > 0 && dt < 5000) vals.push(dt);
       timer.clear();
-    }catch(e){
-      try{
-        const start = performance.now();
-        await xhrGetBytes(SPEED_BASE + "/__down?bytes=" + PING_BYTES + "&cacheBust=" + Date.now() + Math.random(), 4000);
-        vals.push(performance.now() - start);
-      }catch(_){}
-    }
-    await sleep(50);
+    }catch(e){ /* skip */ }
+    await sleep(40);
   }
-  if (!vals.length) throw new Error("All latency requests failed. Cloudflare may be blocked by your network, VPN, DNS or ad blocker.");
-  const usable = vals.slice().sort((a,b)=>a-b).slice(0, Math.max(3, Math.ceil(vals.length * 0.8)));
+  if (!vals.length) throw new Error("All latency requests failed");
+  const usable = vals.slice().sort((a,b)=>a-b).slice(0, Math.max(3, Math.ceil(vals.length*0.8)));
   const ping = robustMedian(usable);
   const deltas = [];
   for (let i=1; i<vals.length; i++) deltas.push(Math.abs(vals[i]-vals[i-1]));
@@ -778,132 +736,147 @@ async function pingTest(){
   return { ping, jitter };
 }
 
-/* ---- DOWNLOAD ---- */
-async function parallelDownload(bytes, streams, timeoutMs){
-  const wallStart = performance.now();
-  const jobs = Array.from({length:streams}, async () => {
-    const timer = testTimeout(timeoutMs);
-    const url = SPEED_BASE + "/__down?bytes=" + Math.floor(bytes) + "&cacheBust=" + Math.random();
-    try{
-      const r = await fetch(url, {cache:"no-store", credentials:"omit", signal: timer.signal});
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      const b = await r.arrayBuffer();
-      return b.byteLength;
-    } catch(fetchErr){
-      try { return await xhrGetBytes(url, timeoutMs); }
-      catch(xhrErr){ throw new Error("DL " + fetchErr.message + " / " + xhrErr.message); }
-    } finally { timer.clear(); }
-  });
-  const res = await Promise.allSettled(jobs);
-  const good = res.filter(x => x.status === "fulfilled" && x.value > 0).map(x => x.value);
-  const seconds = (performance.now() - wallStart) / 1000;
-  if (!good.length || seconds <= 0) {
-    const firstErr = res.find(x => x.status === "rejected");
-    throw new Error(firstErr ? firstErr.reason.message : "DL fail");
+/* ---------- DOWNLOAD ---------- */
+async function downloadOnce(bytes, timeoutMs){
+  const url = SPEED_BASE + "/__down?bytes=" + Math.floor(bytes) + "&r=" + Math.random();
+  const t0 = performance.now();
+  const timer = testTimeout(timeoutMs);
+  try {
+    const r = await fetch(url, {cache:"no-store", credentials:"omit", signal: timer.signal});
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const buf = await r.arrayBuffer();
+    timer.clear();
+    return { bytes: buf.byteLength, ms: performance.now() - t0 };
+  } catch (fetchErr) {
+    timer.clear();
+    // XHR fallback
+    const t1 = performance.now();
+    const n = await xhrDownload(url, timeoutMs);
+    return { bytes: n, ms: performance.now() - t1 };
   }
-  return { bytes: good.reduce((a,b)=>a+b,0), seconds };
 }
+
 async function downloadTest(){
   const startTime = performance.now();
   const samples = [];
-  let mbps = 60;
-  while(isRunning && (performance.now() - startTime) < PHASE_MS){
-    const streams = mbps > 300 ? 8 : mbps > 150 ? 6 : mbps > 60 ? 4 : 3;
-    const bytes = Math.min(64*1024*1024, Math.max(512*1024, (mbps * 1e6 / 8) * 0.8));
-    try{
-      const res = await parallelDownload(bytes, streams, 5000);
-      const curMbps = (res.bytes * 8) / res.seconds / 1e6;
-      if (curMbps > 0){
-        samples.push(curMbps);
-        mbps = curMbps;
-        setGaugeValue(curMbps);
-        $("downVal").textContent = formatMbps(curMbps);
+  // Start VERY small (256 KB), grow adaptively
+  let bytes = 256 * 1024;
+  let lastMbps = 0;
+  let consecutiveFails = 0;
+
+  while (isRunning && (performance.now() - startTime) < PHASE_MS){
+    try {
+      const t0 = performance.now();
+      const { bytes: got, ms } = await downloadOnce(bytes, 10000);
+      const seconds = ms / 1000;
+      if (!got || seconds <= 0) throw new Error("no data");
+      const mbps = (got * 8) / seconds / 1e6;
+      if (mbps > 0){
+        samples.push(mbps);
+        lastMbps = mbps;
+        consecutiveFails = 0;
+        setGaugeValue(mbps);
+        $("downVal").textContent = formatMbps(mbps);
+        // Grow payload based on measured speed (target ~1.5s per request)
+        const targetBytes = Math.round((mbps * 1e6 / 8) * 1.5);
+        bytes = Math.min(24 * 1024 * 1024, Math.max(256 * 1024, targetBytes));
       }
-    } catch(e){ dbgShow("Download error: " + e.message); await sleep(100); }
+    } catch (e){
+      consecutiveFails++;
+      dbgLog(`DL fail #${consecutiveFails} (${Math.round(bytes/1024)} KB): ${e.message}`);
+      // Halve the payload and retry
+      bytes = Math.max(64 * 1024, Math.round(bytes / 2));
+      if (consecutiveFails >= 5) break;
+      await sleep(150);
+    }
   }
+
+  if (!samples.length) throw new Error("No successful download samples. Network may block Cloudflare.");
+  dbgLog(`✓ ${samples.length} download samples collected`);
   return percentile(samples, 75) || robustMedian(samples);
 }
 
-/* ---- UPLOAD ---- */
-async function parallelUpload(bytes, streams, timeoutMs){
+/* ---------- UPLOAD ---------- */
+async function uploadOnce(bytes, timeoutMs){
   const payload = new Uint8Array(bytes);
-  const wallStart = performance.now();
-  const jobs = Array.from({length:streams}, async () => {
-    const timer = testTimeout(timeoutMs);
-    const url = SPEED_BASE + "/__up?cacheBust=" + Math.random();
-    try{
-      const r = await fetch(url, {
-        method:"POST", body: payload,
-        headers:{"Content-Type":"text/plain;charset=UTF-8"},
-        cache:"no-store", credentials:"omit", signal: timer.signal
-      });
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      await r.arrayBuffer();
-      return bytes;
-    } catch(fetchErr){
-      try { return await xhrPostBytes(url, payload, timeoutMs); }
-      catch(xhrErr){ throw new Error("UP " + fetchErr.message + " / " + xhrErr.message); }
-    } finally { timer.clear(); }
-  });
-  const res = await Promise.allSettled(jobs);
-  const good = res.filter(x => x.status === "fulfilled" && x.value > 0).map(x => x.value);
-  const seconds = (performance.now() - wallStart) / 1000;
-  if (!good.length || seconds <= 0) {
-    const firstErr = res.find(x => x.status === "rejected");
-    throw new Error(firstErr ? firstErr.reason.message : "UP fail");
+  const url = SPEED_BASE + "/__up?r=" + Math.random();
+  const t0 = performance.now();
+  const timer = testTimeout(timeoutMs);
+  try {
+    const r = await fetch(url, {
+      method:"POST", body: payload,
+      headers:{"Content-Type":"text/plain;charset=UTF-8"},
+      cache:"no-store", credentials:"omit", signal: timer.signal
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    await r.arrayBuffer();
+    timer.clear();
+    return { bytes, ms: performance.now() - t0 };
+  } catch (fetchErr){
+    timer.clear();
+    const t1 = performance.now();
+    await xhrUpload(url, payload, timeoutMs);
+    return { bytes, ms: performance.now() - t1 };
   }
-  return { bytes: good.reduce((a,b)=>a+b,0), seconds };
 }
+
 async function uploadTest(){
   const startTime = performance.now();
   const samples = [];
-  let mbps = 30;
-  while(isRunning && (performance.now() - startTime) < PHASE_MS){
-    const streams = mbps > 100 ? 4 : mbps > 40 ? 3 : 2;
-    const bytes = Math.min(32*1024*1024, Math.max(256*1024, (mbps * 1e6 / 8) * 0.8));
-    try{
-      const res = await parallelUpload(bytes, streams, 5000);
-      const curMbps = (res.bytes * 8) / res.seconds / 1e6;
-      if (curMbps > 0){
-        samples.push(curMbps);
-        mbps = curMbps;
-        setGaugeValue(curMbps);
-        $("upVal").textContent = formatMbps(curMbps);
+  let bytes = 128 * 1024;
+  let consecutiveFails = 0;
+
+  while (isRunning && (performance.now() - startTime) < PHASE_MS){
+    try {
+      const { bytes: got, ms } = await uploadOnce(bytes, 10000);
+      const seconds = ms / 1000;
+      if (!got || seconds <= 0) throw new Error("no data");
+      const mbps = (got * 8) / seconds / 1e6;
+      if (mbps > 0){
+        samples.push(mbps);
+        consecutiveFails = 0;
+        setGaugeValue(mbps);
+        $("upVal").textContent = formatMbps(mbps);
+        const targetBytes = Math.round((mbps * 1e6 / 8) * 1.5);
+        bytes = Math.min(16 * 1024 * 1024, Math.max(128 * 1024, targetBytes));
       }
-    } catch(e){ dbgShow("Upload error: " + e.message); await sleep(100); }
+    } catch (e){
+      consecutiveFails++;
+      dbgLog(`UP fail #${consecutiveFails}: ${e.message}`);
+      bytes = Math.max(64 * 1024, Math.round(bytes / 2));
+      if (consecutiveFails >= 5) break;
+      await sleep(150);
+    }
   }
+
+  if (!samples.length) throw new Error("No successful upload samples");
   return percentile(samples, 75) || robustMedian(samples);
 }
 
-/* =========================================================
-   PROVIDER COMPARISON
-   ========================================================= */
+/* ---------- Provider comparison ---------- */
 function matchProvider(ispName, providers){
   if (!ispName) return null;
   const lower = ispName.toLowerCase();
-  // Try alias match first (most specific)
   let best = null, bestLen = 0;
   providers.forEach(p => {
     p.aliases.forEach(a => {
-      if (lower.includes(a) && a.length > bestLen){
-        best = p; bestLen = a.length;
-      }
+      if (lower.includes(a) && a.length > bestLen){ best = p; bestLen = a.length; }
     });
   });
   return best;
 }
+function truncate(s, n){ s = String(s); return s.length > n ? s.slice(0, n-1) + "…" : s; }
 
 function buildBarRow({name, value, maxValue, highlight, badge}){
   const safeVal = Math.max(0, Number(value) || 0);
   const pct = maxValue > 0 ? Math.min(100, (safeVal / maxValue) * 100) : 0;
-  const display = formatMbps(safeVal);
   return `
     <div class="compare-row${highlight ? " highlight" : ""}">
       <div class="compare-name">
         ${escapeHtml(name)}
         ${badge ? `<span class="badge">${escapeHtml(badge)}</span>` : ""}
       </div>
-      <div class="compare-val">${display}</div>
+      <div class="compare-val">${formatMbps(safeVal)}</div>
       <div class="compare-bar-track">
         <div class="compare-bar-fill" style="width:${pct.toFixed(1)}%"></div>
       </div>
@@ -911,141 +884,90 @@ function buildBarRow({name, value, maxValue, highlight, badge}){
 }
 
 function renderProviderComparison(measuredMbps){
-  const section = $("comparisonSection");
   const list = $("providerList");
   const insight = $("insightBox");
   const note = $("compNote");
   const title = $("compHeaderTitle");
   const subtitle = $("compSubtitle");
   const badge = $("compCountryBadge");
+  const section = $("comparisonSection");
 
   const cc = (userCountryCode || "").toUpperCase();
   const data = ISP_DATA[cc];
 
-  // ---------- Fallback: no data for country ----------
   if (!data){
-    title.textContent = "How you compare";
-    if (cc) { badge.textContent = cc; badge.style.display = "inline-block"; }
+    title.textContent = "Your result";
+    if (cc){ badge.textContent = cc; badge.style.display = "inline-block"; }
     else { badge.style.display = "none"; }
-
-    const countryLabel = userCountry || "your region";
-    subtitle.textContent = `Your measured download speed in ${countryLabel}.`;
-
-    // Show only user's bar so the UI still works
+    subtitle.textContent = `Measured download speed in ${userCountry || "your region"}.`;
     const maxV = Math.max(measuredMbps || 0, 1);
     list.innerHTML = buildBarRow({
-      name: "Your measured download",
-      value: measuredMbps,
-      maxValue: maxV,
-      highlight: true,
-      badge: userIspName ? userIspName : null
+      name: "Your measured download", value: measuredMbps,
+      maxValue: maxV, highlight: true,
+      badge: userIspName ? truncate(userIspName, 20) : null
     });
-
     insight.style.display = "none";
     note.style.display = "block";
-    note.textContent = `Regional average data is not yet available for ${escapeHtml(countryLabel)}. We only display verified national averages where public data exists — Fasqoo does not invent comparison numbers.`;
+    note.textContent = `Regional comparison data is not yet available for ${escapeHtml(userCountry || "this country")}.`;
     section.classList.add("active");
     return;
   }
 
-  // ---------- Data available ----------
   title.textContent = `How you compare in ${data.name}`;
   badge.textContent = cc;
   badge.style.display = "inline-block";
-
   subtitle.textContent = `Your measured download vs. ${data.name} national average and major providers.`;
 
   const matched = matchProvider(userIspName, data.providers);
   const measuredSafe = Number.isFinite(measuredMbps) && measuredMbps > 0 ? measuredMbps : 0;
 
-  // Assemble rows
   const rows = [];
-
-  // User row (highlight)
-  rows.push({
-    name: "Your result",
-    value: measuredSafe,
-    highlight: true,
-    badge: userIspName ? truncate(userIspName, 22) : null
-  });
-
-  // Country average
-  rows.push({ name: `${data.name} average`, value: data.avg, highlight: false });
-
-  // Matched ISP
-  if (matched){
-    rows.push({
-      name: matched.name,
-      value: matched.avg,
-      highlight: false,
-      badge: "your provider"
-    });
-  }
-
-  // Other providers (up to 3)
+  rows.push({ name:"Your result", value: measuredSafe, highlight: true,
+              badge: userIspName ? truncate(userIspName, 20) : null });
+  rows.push({ name:`${data.name} average`, value: data.avg });
+  if (matched) rows.push({ name: matched.name, value: matched.avg, badge: "your provider" });
   const others = data.providers.filter(p => p !== matched).slice(0, 3);
-  others.forEach(p => rows.push({ name: p.name, value: p.avg, highlight: false }));
+  others.forEach(p => rows.push({ name: p.name, value: p.avg }));
 
-  // Max for bar scaling (with small headroom)
   const maxV = Math.max(...rows.map(r => r.value), 1) * 1.05;
-
-  // Render rows
   list.innerHTML = rows.map(r => buildBarRow({ ...r, maxValue: maxV })).join("");
 
-  // Trigger bar animation on next frame
   requestAnimationFrame(() => {
-    list.querySelectorAll(".compare-bar-fill").forEach((el) => {
+    list.querySelectorAll(".compare-bar-fill").forEach(el => {
       const w = el.style.width;
       el.style.width = "0%";
       requestAnimationFrame(() => { el.style.width = w; });
     });
   });
 
-  // ---------- Insight ----------
+  // Insight
   const delta = measuredSafe - data.avg;
   const deltaPct = data.avg > 0 ? (delta / data.avg) * 100 : 0;
   const sign = delta >= 0 ? "+" : "";
-  let insightHtml = "";
-
+  let html = "";
   if (measuredSafe <= 0){
-    insightHtml = `We couldn't obtain a valid download measurement, so no comparison is shown.`;
+    html = `No valid measurement available for comparison.`;
   } else if (deltaPct >= 15){
-    insightHtml = `You're <strong>${sign}${deltaPct.toFixed(0)}%</strong> above the ${escapeHtml(data.name)} national average
-      (<span class="insight-delta">${formatMbps(measuredSafe)} Mbps</span> vs
-       <span class="insight-delta">${formatMbps(data.avg)} Mbps</span>).`;
+    html = `You're <strong>${sign}${deltaPct.toFixed(0)}%</strong> above the ${escapeHtml(data.name)} national average (<span class="insight-delta">${formatMbps(measuredSafe)} Mbps</span> vs <span class="insight-delta">${formatMbps(data.avg)} Mbps</span>).`;
   } else if (deltaPct <= -15){
-    insightHtml = `You're <strong>${deltaPct.toFixed(0)}%</strong> below the ${escapeHtml(data.name)} national average
-      (<span class="insight-delta">${formatMbps(measuredSafe)} Mbps</span> vs
-       <span class="insight-delta">${formatMbps(data.avg)} Mbps</span>).`;
+    html = `You're <strong>${deltaPct.toFixed(0)}%</strong> below the ${escapeHtml(data.name)} national average (<span class="insight-delta">${formatMbps(measuredSafe)} Mbps</span> vs <span class="insight-delta">${formatMbps(data.avg)} Mbps</span>).`;
   } else {
-    insightHtml = `You're right around the ${escapeHtml(data.name)} national average
-      (<span class="insight-delta">${formatMbps(measuredSafe)} Mbps</span> vs
-       <span class="insight-delta">${formatMbps(data.avg)} Mbps</span>).`;
+    html = `You're near the ${escapeHtml(data.name)} national average (<span class="insight-delta">${formatMbps(measuredSafe)} Mbps</span> vs <span class="insight-delta">${formatMbps(data.avg)} Mbps</span>).`;
   }
-
-  // Add ISP comparison line if matched
   if (matched && measuredSafe > 0){
     const ispDelta = measuredSafe - matched.avg;
     const ispPct = matched.avg > 0 ? (ispDelta / matched.avg) * 100 : 0;
     const ispSign = ispDelta >= 0 ? "+" : "";
-    insightHtml += `<br><span style="color:var(--muted);font-weight:600">vs. ${escapeHtml(matched.name)} (${formatMbps(matched.avg)} Mbps avg): </span>`
-      + `<strong class="insight-delta">${ispSign}${ispPct.toFixed(0)}%</strong>`;
+    html += `<br><span style="color:var(--muted);font-weight:600">vs. ${escapeHtml(matched.name)} (${formatMbps(matched.avg)} Mbps avg): </span><strong class="insight-delta">${ispSign}${ispPct.toFixed(0)}%</strong>`;
   }
-
-  insight.innerHTML = insightHtml;
+  insight.innerHTML = html;
   insight.style.display = "block";
-
-  // ---------- Note ----------
   note.style.display = "block";
-  note.innerHTML = `National averages are based on publicly reported broadband data (Cable.co.uk, Ookla Speedtest Global Index, national regulators, 2023–2024). Provider speeds are typical averages, not live values. Individual results may vary by plan, time of day and network load.`;
+  note.textContent = "National averages are based on publicly reported broadband data (Cable.co.uk, Ookla, regulators, 2023–2024). Provider speeds are typical averages, not live values.";
+  section.classList.add("active");
 }
 
-function truncate(s, n){
-  s = String(s);
-  return s.length > n ? s.slice(0, n - 1) + "…" : s;
-}
-
-/* ---- MAIN ---- */
+/* ---------- MAIN ---------- */
 async function startSpeedTest(){
   if (isRunning) return;
   isRunning = true;
@@ -1061,6 +983,8 @@ async function startSpeedTest(){
   $("upVal").textContent = "--";
   resetGauge();
 
+  let finalDown = 0;
+
   try{
     $("phaseLabel").textContent = "Connecting…";
     await preCheck();
@@ -1070,41 +994,45 @@ async function startSpeedTest(){
     if (!Number.isFinite(latency.ping) || latency.ping <= 0) throw new Error("Ping measurement failed");
     $("pingVal").textContent = latency.ping.toFixed(0);
     $("jitterVal").textContent = latency.jitter.toFixed(0);
-    await sleep(300);
+    await sleep(250);
 
     $("phaseLabel").textContent = "Measuring download…";
-    const finalDown = await downloadTest();
+    finalDown = await downloadTest();
     if (!Number.isFinite(finalDown) || finalDown <= 0) throw new Error("Download measurement failed");
     $("downVal").textContent = formatMbps(finalDown);
     setGaugeValue(finalDown);
-    await sleep(300);
+    await sleep(250);
 
     $("phaseLabel").textContent = "Measuring upload…";
-    const finalUp = await uploadTest();
-    if (!Number.isFinite(finalUp) || finalUp <= 0) throw new Error("Upload measurement failed");
-    $("upVal").textContent = formatMbps(finalUp);
+    try {
+      const finalUp = await uploadTest();
+      if (Number.isFinite(finalUp) && finalUp > 0) {
+        $("upVal").textContent = formatMbps(finalUp);
+      } else {
+        $("upVal").textContent = "n/a";
+      }
+    } catch(e){
+      dbgLog("Upload skipped: " + e.message);
+      $("upVal").textContent = "n/a";
+    }
 
     setGaugeValue(finalDown);
     $("phaseLabel").textContent = "Test complete";
-    dbgShow("Test completed successfully.", true);
-
-    // Automatic provider comparison
+    dbgOk(`✓ Test complete\nDownload: ${formatMbps(finalDown)} Mbps\nPing: ${latency.ping.toFixed(0)} ms`);
     renderProviderComparison(finalDown);
 
   } catch(err){
-    console.error("Fasqoo speed test failed:", err);
-    $("pingVal").textContent = "--";
-    $("jitterVal").textContent = "--";
-    if ($("downVal").textContent === "--") $("downVal").textContent = "Failed";
-    if ($("upVal").textContent === "--") $("upVal").textContent = "Failed";
+    console.error("Speed test failed:", err);
+    if($("downVal").textContent === "--") $("downVal").textContent = "Failed";
+    if($("upVal").textContent === "--") $("upVal").textContent = "Failed";
     $("phaseLabel").textContent = "Test failed";
-    dbgShow("Error: " + (err?.message || err));
-    $("compHeaderTitle").textContent = "Test could not be completed";
-    $("compSubtitle").textContent = "No valid measurement was obtained.";
-    $("providerList").innerHTML = "";
-    $("insightBox").style.display = "none";
-    $("compNote").style.display = "none";
-    $("comparisonSection").classList.add("active");
+    dbgLog("✗ " + (err?.message || err));
+
+    // Still try to show comparison if download succeeded before failure
+    if (finalDown > 0){
+      $("downVal").textContent = formatMbps(finalDown);
+      renderProviderComparison(finalDown);
+    }
   } finally {
     isRunning = false;
     $("retestContainer").classList.add("active");
