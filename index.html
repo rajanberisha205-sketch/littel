@@ -181,48 +181,6 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:26
   .seo-content p,.seo-content ul{font-size:12.5px}
 }
 
-/* App Download Modal Styles */
-.app-modal-overlay {
-  position: fixed; inset: 0; background: rgba(10, 10, 12, 0.85); backdrop-filter: blur(8px);
-  display: none; align-items: center; justify-content: center;
-  z-index: 1000; opacity: 0; transition: opacity 0.3s ease;
-}
-.app-modal-overlay.active { display: flex; opacity: 1; }
-.app-modal-content {
-  background: var(--panel); border-radius: 24px; padding: 40px;
-  width: 90%; max-width: 800px; display: flex; gap: 40px; align-items: center;
-  position: relative; border: 1px solid var(--border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-  transform: scale(0.95); transition: transform 0.3s ease;
-}
-.app-modal-overlay.active .app-modal-content { transform: scale(1); }
-.app-modal-close {
-  position: absolute; top: 15px; right: 15px; background: none; border: none;
-  color: var(--muted); font-size: 28px; cursor: pointer; transition: color 0.2s;
-  line-height: 1; padding: 5px;
-}
-.app-modal-close:hover { color: var(--text); }
-.app-modal-text { flex: 1; text-align: left; }
-.app-modal-title { font-size: 28px; font-weight: 800; color: var(--text); margin: 0 0 16px 0; line-height: 1.2; }
-.app-modal-desc { font-size: 15px; color: var(--muted); margin: 0 0 32px 0; line-height: 1.6; }
-.app-download-btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: var(--text); color: var(--bg); padding: 14px 28px; border-radius: 999px;
-  font-weight: 700; text-decoration: none; font-size: 15px; transition: transform 0.2s, opacity 0.2s;
-  border: none; cursor: pointer; font-family: inherit;
-}
-.app-download-btn:hover { transform: translateY(-2px); opacity: 0.9; }
-.app-download-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.app-mockup { flex-shrink: 0; width: 240px; display: flex; justify-content: center; }
-.app-mockup img { width: 100%; height: auto; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-
-@media (max-width: 680px) {
-  .app-modal-content { flex-direction: column; padding: 30px 20px; gap: 20px; text-align: center; }
-  .app-modal-text { text-align: center; }
-  .app-mockup { width: 180px; }
-  .app-modal-title { font-size: 22px; }
-  .app-modal-desc { font-size: 14px; margin-bottom: 20px; }
-}
-
 /* Feedback Survey Styles */
 .feedback-section {
   display: none; margin-top: 22px; padding: 18px;
@@ -254,13 +212,11 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:26
       <div class="brandname">Fasqoo</div>
     </a>
     <div class="nav-right">
-      <!-- ============================================================== -->
-      <!-- FIX: Statt eines Buttons jetzt ein direkter Download-Link      -->
-      <!-- Ersetze 'DEIN_DIREKTER_DOWNLOAD_LINK_HIER' mit dem echten Link -->
-      <!-- zu deiner APK-Datei (z.B. https://lite.fasqoo.com/app.apk)     -->
-      <!-- ============================================================== -->
-      <a href="DEIN_DIREKTER_DOWNLOAD_LINK_HIER" class="nav-link" id="installBtn" download><span>Install App</span></a>
-      
+      <!-- ============================================================ -->
+      <!-- INSTALL APP Button – ruft den nativen Browser-Install-Dialog  -->
+      <!-- auf (Chrome/Edge/Samsung). Bei iOS/Safari → Anleitung.       -->
+      <!-- ============================================================ -->
+      <button type="button" class="nav-link" id="installBtn" onclick="installPWA()"><span>Install App</span></button>
       <a href="https://fasqoo.com" class="nav-link" title="Fasqoo.com"><span>Fasqoo.com</span></a>
       <select id="langSelect" class="lang-select" aria-label="Language">
         <option value="en">🇺🇸 English</option>
@@ -446,44 +402,11 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:26
   </div>
 </footer>
 
-<!-- ========================================== -->
-<!-- APP DOWNLOAD MODAL (Fallback / Info)       -->
-<!-- ========================================== -->
-<div id="appDownloadModal" class="app-modal-overlay">
-  <div class="app-modal-content">
-    <button class="app-modal-close" onclick="closeAppModal()" aria-label="Close">&times;</button>
-    <div class="app-modal-text">
-      <h2 class="app-modal-title">Fasqoo is better on the app.</h2>
-      <p class="app-modal-desc">Get the full experience with our dedicated mobile application. Faster testing, better accuracy, and more features. Download directly from your browser.</p>
-      
-      <!-- Ersetze auch hier den Link, falls das Modal genutzt wird -->
-      <a href="DEIN_DIREKTER_DOWNLOAD_LINK_HIER" class="app-download-btn" download>
-        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download App (APK)
-      </a>
-    </div>
-    <div class="app-mockup">
-      <!-- SVG Mockup -->
-      <svg viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; border-radius:24px; box-shadow:0 20px 40px rgba(0,0,0,0.4); background:#181a24; border: 2px solid rgba(255,255,255,0.1);">
-        <rect x="10" y="20" width="180" height="360" rx="15" fill="#111218" />
-        <circle cx="100" cy="200" r="60" fill="none" stroke="#a855f7" stroke-width="8" stroke-dasharray="377" stroke-dashoffset="150" stroke-linecap="round" />
-        <text x="100" y="210" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="bold" font-size="28">185</text>
-        <text x="100" y="240" text-anchor="middle" fill="#8b949e" font-family="sans-serif" font-size="14" font-weight="bold">Mbps</text>
-        <text x="100" y="300" text-anchor="middle" fill="#8b949e" font-family="sans-serif" font-size="10" font-weight="bold">DOWNLOAD</text>
-        <rect x="40" y="320" width="120" height="4" rx="2" fill="#333" />
-        <rect x="40" y="320" width="80" height="4" rx="2" fill="#a855f7" />
-        <text x="100" y="350" text-anchor="middle" fill="#8b949e" font-family="sans-serif" font-size="10" font-weight="bold">UPLOAD</text>
-        <rect x="40" y="370" width="120" height="4" rx="2" fill="#333" />
-        <rect x="40" y="370" width="40" height="4" rx="2" fill="#06b6d4" />
-      </svg>
-    </div>
-  </div>
-</div>
-
 <script>
 const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let isRunning = false;
+let deferredPrompt = null;
 let userCountry = "", userCountryCode = "", userIspName = "";
 
 const SPEED_BASE = "https://speed.cloudflare.com";
@@ -626,7 +549,6 @@ function applyLanguage(code){
   $("vlAvgSpeed").textContent = t.vlAvgSpeed;
   $("shareTitle").textContent = t.shareTitle;
   $("shareDownloadLabel").textContent = t.shareDownload;
-  
   $("feedbackTitle").textContent = fmt(t.feedbackTitle, {provider: userIspName || "ISP"});
   $("fbLabel1").textContent = t.fbMuchWorse;
   $("fbLabel2").textContent = t.fbExpected;
@@ -645,29 +567,54 @@ function applyLanguage(code){
 function setLanguage(code){ localStorage.setItem("fasqoo_lang", code); applyLanguage(code); $("langSelect").value = code; }
 
 // ============================================================
-// DOWNLOAD MODAL FUNKTIONEN
+// INSTALL APP — ruft den nativen Browser-Install-Dialog auf
 // ============================================================
-function openAppModal() {
-  const modal = document.getElementById('appDownloadModal');
-  if(modal) {
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+async function installPWA() {
+  // 1) Schon installiert?
+  const standalone = window.matchMedia('(display-mode: standalone)').matches
+                  || window.navigator.standalone === true;
+  if (standalone) {
+    alert('Fasqoo Lite ist bereits als App installiert.');
+    return;
+  }
+
+  // 2) Nativer Browser-Dialog (Chrome / Edge / Samsung Internet / Brave / Opera)
+  if (deferredPrompt) {
+    try {
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      console.log('Install result:', choice.outcome); // "accepted" oder "dismissed"
+      deferredPrompt = null;
+      return;
+    } catch (e) {
+      console.warn('Install prompt fehlgeschlagen:', e);
+    }
+  }
+
+  // 3) Fallback für iOS Safari, Firefox, etc. → kurze Anleitung
+  const ua = (navigator.userAgent || '').toLowerCase();
+  if (/iphone|ipad|ipod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+    alert('Zum Installieren auf iPhone/iPad:\n\n1. Tippe unten auf das Teilen-Symbol.\n2. Wähle "Zum Home-Bildschirm".\n3. Tippe auf "Hinzufügen".');
+  } else if (/firefox/.test(ua)) {
+    alert('Zum Installieren in Firefox:\n\nÖffne das Menü (⋮) oben rechts und wähle "Installieren" oder "Zum Startbildschirm hinzufügen".');
+  } else {
+    alert('Dein Browser unterstützt die direkte App-Installation nicht. Öffne diese Seite in Chrome, Edge oder Samsung Internet und tippe dann auf "Install App".');
   }
 }
 
-function closeAppModal() {
-  const modal = document.getElementById('appDownloadModal');
-  if(modal) {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-}
+// ============================================================
+// beforeinstallprompt — WIRD VON CHROME GEFEUERT, WENN DIE SITE
+// INSTALLIERBAR IST (Service Worker + Manifest vorhanden).
+// ============================================================
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  console.log('✓ beforeinstallprompt captured — Install App Button ist bereit.');
+});
 
-document.addEventListener('click', function(e) {
-  const modal = document.getElementById('appDownloadModal');
-  if (modal && e.target === modal) {
-    closeAppModal();
-  }
+window.addEventListener('appinstalled', () => {
+  console.log('✓ Fasqoo Lite wurde installiert.');
+  deferredPrompt = null;
 });
 
 // ============================================================
@@ -680,13 +627,13 @@ function submitFeedback(rating, btnElement) {
 }
 
 // ============================================================
-// SERVICE WORKER REGISTRIERUNG (Optional, für PWA-Features)
+// SERVICE WORKER — PFLICHT für beforeinstallprompt!
 // ============================================================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('Service Worker registriert:', reg.scope))
-      .catch(err => console.warn('Service Worker Registrierung fehlgeschlagen:', err));
+      .then(reg => console.log('✓ Service Worker registriert:', reg.scope))
+      .catch(err => console.warn('✗ Service Worker Registrierung fehlgeschlagen:', err));
   });
 }
 
