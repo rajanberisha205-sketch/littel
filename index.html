@@ -50,19 +50,21 @@ main{position:relative;z-index:1;padding:25px 0 40px}
 .start-btn-circle:hover{transform:scale(1.03);background:var(--accent);color:#fff;box-shadow:0 0 50px var(--accent-glow)}
 .start-hint{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.3px;max-width:320px;line-height:1.4}
 
-.gauge-container{display:none;position:relative;width:min(340px,85vw);margin:0 auto}
+/* GAUGE — accent color switches to cyan during upload */
+.gauge-container{display:none;position:relative;width:min(340px,85vw);margin:0 auto;transition:--accent .3s}
 .gauge-container.active{display:block;animation:gaugeIn .4s ease}
+.gauge-container.upload-phase{--accent:#06b6d4;--accent-glow:rgba(6,182,212,.35)}
 @keyframes gaugeIn{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 .speedometer-svg{width:100%;height:auto;overflow:visible;display:block}
 .gauge-bg-arc{fill:none;stroke:rgba(148,163,184,.15);stroke-width:20;stroke-linecap:round}
-.gauge-prog-arc{fill:none;stroke:var(--accent);stroke-width:20;stroke-linecap:round;stroke-dasharray:392.70;stroke-dashoffset:392.70;transition:stroke-dashoffset .12s linear}
+.gauge-prog-arc{fill:none;stroke:var(--accent);stroke-width:20;stroke-linecap:round;stroke-dasharray:392.70;stroke-dashoffset:392.70;transition:stroke-dashoffset .12s linear,stroke .4s ease}
 .gauge-needle{stroke:var(--text);stroke-width:5;stroke-linecap:round;transform-origin:150px 170px;will-change:transform}
 .gauge-center-dot{fill:var(--text)}
 .gauge-label-text{fill:var(--muted);font-size:9px;font-weight:700;text-anchor:middle;dominant-baseline:central;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 .speed-display-box{margin-top:-14px;text-align:center}
-.speed-num{font-size:clamp(48px,10vw,64px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-1px}
+.speed-num{font-size:clamp(48px,10vw,64px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-1px;transition:color .4s ease}
 .speed-unit-lbl{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:2px;margin-top:4px;text-transform:uppercase}
-.phase-label{margin-top:10px;font-size:11px;font-weight:800;letter-spacing:2px;color:var(--accent);text-transform:uppercase;min-height:14px}
+.phase-label{margin-top:10px;font-size:11px;font-weight:800;letter-spacing:2px;color:var(--accent);text-transform:uppercase;min-height:14px;transition:color .4s ease}
 .debug-box{display:none;margin-top:14px;padding:10px 12px;border-radius:10px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.35);color:#f87171;font-size:11px;font-weight:600;font-family:ui-monospace,Menlo,Consolas,monospace;text-align:left;line-height:1.5;word-break:break-word;max-height:220px;overflow-y:auto}
 .debug-box.show{display:block}
 .debug-box.ok{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.35);color:#4ade80}
@@ -114,11 +116,10 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:26
 .footer-link{color:var(--muted);text-decoration:none;font-size:11px;font-weight:700;padding:4px 0}
 .footer-link:hover{color:var(--accent)}
 
-/* RTL support (Arabic) */
 [dir="rtl"] body { text-align: right; }
 [dir="rtl"] .result-val,
 [dir="rtl"] .speed-num,
-[dir="rtl"] .compare-val { direction: ltr; text-align: left; }
+[dir="rtl"] .compare-val { direction: ltr; }
 [dir="rtl"] .compare-val { text-align: left; }
 [dir="rtl"] .net-title,
 [dir="rtl"] .net-sub { text-align: right; }
@@ -244,7 +245,7 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:26
 
 <footer>
   <div class="wrap footer-inner">
-    <div class="footer-title">Fasqoo Lite • Speedtest Engine v10.1</div>
+    <div class="footer-title">Fasqoo Lite • Speedtest Engine v10.2</div>
     <div class="footer-sub" id="footerSub">Real Cloudflare Edge measurement</div>
     <div class="footer-notice" id="footerNotice">Fasqoo is an independent speed-test platform and is not an official Cloudflare product.</div>
     <div class="footer-links">
@@ -265,9 +266,6 @@ const DOWN_BYTES = 50 * 1024 * 1024;
 const UP_BYTES = 15 * 1024 * 1024;
 const DOWN_MS = 12000, UP_MS = 12000, PING_COUNT = 6;
 
-/* =========================================================
-   TRANSLATIONS — same 10 languages as www.fasqoo.com
-   ========================================================= */
 const I18N = {
   en:{startHint:"Tap GO to begin the Cloudflare speed test",go:"GO",testAgain:"TEST AGAIN",phaseWarmup:"Warming up connection…",phaseLatency:"Measuring latency…",phaseDownload:"Measuring download…",phaseUpload:"Measuring upload…",phaseComplete:"Test complete",phaseFailed:"Test failed",phaseReady:"Ready",ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",detecting:"Detecting internet provider...",cloudflareEdge:"Cloudflare Edge Server",cloudflareEndpoint:"Cloudflare Edge endpoint",providerUnavailable:"Provider unavailable",ipUnavailable:"IP information unavailable",locationUnavailable:"Location unavailable",howYouCompare:"How you compare",compareSubtitle:"Your measured download speed compared to regional averages.",yourResult:"Your result",yourProvider:"your provider",yourMeasuredDownload:"Your measured download",countryAvg:"{country} average",noValid:"No valid measurement for comparison.",avgAbove:"You're <strong>{pct}</strong> above the {country} national average ({speed} vs {avg}).",avgBelow:"You're <strong>{pct}</strong> below the {country} national average ({speed} vs {avg}).",avgNear:"You're near the {country} national average ({speed} vs {avg}).",vsProvider:"vs. {name} ({avg} Mbps avg): ",noRegionData:"Regional comparison data is not yet available for {country}.",measuredIn:"Measured download speed in {country}.",privacy:"Privacy Policy",footerSub:"Real Cloudflare Edge measurement",disclaimer:'National and provider averages are based on publicly reported broadband data from sources such as <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, the <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a>, and national regulators (<strong>2023–2024</strong>). These figures represent <strong>typical national averages</strong> and are <strong>not live measurements</strong> of any single provider\'s current network performance. Individual results may vary by plan, time of day, and network load.',footerNotice:"Fasqoo is an independent speed-test platform and is not an official Cloudflare product."},
 
@@ -289,12 +287,8 @@ const I18N = {
 
   ar:{startHint:"اضغط على ابدأ لبدء اختبار سرعة Cloudflare",go:"ابدأ",testAgain:"إعادة الاختبار",phaseWarmup:"جاري تحضير الاتصال…",phaseLatency:"قياس زمن الاستجابة…",phaseDownload:"قياس التنزيل…",phaseUpload:"قياس الرفع…",phaseComplete:"اكتمل الاختبار",phaseFailed:"فشل الاختبار",phaseReady:"جاهز",ping:"PING",download:"تنزيل",jitter:"JITTER",upload:"رفع",detecting:"جاري اكتشاف مزود الإنترنت...",cloudflareEdge:"خادم Cloudflare Edge",cloudflareEndpoint:"نقطة نهاية Cloudflare Edge",providerUnavailable:"المزود غير متاح",ipUnavailable:"معلومات IP غير متاحة",locationUnavailable:"الموقع غير متاح",howYouCompare:"مقارنتك",compareSubtitle:"سرعة التنزيل التي قمت بقياسها مقارنة بالمتوسطات الإقليمية.",yourResult:"نتيجتك",yourProvider:"مزودك",yourMeasuredDownload:"تنزيلك المقاس",countryAvg:"متوسط {country}",noValid:"لا يوجد قياس صالح للمقارنة.",avgAbove:"أنت <strong>{pct}</strong> فوق المتوسط الوطني لـ {country} ({speed} مقابل {avg}).",avgBelow:"أنت <strong>{pct}</strong> تحت المتوسط الوطني لـ {country} ({speed} مقابل {avg}).",avgNear:"أنت قريب من المتوسط الوطني لـ {country} ({speed} مقابل {avg}).",vsProvider:"مقابل {name} (متوسط {avg} Mbps): ",noRegionData:"بيانات المقارنة الإقليمية لـ {country} غير متاحة بعد.",measuredIn:"سرعة التنزيل المقاسة في {country}.",privacy:"سياسة الخصوصية",footerSub:"قياس حقيقي لـ Cloudflare Edge",disclaimer:'تستند المتوسطات الوطنية ومتوسطات المزودين إلى بيانات النطاق العريض المعلنة علنًا من مصادر مثل <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a> و <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> والجهات التنظيمية الوطنية (<strong>2023–2024</strong>). تمثل هذه الأرقام <strong>متوسطات وطنية نموذجية</strong> وليست <strong>قياسات حية</strong> لأداء شبكة أي مزود فردي. قد تختلف النتائج الفردية حسب الخطة والوقت من اليوم وحمل الشبكة.',footerNotice:"Fasqoo هي منصة اختبار سرعة مستقلة وليست منتجًا رسميًا لـ Cloudflare."}
 };
-
 let currentT = I18N.en;
 
-/* =========================================================
-   ISP DATA
-   ========================================================= */
 const ISP_DATA = {
   XK:{name:"Kosovo",avg:38,providers:[{name:"Kujtesa",avg:52,aliases:["kujtesa"]},{name:"IPKO",avg:45,aliases:["ipko"]},{name:"Artmotion",avg:31,aliases:["artmotion","art motion"]},{name:"Telekom Kosova",avg:28,aliases:["telekom","vala","kosova"]}]},
   AL:{name:"Albania",avg:40,providers:[{name:"Digicom",avg:52,aliases:["digicom"]},{name:"One Albania",avg:44,aliases:["one"]},{name:"Vodafone Albania",avg:38,aliases:["vodafone"]}]},
@@ -335,9 +329,6 @@ const ISP_DATA = {
   SA:{name:"Saudi Arabia",avg:90,providers:[{name:"STC",avg:105,aliases:["stc"]},{name:"Mobily",avg:92,aliases:["mobily"]},{name:"Zain SA",avg:85,aliases:["zain"]}]}
 };
 
-/* =========================================================
-   HELPERS
-   ========================================================= */
 const debugLines = [];
 function dbgLog(line){ debugLines.push(line); if(debugLines.length>20) debugLines.shift(); const box=$("debugBox"); if(box){box.textContent=debugLines.join("\n");box.classList.add("show");box.classList.remove("ok");box.scrollTop=box.scrollHeight;} }
 function dbgClear(){ debugLines.length=0; const b=$("debugBox"); if(b){b.textContent="";b.classList.remove("show","ok");} }
@@ -348,9 +339,6 @@ function formatMbps(v){ if(!Number.isFinite(v)) return "--"; if(v<10) return v.t
 function robustMedian(vals){ if(!vals.length) return 0; const a=[...vals].sort((x,y)=>x-y); const mid=Math.floor(a.length/2); return a.length%2!==0?a[mid]:(a[mid-1]+a[mid])/2; }
 function percentile(vals, p){ if(!vals.length) return 0; const a=[...vals].sort((x,y)=>x-y); const idx=Math.min(a.length-1,Math.max(0,Math.round((p/100)*(a.length-1)))); return a[idx]; }
 
-/* =========================================================
-   THEME
-   ========================================================= */
 function toggleTheme(){
   const html = document.documentElement;
   const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -364,9 +352,6 @@ function updateThemeIcon(theme){
   else { icon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>'; }
 }
 
-/* =========================================================
-   LANGUAGE
-   ========================================================= */
 function detectLang(){
   const saved = localStorage.getItem("fasqoo_lang");
   if (saved && I18N[saved]) return saved;
@@ -400,15 +385,9 @@ function applyLanguage(code){
 }
 function setLanguage(code){ localStorage.setItem("fasqoo_lang", code); applyLanguage(code); $("langSelect").value = code; }
 
-/* =========================================================
-   PWA
-   ========================================================= */
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; if($('installBtn')) $('installBtn').style.display = 'inline-flex'; });
 function installPWA() { if (!deferredPrompt) return; deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => { $('installBtn').style.display = 'none'; }); }
 
-/* =========================================================
-   INIT
-   ========================================================= */
 window.addEventListener("DOMContentLoaded", () => {
   const savedTheme = localStorage.getItem("fasqoo_theme") || "dark";
   document.documentElement.setAttribute("data-theme", savedTheme);
@@ -422,9 +401,6 @@ window.addEventListener("DOMContentLoaded", () => {
   fetchIpInfo();
 });
 
-/* =========================================================
-   IP LOOKUP
-   ========================================================= */
 async function fetchIpInfo(){
   try{
     const res = await fetch("https://ipwho.is/", {cache:"no-store"});
@@ -447,19 +423,20 @@ async function fetchIpInfo(){
 }
 
 /* =========================================================
-   GAUGE — 0 → 1000 Mbps
+   GAUGE — 0 → 1000 Mbps with balanced log scale
+   Gaps: 18° 29° 15° 23° 17° 18° 24° 18° 18°
    ========================================================= */
 const GAUGE_CIRCUMFERENCE = Math.PI * 125;
 const GAUGE_TICKS = [
   {v:0,    a:180},
-  {v:1,    a:196},
-  {v:5,    a:210},
-  {v:10,   a:222},
-  {v:25,   a:234},
-  {v:50,   a:246},
-  {v:100,  a:258},
-  {v:250,  a:278},
-  {v:500,  a:302},
+  {v:1,    a:198},
+  {v:5,    a:227},
+  {v:10,   a:242},
+  {v:25,   a:265},
+  {v:50,   a:282},
+  {v:100,  a:300},
+  {v:250,  a:324},
+  {v:500,  a:342},
   {v:1000, a:360}
 ];
 function buildGaugeLabels(){
@@ -510,8 +487,15 @@ function setGaugeValue(val){
 function resetGauge(){ needleTarget = 0; needleCurrent = 0; if (needleRAF){cancelAnimationFrame(needleRAF);needleRAF=null;} renderGauge(0); }
 
 /* =========================================================
-   PING
+   PHASE COLOR SWITCHING
    ========================================================= */
+function setGaugePhase(phase){
+  const gc = $("gaugeContainer");
+  if (!gc) return;
+  if (phase === "upload") gc.classList.add("upload-phase");
+  else gc.classList.remove("upload-phase");
+}
+
 async function pingTest(){
   const vals = [];
   for (let i=0; i<PING_COUNT && isRunning; i++){
@@ -539,9 +523,6 @@ async function pingTest(){
   return { ping, jitter };
 }
 
-/* =========================================================
-   DOWNLOAD
-   ========================================================= */
 async function downloadStream(){
   const url = SPEED_BASE + "/__down?bytes=" + DOWN_BYTES + "&r=" + Math.random();
   dbgLog(`↓ streaming download…`);
@@ -590,9 +571,6 @@ async function downloadStream(){
   return percentile(samples, 85) || robustMedian(samples);
 }
 
-/* =========================================================
-   UPLOAD
-   ========================================================= */
 async function uploadStream(){
   const payload = new Uint8Array(UP_BYTES);
   const chunk = 64 * 1024;
@@ -639,9 +617,6 @@ async function uploadStream(){
   });
 }
 
-/* =========================================================
-   COMPARISON
-   ========================================================= */
 function matchProvider(ispName, providers){
   if (!ispName) return null;
   const lower = ispName.toLowerCase();
@@ -720,9 +695,6 @@ function renderProviderComparison(measuredMbps){
   section.classList.add("active");
 }
 
-/* =========================================================
-   MAIN
-   ========================================================= */
 async function startSpeedTest(){
   if (isRunning) return;
   isRunning = true;
@@ -732,6 +704,7 @@ async function startSpeedTest(){
   $("retestContainer").classList.remove("active");
   $("startContainer").style.display = "none";
   $("gaugeContainer").classList.add("active");
+  setGaugePhase("download"); // reset to purple
   $("pingVal").textContent = "--"; $("jitterVal").textContent = "--";
   $("downVal").textContent = "--"; $("downVal").dataset.value = "0";
   $("upVal").textContent = "--";
@@ -756,6 +729,8 @@ async function startSpeedTest(){
       }
     } catch(e){ dbgLog("ping phase: " + e.message); }
 
+    /* ===== DOWNLOAD (purple) ===== */
+    setGaugePhase("download");
     $("phaseLabel").textContent = currentT.phaseDownload;
     try {
       finalDown = await downloadStream();
@@ -765,6 +740,8 @@ async function startSpeedTest(){
       setGaugeValue(finalDown);
     } catch(e){ dbgLog("download phase: " + e.message); }
 
+    /* ===== UPLOAD (cyan — color switch happens here) ===== */
+    setGaugePhase("upload");
     $("phaseLabel").textContent = currentT.phaseUpload;
     try {
       const finalUp = await uploadStream();
@@ -773,6 +750,7 @@ async function startSpeedTest(){
     } catch(e){ dbgLog("upload: " + e.message); $("upVal").textContent = "n/a"; }
 
     if (finalDown > 0) {
+      setGaugePhase("download"); // back to purple for final display
       setGaugeValue(finalDown);
       $("phaseLabel").textContent = currentT.phaseComplete;
       dbgOk(`✓ Done\nDownload: ${formatMbps(finalDown)} Mbps\nPing: ${finalPing !== null ? finalPing.toFixed(0) + " ms" : "n/a"}`);
