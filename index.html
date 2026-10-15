@@ -103,19 +103,30 @@ main{position:relative;z-index:1;padding:25px 0 40px}
 
 .gauge-visual{position:relative;width:100%;line-height:0}
 .speedometer-svg{width:100%;height:auto;overflow:visible;display:block}
-.gauge-bg-arc{fill:none;stroke:rgba(148,163,184,.22);stroke-width:22;stroke-linecap:round}
+
+/* Der Balken endet nun gerade (butt) statt rund (round) */
+.gauge-bg-arc{fill:none;stroke:rgba(148,163,184,.22);stroke-width:22;stroke-linecap:butt}
 :root[data-theme="light"] .gauge-bg-arc{stroke:rgba(15,23,42,.10)}
-.gauge-prog-arc{fill:none;stroke:url(#gaugeGradDown);stroke-width:22;stroke-linecap:round;stroke-dasharray:502.65;stroke-dashoffset:502.65;transition:stroke .4s ease}
+.gauge-prog-arc{fill:none;stroke:url(#gaugeGradDown);stroke-width:22;stroke-linecap:butt;stroke-dasharray:502.65;stroke-dashoffset:502.65;transition:stroke .4s ease}
 .gauge-container.upload-phase .gauge-prog-arc{stroke:url(#gaugeGradUp)}
-.gauge-needle{stroke:#334155;stroke-width:7;stroke-linecap:round}
-:root[data-theme="dark"] .gauge-needle{stroke:#e2e8f0}
-.gauge-center-dot{fill:rgba(148,163,184,.55)}
-:root[data-theme="dark"] .gauge-center-dot{fill:rgba(148,163,184,.65)}
+
+/* Die neue, dicke Nadel */
+.gauge-needle {
+    fill: #cbd5e1;
+    stroke: none;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+:root[data-theme="light"] .gauge-needle {
+    fill: #1e293b;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
 .gauge-label-text{fill:var(--muted);font-size:11px;font-weight:700;text-anchor:middle;dominant-baseline:central;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 
-.gauge-readout{position:absolute;left:0;right:0;top:60%;transform:translateY(-50%);text-align:center;pointer-events:none;line-height:1.1}
-.speed-num{font-size:clamp(42px,11vw,58px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-1.5px;color:var(--text)}
-.speed-unit-lbl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:2.5px;margin-top:3px;text-transform:uppercase}
+/* Zahlen weiter nach unten verschoben (85% statt 76%) */
+.gauge-readout{position:absolute;left:0;right:0;top:85%;transform:translateY(-50%);text-align:center;pointer-events:none;line-height:1.1}
+.speed-num{font-size:clamp(48px,14vw,68px);font-weight:300;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-2px;color:var(--text)}
+.speed-unit-lbl{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:2px;margin-top:6px;text-transform:uppercase}
 
 .phase-label{margin-top:16px;font-size:11px;font-weight:800;letter-spacing:2px;color:var(--accent);text-transform:uppercase;min-height:14px;transition:color .4s ease;text-align:center}
 .debug-box{display:none;margin-top:14px;padding:10px 12px;border-radius:10px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.35);color:#f87171;font-size:11px;font-weight:600;font-family:ui-monospace,Menlo,Consolas,monospace;text-align:left;line-height:1.5;word-break:break-word;max-height:220px;overflow-y:auto}
@@ -290,23 +301,23 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:26
           <svg class="speedometer-svg" viewBox="0 0 300 240" aria-hidden="true">
             <defs>
               <linearGradient id="gaugeGradDown" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#67e8f9"/>
-                <stop offset="45%" stop-color="#22d3ee"/>
-                <stop offset="100%" stop-color="#0891b2"/>
+                <stop offset="0%" stop-color="#38bdf8"/>
+                <stop offset="100%" stop-color="#0284c7"/>
               </linearGradient>
               <linearGradient id="gaugeGradUp" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#86efac"/>
-                <stop offset="45%" stop-color="#34d399"/>
-                <stop offset="100%" stop-color="#059669"/>
+                <stop offset="0%" stop-color="#4ade80"/>
+                <stop offset="100%" stop-color="#16a34a"/>
               </linearGradient>
             </defs>
             <path class="gauge-bg-arc" d="M 46.08 225 A 120 120 0 1 1 253.92 225" />
             <path id="gaugeProgress" class="gauge-prog-arc" d="M 46.08 225 A 120 120 0 1 1 253.92 225" />
             <g id="gaugeLabels"></g>
+            
+            <!-- Neue, dicke Nadel (Polygon) die den Rand NICHT berührt (endet bei -105 statt -125) -->
             <g id="needleGroup" transform="translate(150,165) rotate(-30)">
-              <line class="gauge-needle" x1="0" y1="0" x2="-78" y2="0" />
+              <polygon class="gauge-needle" points="0,-8 -105,0 0,8" />
             </g>
-            <circle class="gauge-center-dot" cx="150" cy="165" r="5" />
+            
           </svg>
           <div class="gauge-readout">
             <div id="speedNum" class="speed-num" aria-live="polite">0.00</div>
@@ -568,7 +579,7 @@ function dbgClear(){ debugLines.length=0; const b=$("debugBox"); if(b){b.textCon
 function dbgOk(msg){ const b=$("debugBox"); if(b){ b.textContent=msg; b.classList.add("show","ok"); } }
 function fmt(tpl, vars){ return String(tpl).replace(/\{(\w+)\}/g, (_, k) => vars[k] !== undefined ? vars[k] : ""); }
 function escapeHtml(v){ return String(v).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch])); }
-function formatMbps(v){ if(!Number.isFinite(v)) return "--"; if(v<10) return v.toFixed(2); if(v<100) return v.toFixed(1); return Math.round(v).toString(); }
+function formatMbps(v){ if(!Number.isFinite(v)) return "--"; return v.toFixed(2); }
 function robustMedian(vals){ if(!vals.length) return 0; const a=[...vals].sort((x,y)=>x-y); const mid=Math.floor(a.length/2); return a.length%2!==0?a[mid]:(a[mid-1]+a[mid])/2; }
 
 function getBufferbloatGrade(increase){
