@@ -34,7 +34,6 @@ body{overflow-x:hidden}
 .wrap{width:min(1000px,calc(100% - 24px));margin:auto}
 
 header{position:sticky;top:0;z-index:100;padding:12px 0;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(15px)}
-
 .nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);flex-shrink:0}
 .brandmark{height:28px;width:auto}
@@ -48,18 +47,15 @@ header{position:sticky;top:0;z-index:100;padding:12px 0;border-bottom:1px solid 
 .nav-install-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background-color:#1a1e26;color:#fff;border:none;padding:7px 14px;border-radius:999px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s ease;box-shadow:0 2px 6px rgba(0,0,0,.15);-webkit-tap-highlight-color:transparent}
 .nav-install-btn svg{flex-shrink:0;width:14px;height:14px}
 .nav-install-btn:hover{background-color:#2a313d;transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.2)}
-.nav-install-btn:active{transform:translateY(0);background-color:#14181f}
 
 .install-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .3s ease}
 .install-modal-overlay.active{display:flex;opacity:1}
 .install-modal-content{background:#fff;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:32px 24px 40px;text-align:center;position:relative;transform:translateY(100%);transition:transform .35s cubic-bezier(.16,1,.3,1);box-shadow:0 -10px 40px rgba(0,0,0,.2);color:#1f2937}
 .install-modal-overlay.active .install-modal-content{transform:translateY(0)}
-.install-modal-close{position:absolute;top:16px;right:16px;background:transparent;border:none;font-size:24px;color:#9ca3af;cursor:pointer;line-height:1;padding:4px;transition:color .2s}
-.install-modal-close:hover{color:#1f2937}
+.install-modal-close{position:absolute;top:16px;right:16px;background:transparent;border:none;font-size:24px;color:#9ca3af;cursor:pointer;line-height:1;padding:4px}
 .install-modal-title{font-size:22px;font-weight:800;margin:0 0 12px;color:#111827;letter-spacing:-.5px}
 .install-modal-text{font-size:14px;line-height:1.6;color:#4b5563;margin:0 0 24px}
 .install-modal-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background-color:#1a1e26;color:#fff;border:none;padding:16px 32px;border-radius:50px;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:all .25s ease;box-shadow:0 4px 15px rgba(0,0,0,.2);width:100%;max-width:320px;margin:0 auto}
-.install-modal-btn:hover{background-color:#2a313d;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.25)}
 .install-modal-btn svg{width:20px;height:20px;flex-shrink:0}
 .install-modal-phone{margin:30px auto 0;width:180px;height:320px;background:#1a1e26;border-radius:28px;border:4px solid #2a313d;position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.3);display:flex;flex-direction:column;align-items:center;justify-content:center}
 .phone-gauge-ring{width:100px;height:100px;border-radius:50%;border:8px solid #22d3ee;border-bottom-color:transparent;border-left-color:transparent;transform:rotate(-45deg);position:absolute;top:80px}
@@ -77,7 +73,6 @@ header{position:sticky;top:0;z-index:100;padding:12px 0;border-bottom:1px solid 
 .history-modal-content{background:var(--panel);width:100%;max-width:520px;max-height:80vh;overflow-y:auto;border-radius:20px;padding:24px;position:relative;transform:scale(.95);transition:transform .3s ease;box-shadow:0 20px 60px rgba(0,0,0,.5);border:1px solid var(--border)}
 .history-modal-overlay.active .history-modal-content{transform:scale(1)}
 .history-modal-close{position:absolute;top:16px;right:16px;background:transparent;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;padding:4px}
-.history-modal-close:hover{color:var(--text)}
 .history-modal-title{font-size:16px;font-weight:800;color:var(--text);margin:0 0 16px;letter-spacing:-.3px}
 .history-list{display:flex;flex-direction:column;gap:10px}
 .history-item{padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--bg) 60%,transparent);border:1px solid var(--border);font-size:12px}
@@ -91,38 +86,42 @@ header{position:sticky;top:0;z-index:100;padding:12px 0;border-bottom:1px solid 
 .live-chart-wrap{display:none;margin-top:12px;height:70px;position:relative;border-radius:10px;overflow:hidden;background:color-mix(in srgb,var(--panel) 60%,transparent);border:1px solid var(--border)}
 .live-chart-wrap.active{display:block}
 #liveChart{width:100%;height:100%;display:block}
-.live-chart-label{position:absolute;top:6px;left:10px;font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.live-chart-label{position:absolute;top:6px;left:10px;font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);z-index:2;pointer-events:none}
 
 main{position:relative;z-index:1;padding:25px 0 40px}
 .test-panel{width:min(680px,100%);margin:auto;padding:15px;text-align:center}
 .start-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 0;gap:18px}
-.start-btn-circle{width:clamp(190px,45vw,240px);height:clamp(190px,45vw,240px);border-radius:50%;border:4px solid var(--accent);background:transparent;color:var(--accent);font-size:clamp(30px,6vw,42px);font-weight:800;letter-spacing:2px;cursor:pointer;transition:transform .25s ease,background .25s ease,color .25s ease,box-shadow .25s ease;box-shadow:0 0 35px var(--accent-glow);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;text-align:center;padding:0 14px;line-height:1.1}
+.start-btn-circle{width:clamp(190px,45vw,240px);height:clamp(190px,45vw,240px);border-radius:50%;border:4px solid var(--accent);background:transparent;color:var(--accent);font-size:clamp(30px,6vw,42px);font-weight:800;letter-spacing:2px;cursor:pointer;transition:transform .25s ease,background .25s ease,color .25s ease,box-shadow .25s ease;box-shadow:0 0 35px var(--accent-glow);display:flex;align-items:center;justify-content:center;text-align:center;padding:0 14px;line-height:1.1}
 .start-btn-circle:hover{transform:scale(1.03);background:var(--accent);color:#fff;box-shadow:0 0 50px var(--accent-glow)}
 .start-hint{font-size:12px;color:var(--muted);font-weight:600;max-width:320px;line-height:1.4}
 
-/* ============ NEW OOKLA-STYLE GAUGE ============ */
-.gauge-container{display:none;position:relative;width:min(340px,88vw);margin:0 auto}
+/* ============ OOKLA-STYLE GAUGE ============ */
+.gauge-container{display:none;position:relative;width:min(360px,92vw);margin:0 auto}
 .gauge-container.active{display:block;animation:gaugeIn .4s ease}
 .gauge-container.upload-phase{--accent:#10b981;--accent-glow:rgba(16,185,129,.35)}
 @keyframes gaugeIn{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.gauge-visual{position:relative;width:100%;line-height:0}
 .speedometer-svg{width:100%;height:auto;overflow:visible;display:block}
-.gauge-bg-arc{fill:none;stroke:rgba(148,163,184,.20);stroke-width:22;stroke-linecap:round}
-:root[data-theme="light"] .gauge-bg-arc{stroke:rgba(15,23,42,.09)}
+.gauge-bg-arc{fill:none;stroke:rgba(148,163,184,.22);stroke-width:22;stroke-linecap:round}
+:root[data-theme="light"] .gauge-bg-arc{stroke:rgba(15,23,42,.10)}
 .gauge-prog-arc{fill:none;stroke:url(#gaugeGradDown);stroke-width:22;stroke-linecap:round;stroke-dasharray:502.65;stroke-dashoffset:502.65;transition:stroke .4s ease}
 .gauge-container.upload-phase .gauge-prog-arc{stroke:url(#gaugeGradUp)}
-.gauge-needle{stroke:#334155;stroke-width:6;stroke-linecap:round;transform-box:view-box;transform-origin:150px 165px;will-change:transform}
+.gauge-needle{stroke:#334155;stroke-width:7;stroke-linecap:round}
 :root[data-theme="dark"] .gauge-needle{stroke:#e2e8f0}
-.gauge-center-dot{fill:rgba(148,163,184,.5)}
-:root[data-theme="dark"] .gauge-center-dot{fill:rgba(148,163,184,.6)}
-.gauge-label-text{fill:var(--muted);font-size:11px;font-weight:700;text-anchor:middle;dominant-baseline:central}
+.gauge-center-dot{fill:rgba(148,163,184,.55)}
+:root[data-theme="dark"] .gauge-center-dot{fill:rgba(148,163,184,.65)}
+.gauge-label-text{fill:var(--muted);font-size:11px;font-weight:700;text-anchor:middle;dominant-baseline:central;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 
-.gauge-readout{position:absolute;left:0;right:0;top:68%;text-align:center;pointer-events:none}
-.speed-num{font-size:clamp(44px,11vw,60px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-1.5px;color:var(--text);transition:color .4s ease}
-.speed-unit-lbl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:2.5px;margin-top:2px;text-transform:uppercase}
-.phase-label{margin-top:14px;font-size:11px;font-weight:800;letter-spacing:2px;color:var(--accent);text-transform:uppercase;min-height:14px;transition:color .4s ease;text-align:center}
+.gauge-readout{position:absolute;left:0;right:0;top:60%;transform:translateY(-50%);text-align:center;pointer-events:none;line-height:1.1}
+.speed-num{font-size:clamp(42px,11vw,58px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-1.5px;color:var(--text)}
+.speed-unit-lbl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:2.5px;margin-top:3px;text-transform:uppercase}
+
+.phase-label{margin-top:16px;font-size:11px;font-weight:800;letter-spacing:2px;color:var(--accent);text-transform:uppercase;min-height:14px;transition:color .4s ease;text-align:center}
 .debug-box{display:none;margin-top:14px;padding:10px 12px;border-radius:10px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.35);color:#f87171;font-size:11px;font-weight:600;font-family:ui-monospace,Menlo,Consolas,monospace;text-align:left;line-height:1.5;word-break:break-word;max-height:220px;overflow-y:auto}
 .debug-box.show{display:block}
 .debug-box.ok{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.35);color:#4ade80}
+
 .retest-container{display:none;margin-top:24px;text-align:center;gap:10px;flex-direction:column;align-items:center}
 .retest-container.active{display:flex;animation:gaugeIn .4s ease}
 .retest-btn{padding:12px 32px;border-radius:999px;border:2px solid var(--accent);background:transparent;color:var(--accent);font-size:13px;font-weight:800;letter-spacing:2px;cursor:pointer;transition:all .2s ease;font-family:inherit}
@@ -137,7 +136,7 @@ main{position:relative;z-index:1;padding:25px 0 40px}
 .result-unit{font-size:11px;font-weight:600;color:var(--muted);margin-top:1px}
 
 .verify-panel{display:none;margin-top:20px;padding:18px 20px;border-radius:16px;background:linear-gradient(145deg,rgba(24,26,36,.85),rgba(17,18,24,.95));border:1px solid rgba(255,255,255,.06);box-shadow:0 8px 32px rgba(0,0,0,.25);text-align:left}
-:root[data-theme="light"] .verify-panel{background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(244,245,247,.9));border:1px solid rgba(15,23,42,.06);box-shadow:0 8px 32px rgba(0,0,0,.06)}
+:root[data-theme="light"] .verify-panel{background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(244,245,247,.9));border:1px solid rgba(15,23,42,.06)}
 .verify-panel.active{display:block;animation:gaugeIn .5s ease}
 .verify-header{display:flex;align-items:center;gap:8px;margin-bottom:14px}
 .verify-header svg{stroke:var(--accent);flex-shrink:0}
@@ -164,7 +163,7 @@ main{position:relative;z-index:1;padding:25px 0 40px}
 .share-btn.wa{background:#25D366}
 .share-btn.fb{background:#1877F2}
 .share-btn.tw{background:#000}
-.share-btn.dl{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 60%,#fff))}
+.share-btn.dl{background:linear-gradient(135deg,#22d3ee,#0891b2)}
 
 .network-info-box{margin-top:35px;text-align:left;display:flex;flex-direction:column;gap:12px;padding-top:20px;border-top:1px solid var(--border)}
 .net-row{display:flex;align-items:center;gap:12px}
@@ -185,7 +184,7 @@ main{position:relative;z-index:1;padding:25px 0 40px}
 .compare-val{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
 .compare-bar-track{grid-column:1/-1;height:8px;background:rgba(148,163,184,.13);border-radius:999px;overflow:hidden}
 .compare-bar-fill{height:100%;width:0;border-radius:999px;background:rgba(148,163,184,.55);transition:width .8s cubic-bezier(.2,.8,.2,1)}
-.compare-row.highlight .compare-bar-fill{background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 60%,#fff));box-shadow:0 0 12px var(--accent-glow)}
+.compare-row.highlight .compare-bar-fill{background:linear-gradient(90deg,#22d3ee,#0891b2);box-shadow:0 0 12px rgba(34,211,238,.35)}
 .compare-row.highlight .compare-name,.compare-row.highlight .compare-val{color:var(--text)}
 .insight-box{margin-top:8px;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--accent) 8%,transparent);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);font-size:12px;font-weight:600;line-height:1.5;color:var(--text)}
 .insight-box strong{color:var(--accent);font-weight:800}
@@ -287,28 +286,32 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:26
       </div>
 
       <div id="gaugeContainer" class="gauge-container">
-        <svg class="speedometer-svg" viewBox="0 0 300 240" aria-hidden="true">
-          <defs>
-            <linearGradient id="gaugeGradDown" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#67e8f9"/>
-              <stop offset="45%" stop-color="#22d3ee"/>
-              <stop offset="100%" stop-color="#0891b2"/>
-            </linearGradient>
-            <linearGradient id="gaugeGradUp" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#86efac"/>
-              <stop offset="45%" stop-color="#34d399"/>
-              <stop offset="100%" stop-color="#059669"/>
-            </linearGradient>
-          </defs>
-          <path class="gauge-bg-arc" d="M 46.08 225 A 120 120 0 1 1 253.92 225" />
-          <path id="gaugeProgress" class="gauge-prog-arc" d="M 46.08 225 A 120 120 0 1 1 253.92 225" />
-          <g id="gaugeLabels"></g>
-          <line id="needle" class="gauge-needle" x1="150" y1="165" x2="50" y2="165" />
-          <circle class="gauge-center-dot" cx="150" cy="165" r="6" />
-        </svg>
-        <div class="gauge-readout">
-          <div id="speedNum" class="speed-num" aria-live="polite">0.00</div>
-          <div class="speed-unit-lbl">Mbps</div>
+        <div class="gauge-visual">
+          <svg class="speedometer-svg" viewBox="0 0 300 240" aria-hidden="true">
+            <defs>
+              <linearGradient id="gaugeGradDown" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#67e8f9"/>
+                <stop offset="45%" stop-color="#22d3ee"/>
+                <stop offset="100%" stop-color="#0891b2"/>
+              </linearGradient>
+              <linearGradient id="gaugeGradUp" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#86efac"/>
+                <stop offset="45%" stop-color="#34d399"/>
+                <stop offset="100%" stop-color="#059669"/>
+              </linearGradient>
+            </defs>
+            <path class="gauge-bg-arc" d="M 46.08 225 A 120 120 0 1 1 253.92 225" />
+            <path id="gaugeProgress" class="gauge-prog-arc" d="M 46.08 225 A 120 120 0 1 1 253.92 225" />
+            <g id="gaugeLabels"></g>
+            <g id="needleGroup" transform="translate(150,165) rotate(-30)">
+              <line class="gauge-needle" x1="0" y1="0" x2="-78" y2="0" />
+            </g>
+            <circle class="gauge-center-dot" cx="150" cy="165" r="5" />
+          </svg>
+          <div class="gauge-readout">
+            <div id="speedNum" class="speed-num" aria-live="polite">0.00</div>
+            <div class="speed-unit-lbl">Mbps</div>
+          </div>
         </div>
         <div id="phaseLabel" class="phase-label">Ready</div>
         <div id="debugBox" class="debug-box"></div>
@@ -464,7 +467,7 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:26
 
 <footer>
   <div class="wrap footer-inner">
-    <div class="footer-title">Fasqoo Lite • Speedtest Engine v15.0</div>
+    <div class="footer-title">Fasqoo Lite • Speedtest Engine v15.1</div>
     <div class="footer-sub" id="footerSub">Real Cloudflare Edge measurement</div>
     <div class="footer-notice" id="footerNotice">Fasqoo is an independent speed-test platform and is not an official Cloudflare product.</div>
     <div class="footer-links">
@@ -529,336 +532,16 @@ let bufferbloatPings = [];
 let bufferbloatRunning = false;
 
 const I18N = {
-  en:{
-    installApp:"Install App",
-    history:"History",historyModalTitle:"Test History",historyEmpty:"No tests yet. Run your first speed test!",
-    installModalTitle:"Fasqoo is better on the app.",
-    installModalText:"Get the full experience with our dedicated mobile application. Faster testing, better accuracy, and more features. Download directly from your browser.",
-    installModalBtn:"Download App (APK)",
-    startHint:"Tap GO to begin the Cloudflare speed test",go:"GO",testAgain:"TEST AGAIN",
-    phaseWarmup:"Warming up connection…",phaseLatency:"Measuring latency…",phaseDownload:"Measuring download…",phaseUpload:"Measuring upload…",phaseComplete:"Test complete",phaseFailed:"Test failed",phaseReady:"Ready",
-    ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",loss:"PACKET LOSS",bb:"BUFFERBLOAT",
-    detecting:"Detecting internet provider...",cloudflareEdge:"Cloudflare Edge Server",cloudflareEndpoint:"Cloudflare Edge endpoint",
-    providerUnavailable:"Provider unavailable",ipUnavailable:"IP information unavailable",locationUnavailable:"Location unavailable",
-    howYouCompare:"How you compare",compareSubtitle:"Your measured download speed compared to regional averages.",
-    yourResult:"Your result",yourProvider:"your provider",yourMeasuredDownload:"Your measured download",countryAvg:"{country} average",
-    noValid:"No valid measurement for comparison.",
-    avgAbove:"You're <strong>{pct}</strong> above the {country} national average ({speed} vs {avg}).",
-    avgBelow:"You're <strong>{pct}</strong> below the {country} national average ({speed} vs {avg}).",
-    avgNear:"You're near the {country} national average ({speed} vs {avg}).",
-    vsProvider:"vs. {name} ({avg} Mbps avg): ",
-    noRegionData:"Regional comparison data is not yet available for {country}.",
-    measuredIn:"Measured download speed in {country}.",
-    privacy:"Privacy Policy",footerSub:"Real Cloudflare Edge measurement",
-    disclaimer:'National and provider averages are based on publicly reported broadband data from <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, the <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a>, and national regulators (2023–2024).',
-    footerNotice:"Fasqoo is an independent speed-test platform and is not an official Cloudflare product.",
-    verifyTitle:"Verification — real data proof",vlDownMB:"Total downloaded (Mb)",vlUpMB:"Total uploaded (Mb)",
-    vlDownStreams:"Download streams",vlUpStreams:"Upload streams",vlSamples:"Measurement samples",
-    vlDuration:"Active time",vlAvgSpeed:"Calculated average",
-    shareTitle:"Share your result",shareDownload:"Download image",
-    shareText:"My internet speed test on Fasqoo Lite — Download: {down} | Upload: {up} | Ping: {ping} | Jitter: {jitter}. Test yours free:",
-    feedbackTitle:"How does {provider} customer service meet your expectations?",
-    fbMuchWorse:"Much worse",fbExpected:"As expected",fbMuchBetter:"Much better",fbThanks:"Thank you for your feedback!",
-    liveChart:"Live Speed",bbUnit:"ms idle → loaded",
-    seo:{h2:"About the Fasqoo Lite Internet Speed Test",p1:"Fasqoo Lite is a free, browser-based <strong>internet speed test</strong> that measures your real download and upload speed, latency (ping), jitter, packet loss and bufferbloat in seconds. It works worldwide on any device — Android, iPhone, tablet, laptop or desktop — with no app installation required.",h3Measure:"What does the Fasqoo speed test measure?",liDown:"<strong>Download speed (Mbps)</strong> — data from the internet to your device.",liUp:"<strong>Upload speed (Mbps)</strong> — data from your device to the internet.",liPing:"<strong>Ping / Latency (ms)</strong> — round-trip time for a data packet.",liJitter:"<strong>Jitter (ms)</strong> — variation in ping. Low jitter = stable connection.",h3How:"How does the measurement work?",p2:"Fasqoo Lite connects to the nearest <strong>Cloudflare Edge server</strong> and uses an <strong>adaptive multi-stream engine</strong>: it starts with a single data stream and automatically adds more (up to 8) as your measured speed increases. The final speed shown is the <strong>true average</strong> calculated from real bytes transferred divided by the active measurement time — nothing is estimated or simulated.",h3Good:"What is a good internet speed?",li5:"<strong>5–10 Mbps</strong> — email, browsing, SD video.",li6:"<strong>15–25 Mbps</strong> — HD streaming on one device.",li7:"<strong>50–100 Mbps</strong> — 4K streaming, gaming, multiple users.",li8:"<strong>200+ Mbps</strong> — heavy households, work-from-home.",li9:"<strong>500+ Mbps</strong> — fiber connections, pro users."}
-  },
-  de:{
-    installApp:"App installieren",
-    history:"Verlauf",historyModalTitle:"Testverlauf",historyEmpty:"Noch keine Tests. Führe deinen ersten Speedtest durch!",
-    installModalTitle:"Fasqoo ist besser als App.",
-    installModalText:"Erlebe das volle Erlebnis mit unserer mobilen App. Schnellere Tests, bessere Genauigkeit und mehr Funktionen. Direkt im Browser herunterladen.",
-    installModalBtn:"App herunterladen (APK)",
-    startHint:"Tippe auf LOS, um den Cloudflare-Speedtest zu starten",go:"LOS",testAgain:"ERNEUT TESTEN",
-    phaseWarmup:"Verbindung wird aufgebaut…",phaseLatency:"Latenz wird gemessen…",phaseDownload:"Download wird gemessen…",phaseUpload:"Upload wird gemessen…",phaseComplete:"Test abgeschlossen",phaseFailed:"Test fehlgeschlagen",phaseReady:"Bereit",
-    ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",loss:"PAKETVERLUST",bb:"BUFFERBLOAT",
-    detecting:"Internetanbieter wird erkannt...",cloudflareEdge:"Cloudflare Edge Server",cloudflareEndpoint:"Cloudflare Edge Endpunkt",
-    providerUnavailable:"Anbieter nicht verfügbar",ipUnavailable:"IP-Information nicht verfügbar",locationUnavailable:"Standort nicht verfügbar",
-    howYouCompare:"Dein Vergleich",compareSubtitle:"Deine gemessene Download-Geschwindigkeit im Vergleich zu regionalen Durchschnitten.",
-    yourResult:"Dein Ergebnis",yourProvider:"dein Anbieter",yourMeasuredDownload:"Dein gemessener Download",countryAvg:"Durchschnitt {country}",
-    noValid:"Keine gültige Messung für den Vergleich.",
-    avgAbove:"Du liegst <strong>{pct}</strong> über dem Landesdurchschnitt von {country} ({speed} vs. {avg}).",
-    avgBelow:"Du liegst <strong>{pct}</strong> unter dem Landesdurchschnitt von {country} ({speed} vs. {avg}).",
-    avgNear:"Du liegst etwa auf dem Landesdurchschnitt von {country} ({speed} vs. {avg}).",
-    vsProvider:"vs. {name} ({avg} Mbps Ø): ",
-    noRegionData:"Regionale Vergleichsdaten für {country} sind noch nicht verfügbar.",
-    measuredIn:"Gemessene Download-Geschwindigkeit in {country}.",
-    privacy:"Datenschutz",footerSub:"Echte Cloudflare-Edge-Messung",
-    disclaimer:'Nationale und Anbieter-Durchschnitte basieren auf öffentlichen Breitband-Daten von <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, dem <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> und Regulierungsbehörden (2023–2024).',
-    footerNotice:"Fasqoo ist eine unabhängige Speedtest-Plattform und kein offizielles Cloudflare-Produkt.",
-    verifyTitle:"Verifizierung — Echter Datenbeweis",vlDownMB:"Gesamt geladen (Mb)",vlUpMB:"Gesamt gesendet (Mb)",
-    vlDownStreams:"Download-Streams",vlUpStreams:"Upload-Streams",vlSamples:"Messproben",
-    vlDuration:"Aktive Messdauer",vlAvgSpeed:"Berechnete Durchschnittsgeschw.",
-    shareTitle:"Ergebnis teilen",shareDownload:"Bild herunterladen",
-    shareText:"Mein Internet-Geschwindigkeitstest auf Fasqoo Lite — Download: {down} | Upload: {up} | Ping: {ping} | Jitter: {jitter}. Teste deine kostenlos:",
-    feedbackTitle:"Wie erfüllt der Kundenservice von {provider} Ihre Erwartungen?",
-    fbMuchWorse:"Viel schlechter",fbExpected:"Wie erwartet",fbMuchBetter:"Viel besser",fbThanks:"Vielen Dank für Ihr Feedback!",
-    liveChart:"Live-Geschwindigkeit",bbUnit:"ms idle → geladen",
-    seo:{h2:"Über den Fasqoo Lite Internet-Geschwindigkeitstest",p1:"Fasqoo Lite ist ein kostenloser, browserbasierter <strong>Internet-Geschwindigkeitstest</strong>, der Ihre echte Download- und Upload-Geschwindigkeit, Latenz (Ping), Jitter, Paketverlust und Bufferbloat in Sekunden misst. Er funktioniert weltweit auf jedem Gerät — Android, iPhone, Tablet, Laptop oder Desktop — ohne App-Installation.",h3Measure:"Was misst der Fasqoo-Geschwindigkeitstest?",liDown:"<strong>Download-Geschwindigkeit (Mbps)</strong> — Daten vom Internet zu Ihrem Gerät.",liUp:"<strong>Upload-Geschwindigkeit (Mbps)</strong> — Daten von Ihrem Gerät ins Internet.",liPing:"<strong>Ping / Latenz (ms)</strong> — Umlaufzeit eines Datenpakets.",liJitter:"<strong>Jitter (ms)</strong> — Schwankung des Pings. Niedriger Jitter = stabile Verbindung.",h3How:"Wie funktioniert die Messung?",p2:"Fasqoo Lite verbindet sich mit dem nächstgelegenen <strong>Cloudflare Edge-Server</strong> und verwendet eine <strong>adaptive Multi-Stream-Engine</strong>: Sie startet mit einem einzelnen Datenstrom und fügt automatisch weitere hinzu (bis zu 8), wenn Ihre gemessene Geschwindigkeit steigt. Die endgültig angezeigte Geschwindigkeit ist der <strong>echte Durchschnitt</strong>, berechnet aus tatsächlich übertragenen Bytes geteilt durch die aktive Messzeit — nichts wird geschätzt oder simuliert.",h3Good:"Was ist eine gute Internetgeschwindigkeit?",li5:"<strong>5–10 Mbps</strong> — E-Mail, Surfen, SD-Video.",li6:"<strong>15–25 Mbps</strong> — HD-Streaming auf einem Gerät.",li7:"<strong>50–100 Mbps</strong> — 4K-Streaming, Gaming, mehrere Nutzer.",li8:"<strong>200+ Mbps</strong> — anspruchsvolle Haushalte, Homeoffice.",li9:"<strong>500+ Mbps</strong> — Glasfaseranschlüsse, Profi-Nutzer."}
-  },
-  fr:{
-    installApp:"Installer l'app",
-    history:"Historique",historyModalTitle:"Historique des tests",historyEmpty:"Aucun test pour l'instant. Lancez votre premier test de vitesse !",
-    installModalTitle:"Fasqoo est meilleur sur l'app.",
-    installModalText:"Profitez de l'expérience complète avec notre application mobile dédiée. Tests plus rapides, meilleure précision et plus de fonctionnalités. Téléchargez directement depuis votre navigateur.",
-    installModalBtn:"Télécharger l'app (APK)",
-    startHint:"Appuyez sur GO pour lancer le test de vitesse Cloudflare",go:"GO",testAgain:"RETESTER",
-    phaseWarmup:"Préparation de la connexion…",phaseLatency:"Mesure de la latence…",phaseDownload:"Mesure du téléchargement…",phaseUpload:"Mesure de l'envoi…",phaseComplete:"Test terminé",phaseFailed:"Test échoué",phaseReady:"Prêt",
-    ping:"PING",download:"TÉLÉCHARGEMENT",jitter:"GIGUE",upload:"ENVOI",loss:"PERTE DE PAQUETS",bb:"BUFFERBLOAT",
-    detecting:"Détection du fournisseur d'accès...",cloudflareEdge:"Serveur Cloudflare Edge",cloudflareEndpoint:"Point de terminaison Cloudflare Edge",
-    providerUnavailable:"Fournisseur indisponible",ipUnavailable:"Informations IP indisponibles",locationUnavailable:"Localisation indisponible",
-    howYouCompare:"Votre comparaison",compareSubtitle:"Votre débit descendant mesuré comparé aux moyennes régionales.",
-    yourResult:"Votre résultat",yourProvider:"votre fournisseur",yourMeasuredDownload:"Votre téléchargement mesuré",countryAvg:"Moyenne {country}",
-    noValid:"Aucune mesure valide pour la comparaison.",
-    avgAbove:"Vous êtes <strong>{pct}</strong> au-dessus de la moyenne nationale de {country} ({speed} vs {avg}).",
-    avgBelow:"Vous êtes <strong>{pct}</strong> en dessous de la moyenne nationale de {country} ({speed} vs {avg}).",
-    avgNear:"Vous êtes proche de la moyenne nationale de {country} ({speed} vs {avg}).",
-    vsProvider:"vs. {name} (moy. {avg} Mbps) : ",
-    noRegionData:"Les données de comparaison régionale pour {country} ne sont pas encore disponibles.",
-    measuredIn:"Débit descendant mesuré en {country}.",
-    privacy:"Politique de confidentialité",footerSub:"Mesure réelle sur Cloudflare Edge",
-    disclaimer:'Les moyennes nationales et des fournisseurs proviennent de données publiques sur le haut débit de <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, de l\'<a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> et des régulateurs nationaux (2023–2024).',
-    footerNotice:"Fasqoo est une plateforme de test de vitesse indépendante et n'est pas un produit officiel de Cloudflare.",
-    verifyTitle:"Vérification — preuve de données réelles",vlDownMB:"Total téléchargé (Mb)",vlUpMB:"Total envoyé (Mb)",
-    vlDownStreams:"Flux descendants",vlUpStreams:"Flux montants",vlSamples:"Échantillons de mesure",
-    vlDuration:"Temps actif",vlAvgSpeed:"Moyenne calculée",
-    shareTitle:"Partagez votre résultat",shareDownload:"Télécharger l'image",
-    shareText:"Mon test de vitesse Internet sur Fasqoo Lite — Téléchargement : {down} | Envoi : {up} | Ping : {ping} | Gigue : {jitter}. Testez le vôtre gratuitement :",
-    feedbackTitle:"Comment le service client de {provider} répond-il à vos attentes ?",
-    fbMuchWorse:"Bien pire",fbExpected:"Comme prévu",fbMuchBetter:"Bien mieux",fbThanks:"Merci pour votre retour !",
-    liveChart:"Vitesse en direct",bbUnit:"ms repos → chargé",
-    seo:{h2:"À propos du test de vitesse Internet Fasqoo Lite",p1:"Fasqoo Lite est un <strong>test de vitesse Internet</strong> gratuit et basé sur navigateur qui mesure en quelques secondes votre débit réel descendant et montant, la latence (ping), la gigue, la perte de paquets et le bufferbloat. Il fonctionne partout dans le monde sur n'importe quel appareil — Android, iPhone, tablette, ordinateur portable ou de bureau — sans installation d'application.",h3Measure:"Que mesure le test de vitesse Fasqoo ?",liDown:"<strong>Débit descendant (Mbps)</strong> — données d'Internet vers votre appareil.",liUp:"<strong>Débit montant (Mbps)</strong> — données de votre appareil vers Internet.",liPing:"<strong>Ping / Latence (ms)</strong> — temps aller-retour d'un paquet de données.",liJitter:"<strong>Gigue (ms)</strong> — variation du ping. Une gigue faible = connexion stable.",h3How:"Comment fonctionne la mesure ?",p2:"Fasqoo Lite se connecte au <strong>serveur Cloudflare Edge</strong> le plus proche et utilise un <strong>moteur adaptatif multi-flux</strong> : il démarre avec un seul flux de données et en ajoute automatiquement d'autres (jusqu'à 8) à mesure que votre vitesse mesurée augmente. La vitesse finale affichée est la <strong>vraie moyenne</strong> calculée à partir des octets réellement transférés divisés par le temps de mesure actif — rien n'est estimé ni simulé.",h3Good:"Qu'est-ce qu'une bonne vitesse Internet ?",li5:"<strong>5–10 Mbps</strong> — e-mail, navigation, vidéo SD.",li6:"<strong>15–25 Mbps</strong> — streaming HD sur un appareil.",li7:"<strong>50–100 Mbps</strong> — streaming 4K, jeux, plusieurs utilisateurs.",li8:"<strong>200+ Mbps</strong> — foyers exigeants, télétravail.",li9:"<strong>500+ Mbps</strong> — connexions fibre, utilisateurs pro."}
-  },
-  es:{
-    installApp:"Instalar app",
-    history:"Historial",historyModalTitle:"Historial de pruebas",historyEmpty:"Aún no hay pruebas. ¡Ejecuta tu primera prueba de velocidad!",
-    installModalTitle:"Fasqoo es mejor en la app.",
-    installModalText:"Disfruta de la experiencia completa con nuestra aplicación móvil. Pruebas más rápidas, mejor precisión y más funciones. Descarga directamente desde tu navegador.",
-    installModalBtn:"Descargar app (APK)",
-    startHint:"Toca GO para iniciar la prueba de velocidad de Cloudflare",go:"GO",testAgain:"PROBAR DE NUEVO",
-    phaseWarmup:"Calentando la conexión…",phaseLatency:"Midiendo la latencia…",phaseDownload:"Midiendo la descarga…",phaseUpload:"Midiendo la subida…",phaseComplete:"Prueba completada",phaseFailed:"Prueba fallida",phaseReady:"Listo",
-    ping:"PING",download:"DESCARGA",jitter:"JITTER",upload:"SUBIDA",loss:"PÉRDIDA DE PAQUETES",bb:"BUFFERBLOAT",
-    detecting:"Detectando proveedor de internet...",cloudflareEdge:"Servidor Cloudflare Edge",cloudflareEndpoint:"Endpoint Cloudflare Edge",
-    providerUnavailable:"Proveedor no disponible",ipUnavailable:"Información IP no disponible",locationUnavailable:"Ubicación no disponible",
-    howYouCompare:"Tu comparación",compareSubtitle:"Tu velocidad de descarga medida en comparación con las medias regionales.",
-    yourResult:"Tu resultado",yourProvider:"tu proveedor",yourMeasuredDownload:"Tu descarga medida",countryAvg:"Media de {country}",
-    noValid:"No hay medición válida para la comparación.",
-    avgAbove:"Estás <strong>{pct}</strong> por encima de la media nacional de {country} ({speed} vs {avg}).",
-    avgBelow:"Estás <strong>{pct}</strong> por debajo de la media nacional de {country} ({speed} vs {avg}).",
-    avgNear:"Estás cerca de la media nacional de {country} ({speed} vs {avg}).",
-    vsProvider:"vs. {name} ({avg} Mbps media): ",
-    noRegionData:"Los datos de comparación regional para {country} aún no están disponibles.",
-    measuredIn:"Velocidad de descarga medida en {country}.",
-    privacy:"Política de privacidad",footerSub:"Medición real en Cloudflare Edge",
-    disclaimer:'Las medias nacionales y de proveedores se basan en datos públicos de banda ancha de <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, del <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> y de reguladores nacionales (2023–2024).',
-    footerNotice:"Fasqoo es una plataforma de prueba de velocidad independiente y no es un producto oficial de Cloudflare.",
-    verifyTitle:"Verificación — prueba de datos reales",vlDownMB:"Total descargado (Mb)",vlUpMB:"Total subido (Mb)",
-    vlDownStreams:"Flujos de descarga",vlUpStreams:"Flujos de subida",vlSamples:"Muestras de medición",
-    vlDuration:"Tiempo activo",vlAvgSpeed:"Media calculada",
-    shareTitle:"Comparte tu resultado",shareDownload:"Descargar imagen",
-    shareText:"Mi prueba de velocidad de internet en Fasqoo Lite — Descarga: {down} | Subida: {up} | Ping: {ping} | Jitter: {jitter}. Prueba la tuya gratis:",
-    feedbackTitle:"¿Cómo cumple el servicio de atención al cliente de {provider} tus expectativas?",
-    fbMuchWorse:"Mucho peor",fbExpected:"Como se esperaba",fbMuchBetter:"Mucho mejor",fbThanks:"¡Gracias por tu opinión!",
-    liveChart:"Velocidad en vivo",bbUnit:"ms reposo → cargado",
-    seo:{h2:"Acerca de la prueba de velocidad de internet Fasqoo Lite",p1:"Fasqoo Lite es una <strong>prueba de velocidad de internet</strong> gratuita basada en navegador que mide en segundos tu velocidad real de descarga y subida, latencia (ping), jitter, pérdida de paquetes y bufferbloat. Funciona en todo el mundo en cualquier dispositivo — Android, iPhone, tableta, portátil o escritorio — sin necesidad de instalar ninguna app.",h3Measure:"¿Qué mide la prueba de velocidad Fasqoo?",liDown:"<strong>Velocidad de descarga (Mbps)</strong> — datos de internet a tu dispositivo.",liUp:"<strong>Velocidad de subida (Mbps)</strong> — datos de tu dispositivo a internet.",liPing:"<strong>Ping / Latencia (ms)</strong> — tiempo de ida y vuelta de un paquete.",liJitter:"<strong>Jitter (ms)</strong> — variación del ping. Jitter bajo = conexión estable.",h3How:"¿Cómo funciona la medición?",p2:"Fasqoo Lite se conecta al <strong>servidor Cloudflare Edge</strong> más cercano y usa un <strong>motor adaptativo multi-flujo</strong>: comienza con un solo flujo de datos y añade automáticamente más (hasta 8) a medida que aumenta tu velocidad medida. La velocidad final mostrada es la <strong>media real</strong> calculada a partir de bytes realmente transferidos divididos por el tiempo de medición activo — nada se estima ni se simula.",h3Good:"¿Qué es una buena velocidad de internet?",li5:"<strong>5–10 Mbps</strong> — correo, navegación, vídeo SD.",li6:"<strong>15–25 Mbps</strong> — streaming HD en un dispositivo.",li7:"<strong>50–100 Mbps</strong> — streaming 4K, juegos, varios usuarios.",li8:"<strong>200+ Mbps</strong> — hogares exigentes, teletrabajo.",li9:"<strong>500+ Mbps</strong> — conexiones de fibra, usuarios pro."}
-  },
-  it:{
-    installApp:"Installa app",
-    history:"Cronologia",historyModalTitle:"Cronologia dei test",historyEmpty:"Ancora nessun test. Esegui il tuo primo speed test!",
-    installModalTitle:"Fasqoo è meglio nell'app.",
-    installModalText:"Vivi l'esperienza completa con la nostra app mobile dedicata. Test più veloci, maggiore precisione e più funzioni. Scarica direttamente dal browser.",
-    installModalBtn:"Scarica app (APK)",
-    startHint:"Tocca GO per avviare lo speed test Cloudflare",go:"GO",testAgain:"RIPROVA",
-    phaseWarmup:"Preparazione della connessione…",phaseLatency:"Misurazione della latenza…",phaseDownload:"Misurazione del download…",phaseUpload:"Misurazione dell'upload…",phaseComplete:"Test completato",phaseFailed:"Test fallito",phaseReady:"Pronto",
-    ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",loss:"PERDITA PACCHETTI",bb:"BUFFERBLOAT",
-    detecting:"Rilevamento del provider internet...",cloudflareEdge:"Server Cloudflare Edge",cloudflareEndpoint:"Endpoint Cloudflare Edge",
-    providerUnavailable:"Provider non disponibile",ipUnavailable:"Informazioni IP non disponibili",locationUnavailable:"Posizione non disponibile",
-    howYouCompare:"Il tuo confronto",compareSubtitle:"La tua velocità di download misurata rispetto alle medie regionali.",
-    yourResult:"Il tuo risultato",yourProvider:"il tuo provider",yourMeasuredDownload:"Il tuo download misurato",countryAvg:"Media {country}",
-    noValid:"Nessuna misurazione valida per il confronto.",
-    avgAbove:"Sei <strong>{pct}</strong> sopra la media nazionale di {country} ({speed} vs {avg}).",
-    avgBelow:"Sei <strong>{pct}</strong> sotto la media nazionale di {country} ({speed} vs {avg}).",
-    avgNear:"Sei vicino alla media nazionale di {country} ({speed} vs {avg}).",
-    vsProvider:"vs. {name} (media {avg} Mbps): ",
-    noRegionData:"I dati di confronto regionale per {country} non sono ancora disponibili.",
-    measuredIn:"Velocità di download misurata in {country}.",
-    privacy:"Informativa sulla privacy",footerSub:"Misurazione reale su Cloudflare Edge",
-    disclaimer:'Le medie nazionali e dei provider si basano su dati pubblici sulla banda larga di <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, dell\'<a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> e delle autorità nazionali (2023–2024).',
-    footerNotice:"Fasqoo è una piattaforma di speed test indipendente e non è un prodotto ufficiale Cloudflare.",
-    verifyTitle:"Verifica — prova di dati reali",vlDownMB:"Totale scaricato (Mb)",vlUpMB:"Totale caricato (Mb)",
-    vlDownStreams:"Stream di download",vlUpStreams:"Stream di upload",vlSamples:"Campioni di misurazione",
-    vlDuration:"Tempo attivo",vlAvgSpeed:"Media calcolata",
-    shareTitle:"Condividi il tuo risultato",shareDownload:"Scarica immagine",
-    shareText:"Il mio speed test su Fasqoo Lite — Download: {down} | Upload: {up} | Ping: {ping} | Jitter: {jitter}. Prova il tuo gratis:",
-    feedbackTitle:"In che misura il servizio clienti di {provider} soddisfa le tue aspettative?",
-    fbMuchWorse:"Molto peggio",fbExpected:"Come previsto",fbMuchBetter:"Molto meglio",fbThanks:"Grazie per il tuo feedback!",
-    liveChart:"Velocità in tempo reale",bbUnit:"ms riposo → carico",
-    seo:{h2:"Informazioni sullo speed test Internet Fasqoo Lite",p1:"Fasqoo Lite è uno <strong>speed test Internet</strong> gratuito basato su browser che misura in pochi secondi la tua velocità reale di download e upload, la latenza (ping), il jitter, la perdita di pacchetti e il bufferbloat. Funziona in tutto il mondo su qualsiasi dispositivo — Android, iPhone, tablet, laptop o desktop — senza installare app.",h3Measure:"Cosa misura lo speed test Fasqoo?",liDown:"<strong>Velocità di download (Mbps)</strong> — dati da Internet al tuo dispositivo.",liUp:"<strong>Velocità di upload (Mbps)</strong> — dati dal tuo dispositivo a Internet.",liPing:"<strong>Ping / Latenza (ms)</strong> — tempo di andata e ritorno di un pacchetto.",liJitter:"<strong>Jitter (ms)</strong> — variazione del ping. Jitter basso = connessione stabile.",h3How:"Come funziona la misurazione?",p2:"Fasqoo Lite si connette al <strong>server Cloudflare Edge</strong> più vicino e utilizza un <strong>motore adattivo multi-stream</strong>: inizia con un singolo flusso di dati e ne aggiunge automaticamente altri (fino a 8) man mano che la velocità misurata aumenta. La velocità finale mostrata è la <strong>media reale</strong> calcolata dai byte realmente trasferiti divisi per il tempo di misurazione attivo — nulla è stimato o simulato.",h3Good:"Cos'è una buona velocità Internet?",li5:"<strong>5–10 Mbps</strong> — email, navigazione, video SD.",li6:"<strong>15–25 Mbps</strong> — streaming HD su un dispositivo.",li7:"<strong>50–100 Mbps</strong> — streaming 4K, gaming, più utenti.",li8:"<strong>200+ Mbps</strong> — famiglie esigenti, lavoro da casa.",li9:"<strong>500+ Mbps</strong> — connessioni in fibra, utenti pro."}
-  },
-  pt:{
-    installApp:"Instalar app",
-    history:"Histórico",historyModalTitle:"Histórico de testes",historyEmpty:"Ainda sem testes. Faça o seu primeiro teste de velocidade!",
-    installModalTitle:"O Fasqoo é melhor na app.",
-    installModalText:"Tenha a experiência completa com a nossa aplicação móvel dedicada. Testes mais rápidos, melhor precisão e mais funcionalidades. Transfira diretamente do navegador.",
-    installModalBtn:"Transferir app (APK)",
-    startHint:"Toque em GO para iniciar o teste de velocidade Cloudflare",go:"GO",testAgain:"TESTAR NOVAMENTE",
-    phaseWarmup:"A preparar a ligação…",phaseLatency:"A medir a latência…",phaseDownload:"A medir a transferência…",phaseUpload:"A medir o envio…",phaseComplete:"Teste concluído",phaseFailed:"Teste falhado",phaseReady:"Pronto",
-    ping:"PING",download:"TRANSFERÊNCIA",jitter:"JITTER",upload:"ENVIO",loss:"PERDA DE PACOTES",bb:"BUFFERBLOAT",
-    detecting:"A detetar o fornecedor de internet...",cloudflareEdge:"Servidor Cloudflare Edge",cloudflareEndpoint:"Endpoint Cloudflare Edge",
-    providerUnavailable:"Fornecedor indisponível",ipUnavailable:"Informação de IP indisponível",locationUnavailable:"Localização indisponível",
-    howYouCompare:"A sua comparação",compareSubtitle:"A sua velocidade de transferência medida em comparação com as médias regionais.",
-    yourResult:"O seu resultado",yourProvider:"o seu fornecedor",yourMeasuredDownload:"A sua transferência medida",countryAvg:"Média de {country}",
-    noValid:"Nenhuma medição válida para comparação.",
-    avgAbove:"Está <strong>{pct}</strong> acima da média nacional de {country} ({speed} vs {avg}).",
-    avgBelow:"Está <strong>{pct}</strong> abaixo da média nacional de {country} ({speed} vs {avg}).",
-    avgNear:"Está próximo da média nacional de {country} ({speed} vs {avg}).",
-    vsProvider:"vs. {name} (média {avg} Mbps): ",
-    noRegionData:"Os dados de comparação regional para {country} ainda não estão disponíveis.",
-    measuredIn:"Velocidade de transferência medida em {country}.",
-    privacy:"Política de privacidade",footerSub:"Medição real no Cloudflare Edge",
-    disclaimer:'As médias nacionais e dos fornecedores baseiam-se em dados públicos de banda larga da <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, do <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> e dos reguladores nacionais (2023–2024).',
-    footerNotice:"Fasqoo é uma plataforma de teste de velocidade independente e não é um produto oficial da Cloudflare.",
-    verifyTitle:"Verificação — prova de dados reais",vlDownMB:"Total transferido (Mb)",vlUpMB:"Total enviado (Mb)",
-    vlDownStreams:"Fluxos de transferência",vlUpStreams:"Fluxos de envio",vlSamples:"Amostras de medição",
-    vlDuration:"Tempo ativo",vlAvgSpeed:"Média calculada",
-    shareTitle:"Partilhe o seu resultado",shareDownload:"Transferir imagem",
-    shareText:"O meu teste de velocidade na Fasqoo Lite — Transferência: {down} | Envio: {up} | Ping: {ping} | Jitter: {jitter}. Teste o seu grátis:",
-    feedbackTitle:"Como é que o atendimento ao cliente da {provider} corresponde às suas expectativas?",
-    fbMuchWorse:"Muito pior",fbExpected:"Como esperado",fbMuchBetter:"Muito melhor",fbThanks:"Obrigado pelo seu feedback!",
-    liveChart:"Velocidade em direto",bbUnit:"ms repouso → carregado",
-    seo:{h2:"Sobre o Teste de Velocidade de Internet Fasqoo Lite",p1:"O Fasqoo Lite é um <strong>teste de velocidade de internet</strong> gratuito, baseado no navegador, que mede em segundos a sua velocidade real de transferência e envio, latência (ping), jitter, perda de pacotes e bufferbloat. Funciona em todo o mundo em qualquer dispositivo — Android, iPhone, tablet, portátil ou desktop — sem necessidade de instalar aplicações.",h3Measure:"O que mede o teste de velocidade Fasqoo?",liDown:"<strong>Velocidade de transferência (Mbps)</strong> — dados da internet para o seu dispositivo.",liUp:"<strong>Velocidade de envio (Mbps)</strong> — dados do seu dispositivo para a internet.",liPing:"<strong>Ping / Latência (ms)</strong> — tempo de ida e volta de um pacote.",liJitter:"<strong>Jitter (ms)</strong> — variação do ping. Jitter baixo = ligação estável.",h3How:"Como funciona a medição?",p2:"O Fasqoo Lite liga-se ao <strong>servidor Cloudflare Edge</strong> mais próximo e utiliza um <strong>motor adaptativo multi-fluxo</strong>: começa com um único fluxo de dados e adiciona automaticamente mais (até 8) à medida que a velocidade medida aumenta. A velocidade final apresentada é a <strong>média real</strong> calculada a partir dos bytes realmente transferidos divididos pelo tempo de medição ativo — nada é estimado ou simulado.",h3Good:"O que é uma boa velocidade de internet?",li5:"<strong>5–10 Mbps</strong> — email, navegação, vídeo SD.",li6:"<strong>15–25 Mbps</strong> — streaming HD num dispositivo.",li7:"<strong>50–100 Mbps</strong> — streaming 4K, jogos, vários utilizadores.",li8:"<strong>200+ Mbps</strong> — agregados exigentes, teletrabalho.",li9:"<strong>500+ Mbps</strong> — ligações de fibra, utilizadores pro."}
-  },
-  nl:{
-    installApp:"App installeren",
-    history:"Geschiedenis",historyModalTitle:"Testgeschiedenis",historyEmpty:"Nog geen tests. Voer je eerste snelheidstest uit!",
-    installModalTitle:"Fasqoo is beter in de app.",
-    installModalText:"Ervaar de volledige beleving met onze speciale mobiele app. Snellere tests, betere nauwkeurigheid en meer functies. Download direct vanuit je browser.",
-    installModalBtn:"App downloaden (APK)",
-    startHint:"Tik op GO om de Cloudflare-snelheidstest te starten",go:"GO",testAgain:"OPNIEUW TESTEN",
-    phaseWarmup:"Verbinding opwarmen…",phaseLatency:"Latentie meten…",phaseDownload:"Download meten…",phaseUpload:"Upload meten…",phaseComplete:"Test voltooid",phaseFailed:"Test mislukt",phaseReady:"Gereed",
-    ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",loss:"PAKKETVERLIES",bb:"BUFFERBLOAT",
-    detecting:"Internetprovider detecteren...",cloudflareEdge:"Cloudflare Edge-server",cloudflareEndpoint:"Cloudflare Edge-endpoint",
-    providerUnavailable:"Provider niet beschikbaar",ipUnavailable:"IP-informatie niet beschikbaar",locationUnavailable:"Locatie niet beschikbaar",
-    howYouCompare:"Jouw vergelijking",compareSubtitle:"Je gemeten downloadsnelheid vergeleken met regionale gemiddelden.",
-    yourResult:"Jouw resultaat",yourProvider:"jouw provider",yourMeasuredDownload:"Je gemeten download",countryAvg:"Gemiddelde {country}",
-    noValid:"Geen geldige meting voor vergelijking.",
-    avgAbove:"Je zit <strong>{pct}</strong> boven het landelijk gemiddelde van {country} ({speed} vs {avg}).",
-    avgBelow:"Je zit <strong>{pct}</strong> onder het landelijk gemiddelde van {country} ({speed} vs {avg}).",
-    avgNear:"Je zit rond het landelijk gemiddelde van {country} ({speed} vs {avg}).",
-    vsProvider:"vs. {name} ({avg} Mbps gem.): ",
-    noRegionData:"Regionale vergelijkingsgegevens voor {country} zijn nog niet beschikbaar.",
-    measuredIn:"Gemeten downloadsnelheid in {country}.",
-    privacy:"Privacybeleid",footerSub:"Echte Cloudflare Edge-meting",
-    disclaimer:'Nationale en providergemiddelden zijn gebaseerd op openbare breedbandgegevens van <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, de <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> en nationale toezichthouders (2023–2024).',
-    footerNotice:"Fasqoo is een onafhankelijk snelheidstestplatform en is geen officieel Cloudflare-product.",
-    verifyTitle:"Verificatie — bewijs van echte data",vlDownMB:"Totaal gedownload (Mb)",vlUpMB:"Totaal geüpload (Mb)",
-    vlDownStreams:"Downloadstreams",vlUpStreams:"Uploadstreams",vlSamples:"Meetmonsters",
-    vlDuration:"Actieve tijd",vlAvgSpeed:"Berekend gemiddelde",
-    shareTitle:"Deel je resultaat",shareDownload:"Afbeelding downloaden",
-    shareText:"Mijn internetsnelheidstest op Fasqoo Lite — Download: {down} | Upload: {up} | Ping: {ping} | Jitter: {jitter}. Test de jouwe gratis:",
-    feedbackTitle:"Hoe voldoet de klantenservice van {provider} aan je verwachtingen?",
-    fbMuchWorse:"Veel slechter",fbExpected:"Zoals verwacht",fbMuchBetter:"Veel beter",fbThanks:"Bedankt voor je feedback!",
-    liveChart:"Live snelheid",bbUnit:"ms rust → belast",
-    seo:{h2:"Over de Fasqoo Lite internetsnelheidstest",p1:"Fasqoo Lite is een gratis, browsergebaseerde <strong>internetsnelheidstest</strong> die binnen enkele seconden je echte downloadsnelheid, uploadsnelheid, latentie (ping), jitter, pakketverlies en bufferbloat meet. Het werkt wereldwijd op elk apparaat — Android, iPhone, tablet, laptop of desktop — zonder dat je een app hoeft te installeren.",h3Measure:"Wat meet de Fasqoo-snelheidstest?",liDown:"<strong>Downloadsnelheid (Mbps)</strong> — data van internet naar je apparaat.",liUp:"<strong>Uploadsnelheid (Mbps)</strong> — data van je apparaat naar internet.",liPing:"<strong>Ping / Latentie (ms)</strong> — round-triptijd van een datapakket.",liJitter:"<strong>Jitter (ms)</strong> — variatie in ping. Lage jitter = stabiele verbinding.",h3How:"Hoe werkt de meting?",p2:"Fasqoo Lite verbindt met de dichtstbijzijnde <strong>Cloudflare Edge-server</strong> en gebruikt een <strong>adaptieve multi-stream-engine</strong>: het begint met één datastream en voegt automatisch meer toe (tot 8) naarmate je gemeten snelheid toeneemt. De uiteindelijk getoonde snelheid is het <strong>echte gemiddelde</strong> berekend uit werkelijk overgedragen bytes gedeeld door de actieve meettijd — er wordt niets geschat of gesimuleerd.",h3Good:"Wat is een goede internetsnelheid?",li5:"<strong>5–10 Mbps</strong> — e-mail, browsen, SD-video.",li6:"<strong>15–25 Mbps</strong> — HD-streaming op één apparaat.",li7:"<strong>50–100 Mbps</strong> — 4K-streaming, gamen, meerdere gebruikers.",li8:"<strong>200+ Mbps</strong> — veeleisende huishoudens, thuiswerken.",li9:"<strong>500+ Mbps</strong> — glasvezelverbindingen, pro-gebruikers."}
-  },
-  tr:{
-    installApp:"Uygulamayı Yükle",
-    history:"Geçmiş",historyModalTitle:"Test Geçmişi",historyEmpty:"Henüz test yok. İlk hız testinizi yapın!",
-    installModalTitle:"Fasqoo uygulamada daha iyi.",
-    installModalText:"Özel mobil uygulamamızla tam deneyimi yaşayın. Daha hızlı testler, daha iyi doğruluk ve daha fazla özellik. Doğrudan tarayıcınızdan indirin.",
-    installModalBtn:"Uygulamayı indir (APK)",
-    startHint:"Cloudflare hız testini başlatmak için GO'ya dokunun",go:"GO",testAgain:"YENİDEN TEST ET",
-    phaseWarmup:"Bağlantı ısınıyor…",phaseLatency:"Gecikme ölçülüyor…",phaseDownload:"İndirme ölçülüyor…",phaseUpload:"Yükleme ölçülüyor…",phaseComplete:"Test tamamlandı",phaseFailed:"Test başarısız",phaseReady:"Hazır",
-    ping:"PING",download:"İNDİRME",jitter:"JITTER",upload:"YÜKLEME",loss:"PAKET KAYBI",bb:"BUFFERBLOAT",
-    detecting:"İnternet sağlayıcı tespit ediliyor...",cloudflareEdge:"Cloudflare Edge Sunucusu",cloudflareEndpoint:"Cloudflare Edge uç noktası",
-    providerUnavailable:"Sağlayıcı kullanılamıyor",ipUnavailable:"IP bilgisi yok",locationUnavailable:"Konum yok",
-    howYouCompare:"Karşılaştırmanız",compareSubtitle:"Ölçülen indirme hızınız bölgesel ortalamalarla karşılaştırıldı.",
-    yourResult:"Sonucunuz",yourProvider:"sağlayıcınız",yourMeasuredDownload:"Ölçülen indirmeniz",countryAvg:"{country} ortalaması",
-    noValid:"Karşılaştırma için geçerli ölçüm yok.",
-    avgAbove:"{country} ulusal ortalamasının <strong>{pct}</strong> üzerindesiniz ({speed} / {avg}).",
-    avgBelow:"{country} ulusal ortalamasının <strong>{pct}</strong> altındasınız ({speed} / {avg}).",
-    avgNear:"{country} ulusal ortalamasına yakınsınız ({speed} / {avg}).",
-    vsProvider:"{name} ile karşılaştırma (ort. {avg} Mbps): ",
-    noRegionData:"{country} için bölgesel karşılaştırma verisi henüz mevcut değil.",
-    measuredIn:"{country} içinde ölçülen indirme hızı.",
-    privacy:"Gizlilik Politikası",footerSub:"Gerçek Cloudflare Edge ölçümü",
-    disclaimer:'Ulusal ve sağlayıcı ortalamaları <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> ve ulusal düzenleyiciler tarafından yayımlanan geniş bant verilerine dayanmaktadır (2023–2024).',
-    footerNotice:"Fasqoo bağımsız bir hız testi platformudur ve resmi bir Cloudflare ürünü değildir.",
-    verifyTitle:"Doğrulama — gerçek veri kanıtı",vlDownMB:"Toplam indirilen (Mb)",vlUpMB:"Toplam yüklenen (Mb)",
-    vlDownStreams:"İndirme akışları",vlUpStreams:"Yükleme akışları",vlSamples:"Ölçüm örnekleri",
-    vlDuration:"Aktif süre",vlAvgSpeed:"Hesaplanan ortalama",
-    shareTitle:"Sonucunuzu paylaşın",shareDownload:"Resmi indir",
-    shareText:"Fasqoo Lite'ta internet hız testi sonucum — İndirme: {down} | Yükleme: {up} | Ping: {ping} | Jitter: {jitter}. Siz de ücretsiz test edin:",
-    feedbackTitle:"{provider} müşteri hizmetleri beklentilerinizi ne kadar karşılıyor?",
-    fbMuchWorse:"Çok daha kötü",fbExpected:"Beklendiği gibi",fbMuchBetter:"Çok daha iyi",fbThanks:"Geri bildiriminiz için teşekkürler!",
-    liveChart:"Canlı Hız",bbUnit:"ms boşta → yükte",
-    seo:{h2:"Fasqoo Lite İnternet Hız Testi Hakkında",p1:"Fasqoo Lite, gerçek indirme ve yükleme hızınızı, gecikmenizi (ping), jitter, paket kaybı ve bufferbloat'ı saniyeler içinde ölçen ücretsiz, tarayıcı tabanlı bir <strong>internet hız testidir</strong>. Dünya çapında her cihazda çalışır — Android, iPhone, tablet, dizüstü veya masaüstü — uygulama kurmaya gerek yoktur.",h3Measure:"Fasqoo hız testi neyi ölçer?",liDown:"<strong>İndirme hızı (Mbps)</strong> — internetten cihazınıza veri.",liUp:"<strong>Yükleme hızı (Mbps)</strong> — cihazınızdan internete veri.",liPing:"<strong>Ping / Gecikme (ms)</strong> — bir veri paketinin gidiş-dönüş süresi.",liJitter:"<strong>Jitter (ms)</strong> — ping dalgalanması. Düşük jitter = kararlı bağlantı.",h3How:"Ölçüm nasıl çalışır?",p2:"Fasqoo Lite en yakın <strong>Cloudflare Edge sunucusuna</strong> bağlanır ve <strong>uyarlanabilir çok akışlı bir motor</strong> kullanır: tek bir veri akışıyla başlar ve ölçülen hızınız arttıkça otomatik olarak daha fazla akış ekler (8'e kadar). Gösterilen son hız, gerçekten aktarılan baytların aktif ölçüm süresine bölünmesiyle hesaplanan <strong>gerçek ortalamadır</strong> — hiçbir şey tahmin edilmez veya simüle edilmez.",h3Good:"İyi internet hızı nedir?",li5:"<strong>5–10 Mbps</strong> — e-posta, gezinme, SD video.",li6:"<strong>15–25 Mbps</strong> — tek cihazda HD yayın.",li7:"<strong>50–100 Mbps</strong> — 4K yayın, oyun, birden fazla kullanıcı.",li8:"<strong>200+ Mbps</strong> — yoğun haneler, evden çalışma.",li9:"<strong>500+ Mbps</strong> — fiber bağlantılar, profesyonel kullanıcılar."}
-  },
-  sq:{
-    installApp:"Instalo aplikacionin",
-    history:"Historiku",historyModalTitle:"Historiku i testeve",historyEmpty:"Ende pa teste. Krye testin e parë të shpejtësisë!",
-    installModalTitle:"Fasqoo është më i mirë në aplikacion.",
-    installModalText:"Përjeto përvojën e plotë me aplikacionin tonë mobil të dedikuar. Teste më të shpejta, saktësi më e mirë dhe më shumë funksione. Shkarko direkt nga shfletuesi.",
-    installModalBtn:"Shkarko aplikacionin (APK)",
-    startHint:"Trokitni GO për të nisur testin e shpejtësisë Cloudflare",go:"GO",testAgain:"TESTO PËRSËRI",
-    phaseWarmup:"Përgatitja e lidhjes…",phaseLatency:"Matja e latencës…",phaseDownload:"Matja e shkarkimit…",phaseUpload:"Matja e ngarkimit…",phaseComplete:"Testi përfundoi",phaseFailed:"Testi dështoi",phaseReady:"Gati",
-    ping:"PING",download:"SHKARKIM",jitter:"JITTER",upload:"NGARKIM",loss:"HUMBJE PAKETASH",bb:"BUFFERBLOAT",
-    detecting:"Zbulimi i ofruesit të internetit...",cloudflareEdge:"Serveri Cloudflare Edge",cloudflareEndpoint:"Pika fundore Cloudflare Edge",
-    providerUnavailable:"Ofruesi i padisponueshëm",ipUnavailable:"Informacioni i IP-së i padisponueshëm",locationUnavailable:"Vendndodhja e padisponueshme",
-    howYouCompare:"Krahasimi juaj",compareSubtitle:"Shpejtësia e matur e shkarkimit krahasuar me mesataret rajonale.",
-    yourResult:"Rezultati juaj",yourProvider:"ofruesi juaj",yourMeasuredDownload:"Shkarkimi i matur",countryAvg:"Mesatarja e {country}",
-    noValid:"Nuk ka matje të vlefshme për krahasim.",
-    avgAbove:"Jeni <strong>{pct}</strong> mbi mesataren kombëtare të {country} ({speed} kundrejt {avg}).",
-    avgBelow:"Jeni <strong>{pct}</strong> nën mesataren kombëtare të {country} ({speed} kundrejt {avg}).",
-    avgNear:"Jeni afër mesatares kombëtare të {country} ({speed} kundrejt {avg}).",
-    vsProvider:"kundrejt {name} (mes. {avg} Mbps): ",
-    noRegionData:"Të dhënat e krahasimit rajonal për {country} nuk janë ende të disponueshme.",
-    measuredIn:"Shpejtësia e matur e shkarkimit në {country}.",
-    privacy:"Politika e Privatësisë",footerSub:"Matje reale në Cloudflare Edge",
-    disclaimer:'Mesataret kombëtare dhe të ofruesve bazohen në të dhëna publike për breitband nga <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> dhe rregullatorët kombëtarë (2023–2024).',
-    footerNotice:"Fasqoo është një platformë e pavarur testimi shpejtësie dhe nuk është produkt zyrtar i Cloudflare.",
-    verifyTitle:"Verifikim — provë e dhënash reale",vlDownMB:"Totali i shkarkuar (Mb)",vlUpMB:"Totali i ngarkuar (Mb)",
-    vlDownStreams:"Rrymat e shkarkimit",vlUpStreams:"Rrymat e ngarkimit",vlSamples:"Mostrat e matjes",
-    vlDuration:"Koha aktive",vlAvgSpeed:"Mesatarja e llogaritur",
-    shareTitle:"Shpërndaj rezultatin",shareDownload:"Shkarko imazhin",
-    shareText:"Testi im i shpejtësisë në Fasqoo Lite — Shkarkim: {down} | Ngarkim: {up} | Ping: {ping} | Jitter: {jitter}. Testo tënden falas:",
-    feedbackTitle:"Sa i plotëson shërbimi ndaj klientit i {provider} pritshmëritë tuaja?",
-    fbMuchWorse:"Shumë më keq",fbExpected:"Si pritej",fbMuchBetter:"Shumë më mirë",fbThanks:"Faleminderit për komentin!",
-    liveChart:"Shpejtësia live",bbUnit:"ms pushim → ngarkuar",
-    seo:{h2:"Rreth Testit të Shpejtësisë së Internetit Fasqoo Lite",p1:"Fasqoo Lite është një <strong>test falas i shpejtësisë së internetit</strong> i bazuar në shfletues që mat në sekonda shpejtësinë tuaj reale të shkarkimit dhe ngarkimit, latencën (ping), jitter, humbjen e paketave dhe bufferbloat. Funksionon kudo në botë në çdo pajisje — Android, iPhone, tablet, laptop ose desktop — pa instalim aplikacioni.",h3Measure:"Çfarë mat testi i shpejtësisë Fasqoo?",liDown:"<strong>Shpejtësia e shkarkimit (Mbps)</strong> — të dhëna nga interneti në pajisjen tuaj.",liUp:"<strong>Shpejtësia e ngarkimit (Mbps)</strong> — të dhëna nga pajisja juaj në internet.",liPing:"<strong>Ping / Latenca (ms)</strong> — koha e shkuarjes dhe kthimit të një pakete.",liJitter:"<strong>Jitter (ms)</strong> — ndryshimi i ping-ut. Jitter i ulët = lidhje e qëndrueshme.",h3How:"Si funksionon matja?",p2:"Fasqoo Lite lidhet me <strong>serverin më të afërt Cloudflare Edge</strong> dhe përdor një <strong>motor adaptiv me shumë rryma</strong>: fillon me një rrymë të vetme të dhënash dhe shton automatikisht më shumë (deri në 8) ndërsa shpejtësia e matur rritet. Shpejtësia përfundimtare e shfaqur është <strong>mesatarja e vërtetë</strong> e llogaritur nga bajtët e transferuar realë të pjesëtuar me kohën aktive të matjes — asgjë nuk vlerësohet ose simulohet.",h3Good:"Çfarë është një shpejtësi e mirë interneti?",li5:"<strong>5–10 Mbps</strong> — email, shfletim, video SD.",li6:"<strong>15–25 Mbps</strong> — transmetim HD në një pajisje.",li7:"<strong>50–100 Mbps</strong> — transmetim 4K, lojëra, përdorues të shumtë.",li8:"<strong>200+ Mbps</strong> — familje të kërkuara, punë nga shtëpia.",li9:"<strong>500+ Mbps</strong> — lidhje me fibër, përdorues profesionistë."}
-  },
-  ar:{
-    installApp:"ثبّت التطبيق",
-    history:"السجل",historyModalTitle:"سجل الاختبارات",historyEmpty:"لا توجد اختبارات بعد. قم بإجراء أول اختبار سرعة!",
-    installModalTitle:"Fasqoo أفضل على التطبيق.",
-    installModalText:"استمتع بالتجربة الكاملة مع تطبيقنا المخصص للجوال. اختبارات أسرع، دقة أعلى، ومزيد من الميزات. حمّله مباشرة من المتصفح.",
-    installModalBtn:"تحميل التطبيق (APK)",
-    startHint:"اضغط على GO لبدء اختبار السرعة من Cloudflare",go:"GO",testAgain:"اختبار مرة أخرى",
-    phaseWarmup:"جاري تجهيز الاتصال…",phaseLatency:"قياس زمن الاستجابة…",phaseDownload:"قياس التنزيل…",phaseUpload:"قياس الرفع…",phaseComplete:"اكتمل الاختبار",phaseFailed:"فشل الاختبار",phaseReady:"جاهز",
-    ping:"البينغ",download:"التنزيل",jitter:"التذبذب",upload:"الرفع",loss:"فقدان الحزم",bb:"تضخم المخزن",
-    detecting:"جاري اكتشاف مزود الإنترنت...",cloudflareEdge:"خادم Cloudflare Edge",cloudflareEndpoint:"نقطة نهاية Cloudflare Edge",
-    providerUnavailable:"المزود غير متاح",ipUnavailable:"معلومات IP غير متاحة",locationUnavailable:"الموقع غير متاح",
-    howYouCompare:"مقارنتك",compareSubtitle:"سرعة التنزيل التي تم قياسها مقارنة بالمعدلات الإقليمية.",
-    yourResult:"نتيجتك",yourProvider:"مزودك",yourMeasuredDownload:"تنزيلك المقاس",countryAvg:"متوسط {country}",
-    noValid:"لا يوجد قياس صالح للمقارنة.",
-    avgAbove:"أنت <strong>{pct}</strong> فوق المتوسط الوطني لـ {country} ({speed} مقابل {avg}).",
-    avgBelow:"أنت <strong>{pct}</strong> أقل من المتوسط الوطني لـ {country} ({speed} مقابل {avg}).",
-    avgNear:"أنت قريب من المتوسط الوطني لـ {country} ({speed} مقابل {avg}).",
-    vsProvider:"مقابل {name} (متوسط {avg} Mbps): ",
-    noRegionData:"بيانات المقارنة الإقليمية لـ {country} غير متوفرة بعد.",
-    measuredIn:"سرعة التنزيل المقاسة في {country}.",
-    privacy:"سياسة الخصوصية",footerSub:"قياس حقيقي على Cloudflare Edge",
-    disclaimer:'تستند المتوسطات الوطنية ومتوسطات المزودين إلى بيانات النطاق العريض المنشورة علنًا من <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a> و<a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> والجهات التنظيمية الوطنية (2023–2024).',
-    footerNotice:"Fasqoo منصة اختبار سرعة مستقلة وليست منتجًا رسميًا من Cloudflare.",
-    verifyTitle:"التحقق — إثبات البيانات الحقيقية",vlDownMB:"إجمالي التنزيل (ميغابت)",vlUpMB:"إجمالي الرفع (ميغابت)",
-    vlDownStreams:"مسارات التنزيل",vlUpStreams:"مسارات الرفع",vlSamples:"عينات القياس",
-    vlDuration:"الوقت النشط",vlAvgSpeed:"المتوسط المحسوب",
-    shareTitle:"شارك نتيجتك",shareDownload:"تحميل الصورة",
-    shareText:"نتيجة اختبار سرعة الإنترنت على Fasqoo Lite — التنزيل: {down} | الرفع: {up} | البينغ: {ping} | التذبذب: {jitter}. جرّب اختبارك مجانًا:",
-    feedbackTitle:"إلى أي مدى تلبي خدمة عملاء {provider} توقعاتك؟",
-    fbMuchWorse:"أسوأ بكثير",fbExpected:"كما هو متوقع",fbMuchBetter:"أفضل بكثير",fbThanks:"شكرًا على ملاحظاتك!",
-    liveChart:"السرعة المباشرة",bbUnit:"ms خامل → محمّل",
-    seo:{h2:"حول اختبار سرعة الإنترنت Fasqoo Lite",p1:"Fasqoo Lite هو <strong>اختبار سرعة إنترنت</strong> مجاني يعمل في المتصفح ويقيس في ثوانٍ سرعة التنزيل والرفع الحقيقية، وزمن الاستجابة (البينغ)، والتذبذب، وفقدان الحزم، وتضخم المخزن. يعمل في جميع أنحاء العالم على أي جهاز — Android أو iPhone أو جهاز لوحي أو حاسوب محمول أو مكتبي — بدون الحاجة لتثبيت أي تطبيق.",h3Measure:"ما الذي يقيسه اختبار سرعة Fasqoo؟",liDown:"<strong>سرعة التنزيل (Mbps)</strong> — البيانات من الإنترنت إلى جهازك.",liUp:"<strong>سرعة الرفع (Mbps)</strong> — البيانات من جهازك إلى الإنترنت.",liPing:"<strong>البينغ / زمن الاستجابة (ms)</strong> — زمن ذهاب وإياب الحزمة.",liJitter:"<strong>التذبذب (ms)</strong> — تغيّر البينغ. تذبذب منخفض = اتصال مستقر.",h3How:"كيف يعمل القياس؟",p2:"يتصل Fasqoo Lite بأقرب <strong>خادم Cloudflare Edge</strong> ويستخدم <strong>محركًا متعدد المسارات التكيفي</strong>: يبدأ بمسار واحد ثم يضيف مسارات تلقائيًا (حتى 8) مع ارتفاع السرعة المقاسة. السرعة النهائية المعروضة هي <strong>المتوسط الحقيقي</strong> المحسوب من البايتات المنقولة فعليًا مقسومة على زمن القياس النشط — لا يوجد أي تقدير أو محاكاة.",h3Good:"ما هي سرعة الإنترنت الجيدة؟",li5:"<strong>5–10 Mbps</strong> — البريد، التصفح، فيديو بجودة عادية.",li6:"<strong>15–25 Mbps</strong> — بث HD على جهاز واحد.",li7:"<strong>50–100 Mbps</strong> — بث 4K، ألعاب، عدة مستخدمين.",li8:"<strong>200+ Mbps</strong> — منازل مزدحمة، العمل من المنزل.",li9:"<strong>500+ Mbps</strong> — اتصالات الألياف، مستخدمون محترفون."}
-  }
+  en:{installApp:"Install App",history:"History",historyModalTitle:"Test History",historyEmpty:"No tests yet. Run your first speed test!",installModalTitle:"Fasqoo is better on the app.",installModalText:"Get the full experience with our dedicated mobile application. Faster testing, better accuracy, and more features.",installModalBtn:"Download App (APK)",startHint:"Tap GO to begin the Cloudflare speed test",go:"GO",testAgain:"TEST AGAIN",phaseWarmup:"Warming up connection…",phaseLatency:"Measuring latency…",phaseDownload:"Measuring download…",phaseUpload:"Measuring upload…",phaseComplete:"Test complete",phaseFailed:"Test failed",phaseReady:"Ready",ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",loss:"PACKET LOSS",bb:"BUFFERBLOAT",detecting:"Detecting internet provider...",cloudflareEdge:"Cloudflare Edge Server",cloudflareEndpoint:"Cloudflare Edge endpoint",providerUnavailable:"Provider unavailable",ipUnavailable:"IP information unavailable",locationUnavailable:"Location unavailable",howYouCompare:"How you compare",compareSubtitle:"Your measured download speed compared to regional averages.",yourResult:"Your result",yourProvider:"your provider",yourMeasuredDownload:"Your measured download",countryAvg:"{country} average",noValid:"No valid measurement for comparison.",avgAbove:"You're <strong>{pct}</strong> above the {country} national average ({speed} vs {avg}).",avgBelow:"You're <strong>{pct}</strong> below the {country} national average ({speed} vs {avg}).",avgNear:"You're near the {country} national average ({speed} vs {avg}).",vsProvider:"vs. {name} ({avg} Mbps avg): ",noRegionData:"Regional comparison data is not yet available for {country}.",measuredIn:"Measured download speed in {country}.",privacy:"Privacy Policy",footerSub:"Real Cloudflare Edge measurement",disclaimer:'National and provider averages are based on publicly reported broadband data from <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, the <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a>, and national regulators (2023–2024).',footerNotice:"Fasqoo is an independent speed-test platform and is not an official Cloudflare product.",verifyTitle:"Verification — real data proof",vlDownMB:"Total downloaded (Mb)",vlUpMB:"Total uploaded (Mb)",vlDownStreams:"Download streams",vlUpStreams:"Upload streams",vlSamples:"Measurement samples",vlDuration:"Active time",vlAvgSpeed:"Calculated average",shareTitle:"Share your result",shareDownload:"Download image",shareText:"My internet speed test on Fasqoo Lite — Download: {down} | Upload: {up} | Ping: {ping} | Jitter: {jitter}. Test yours free:",feedbackTitle:"How does {provider} customer service meet your expectations?",fbMuchWorse:"Much worse",fbExpected:"As expected",fbMuchBetter:"Much better",fbThanks:"Thank you for your feedback!",liveChart:"Live Speed",bbUnit:"ms idle → loaded",seo:{h2:"About the Fasqoo Lite Internet Speed Test",p1:"Fasqoo Lite is a free, browser-based <strong>internet speed test</strong> that measures your real download and upload speed, latency (ping), jitter, packet loss and bufferbloat in seconds. It works worldwide on any device — Android, iPhone, tablet, laptop or desktop — with no app installation required.",h3Measure:"What does the Fasqoo speed test measure?",liDown:"<strong>Download speed (Mbps)</strong> — data from the internet to your device.",liUp:"<strong>Upload speed (Mbps)</strong> — data from your device to the internet.",liPing:"<strong>Ping / Latency (ms)</strong> — round-trip time for a data packet.",liJitter:"<strong>Jitter (ms)</strong> — variation in ping. Low jitter = stable connection.",h3How:"How does the measurement work?",p2:"Fasqoo Lite connects to the nearest <strong>Cloudflare Edge server</strong> and uses an <strong>adaptive multi-stream engine</strong>: it starts with a single data stream and automatically adds more (up to 8) as your measured speed increases. The final speed shown is the <strong>true average</strong> calculated from real bytes transferred divided by the active measurement time — nothing is estimated or simulated.",h3Good:"What is a good internet speed?",li5:"<strong>5–10 Mbps</strong> — email, browsing, SD video.",li6:"<strong>15–25 Mbps</strong> — HD streaming on one device.",li7:"<strong>50–100 Mbps</strong> — 4K streaming, gaming, multiple users.",li8:"<strong>200+ Mbps</strong> — heavy households, work-from-home.",li9:"<strong>500+ Mbps</strong> — fiber connections, pro users."}},
+  de:{installApp:"App installieren",history:"Verlauf",historyModalTitle:"Testverlauf",historyEmpty:"Noch keine Tests. Führe deinen ersten Speedtest durch!",installModalTitle:"Fasqoo ist besser als App.",installModalText:"Erlebe das volle Erlebnis mit unserer mobilen App. Schnellere Tests, bessere Genauigkeit und mehr Funktionen.",installModalBtn:"App herunterladen (APK)",startHint:"Tippe auf LOS, um den Cloudflare-Speedtest zu starten",go:"LOS",testAgain:"ERNEUT TESTEN",phaseWarmup:"Verbindung wird aufgebaut…",phaseLatency:"Latenz wird gemessen…",phaseDownload:"Download wird gemessen…",phaseUpload:"Upload wird gemessen…",phaseComplete:"Test abgeschlossen",phaseFailed:"Test fehlgeschlagen",phaseReady:"Bereit",ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",loss:"PAKETVERLUST",bb:"BUFFERBLOAT",detecting:"Internetanbieter wird erkannt...",cloudflareEdge:"Cloudflare Edge Server",cloudflareEndpoint:"Cloudflare Edge Endpunkt",providerUnavailable:"Anbieter nicht verfügbar",ipUnavailable:"IP-Information nicht verfügbar",locationUnavailable:"Standort nicht verfügbar",howYouCompare:"Dein Vergleich",compareSubtitle:"Deine gemessene Download-Geschwindigkeit im Vergleich zu regionalen Durchschnitten.",yourResult:"Dein Ergebnis",yourProvider:"dein Anbieter",yourMeasuredDownload:"Dein gemessener Download",countryAvg:"Durchschnitt {country}",noValid:"Keine gültige Messung für den Vergleich.",avgAbove:"Du liegst <strong>{pct}</strong> über dem Landesdurchschnitt von {country} ({speed} vs. {avg}).",avgBelow:"Du liegst <strong>{pct}</strong> unter dem Landesdurchschnitt von {country} ({speed} vs. {avg}).",avgNear:"Du liegst etwa auf dem Landesdurchschnitt von {country} ({speed} vs. {avg}).",vsProvider:"vs. {name} ({avg} Mbps Ø): ",noRegionData:"Regionale Vergleichsdaten für {country} sind noch nicht verfügbar.",measuredIn:"Gemessene Download-Geschwindigkeit in {country}.",privacy:"Datenschutz",footerSub:"Echte Cloudflare-Edge-Messung",disclaimer:'Nationale und Anbieter-Durchschnitte basieren auf öffentlichen Breitband-Daten von <a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener"><strong>Cable.co.uk</strong></a>, dem <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener"><strong>Ookla Speedtest Global Index</strong></a> und Regulierungsbehörden (2023–2024).',footerNotice:"Fasqoo ist eine unabhängige Speedtest-Plattform und kein offizielles Cloudflare-Produkt.",verifyTitle:"Verifizierung — Echter Datenbeweis",vlDownMB:"Gesamt geladen (Mb)",vlUpMB:"Gesamt gesendet (Mb)",vlDownStreams:"Download-Streams",vlUpStreams:"Upload-Streams",vlSamples:"Messproben",vlDuration:"Aktive Messdauer",vlAvgSpeed:"Berechnete Durchschnittsgeschw.",shareTitle:"Ergebnis teilen",shareDownload:"Bild herunterladen",shareText:"Mein Internet-Geschwindigkeitstest auf Fasqoo Lite — Download: {down} | Upload: {up} | Ping: {ping} | Jitter: {jitter}. Teste deine kostenlos:",feedbackTitle:"Wie erfüllt der Kundenservice von {provider} Ihre Erwartungen?",fbMuchWorse:"Viel schlechter",fbExpected:"Wie erwartet",fbMuchBetter:"Viel besser",fbThanks:"Vielen Dank für Ihr Feedback!",liveChart:"Live-Geschwindigkeit",bbUnit:"ms idle → geladen",seo:{h2:"Über den Fasqoo Lite Internet-Geschwindigkeitstest",p1:"Fasqoo Lite ist ein kostenloser, browserbasierter <strong>Internet-Geschwindigkeitstest</strong>, der Ihre echte Download- und Upload-Geschwindigkeit, Latenz (Ping), Jitter, Paketverlust und Bufferbloat in Sekunden misst.",h3Measure:"Was misst der Fasqoo-Geschwindigkeitstest?",liDown:"<strong>Download-Geschwindigkeit (Mbps)</strong> — Daten vom Internet zu Ihrem Gerät.",liUp:"<strong>Upload-Geschwindigkeit (Mbps)</strong> — Daten von Ihrem Gerät ins Internet.",liPing:"<strong>Ping / Latenz (ms)</strong> — Umlaufzeit eines Datenpakets.",liJitter:"<strong>Jitter (ms)</strong> — Schwankung des Pings. Niedriger Jitter = stabile Verbindung.",h3How:"Wie funktioniert die Messung?",p2:"Fasqoo Lite verbindet sich mit dem nächstgelegenen <strong>Cloudflare Edge-Server</strong> und verwendet eine <strong>adaptive Multi-Stream-Engine</strong>. Die angezeigte Geschwindigkeit ist der <strong>echte Durchschnitt</strong> aus tatsächlich übertragenen Bytes geteilt durch die aktive Messzeit.",h3Good:"Was ist eine gute Internetgeschwindigkeit?",li5:"<strong>5–10 Mbps</strong> — E-Mail, Surfen, SD-Video.",li6:"<strong>15–25 Mbps</strong> — HD-Streaming auf einem Gerät.",li7:"<strong>50–100 Mbps</strong> — 4K-Streaming, Gaming, mehrere Nutzer.",li8:"<strong>200+ Mbps</strong> — anspruchsvolle Haushalte, Homeoffice.",li9:"<strong>500+ Mbps</strong> — Glasfaseranschlüsse, Profi-Nutzer."}},
+  fr:{installApp:"Installer l'app",history:"Historique",historyModalTitle:"Historique des tests",historyEmpty:"Aucun test pour l'instant.",installModalTitle:"Fasqoo est meilleur sur l'app.",installModalText:"Profitez de l'expérience complète avec notre application mobile dédiée.",installModalBtn:"Télécharger l'app (APK)",startHint:"Appuyez sur GO pour lancer le test Cloudflare",go:"GO",testAgain:"RETESTER",phaseWarmup:"Préparation…",phaseLatency:"Latence…",phaseDownload:"Téléchargement…",phaseUpload:"Envoi…",phaseComplete:"Terminé",phaseFailed:"Échoué",phaseReady:"Prêt",ping:"PING",download:"TÉLÉCHARGEMENT",jitter:"GIGUE",upload:"ENVOI",loss:"PERTE PAQUETS",bb:"BUFFERBLOAT",detecting:"Détection du FAI...",cloudflareEdge:"Serveur Cloudflare Edge",cloudflareEndpoint:"Point Cloudflare Edge",providerUnavailable:"FAI indisponible",ipUnavailable:"Infos IP indisponibles",locationUnavailable:"Localisation indisponible",howYouCompare:"Votre comparaison",compareSubtitle:"Votre débit descendant vs moyennes régionales.",yourResult:"Votre résultat",yourProvider:"votre FAI",yourMeasuredDownload:"Téléchargement mesuré",countryAvg:"Moyenne {country}",noValid:"Aucune mesure valide.",avgAbove:"<strong>{pct}</strong> au-dessus de la moyenne {country} ({speed} vs {avg}).",avgBelow:"<strong>{pct}</strong> en dessous de la moyenne {country} ({speed} vs {avg}).",avgNear:"Proche de la moyenne {country} ({speed} vs {avg}).",vsProvider:"vs. {name} (moy. {avg} Mbps) : ",noRegionData:"Données régionales indisponibles pour {country}.",measuredIn:"Débit mesuré en {country}.",privacy:"Confidentialité",footerSub:"Mesure réelle Cloudflare Edge",disclaimer:'Moyennes issues de données publiques (<a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener">Cable.co.uk</a>, <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener">Ookla</a>, régulateurs 2023–2024).',footerNotice:"Fasqoo est une plateforme indépendante, non officielle de Cloudflare.",verifyTitle:"Vérification — preuve réelle",vlDownMB:"Total téléchargé (Mb)",vlUpMB:"Total envoyé (Mb)",vlDownStreams:"Flux descendants",vlUpStreams:"Flux montants",vlSamples:"Échantillons",vlDuration:"Temps actif",vlAvgSpeed:"Moyenne calculée",shareTitle:"Partager",shareDownload:"Télécharger l'image",shareText:"Mon test de vitesse sur Fasqoo Lite — {down} | {up} | {ping} | {jitter}. Testez :",feedbackTitle:"Le service client {provider} répond-il à vos attentes ?",fbMuchWorse:"Bien pire",fbExpected:"Comme prévu",fbMuchBetter:"Bien mieux",fbThanks:"Merci !",liveChart:"Vitesse en direct",bbUnit:"ms repos → chargé",seo:{h2:"À propos du test Fasqoo Lite",p1:"Fasqoo Lite est un <strong>test de vitesse Internet</strong> gratuit qui mesure débit, latence, gigue, perte de paquets et bufferbloat.",h3Measure:"Ce que mesure Fasqoo",liDown:"<strong>Débit descendant (Mbps)</strong>.",liUp:"<strong>Débit montant (Mbps)</strong>.",liPing:"<strong>Ping (ms)</strong>.",liJitter:"<strong>Gigue (ms)</strong>.",h3How:"Fonctionnement",p2:"Connexion au <strong>serveur Cloudflare Edge</strong> le plus proche, moteur multi-flux adaptatif, mesure réelle.",h3Good:"Bonne vitesse ?",li5:"<strong>5–10 Mbps</strong> — navigation.",li6:"<strong>15–25 Mbps</strong> — HD.",li7:"<strong>50–100 Mbps</strong> — 4K, jeu.",li8:"<strong>200+ Mbps</strong> — télétravail intensif.",li9:"<strong>500+ Mbps</strong> — fibre."}},
+  es:{installApp:"Instalar app",history:"Historial",historyModalTitle:"Historial de pruebas",historyEmpty:"Aún no hay pruebas.",installModalTitle:"Fasqoo es mejor en la app.",installModalText:"Disfruta la experiencia completa con nuestra app móvil.",installModalBtn:"Descargar app (APK)",startHint:"Toca GO para iniciar la prueba Cloudflare",go:"GO",testAgain:"PROBAR DE NUEVO",phaseWarmup:"Preparando…",phaseLatency:"Latencia…",phaseDownload:"Descarga…",phaseUpload:"Subida…",phaseComplete:"Completado",phaseFailed:"Fallido",phaseReady:"Listo",ping:"PING",download:"DESCARGA",jitter:"JITTER",upload:"SUBIDA",loss:"PÉRDIDA PAQUETES",bb:"BUFFERBLOAT",detecting:"Detectando proveedor...",cloudflareEdge:"Servidor Cloudflare Edge",cloudflareEndpoint:"Endpoint Cloudflare Edge",providerUnavailable:"Proveedor no disponible",ipUnavailable:"IP no disponible",locationUnavailable:"Ubicación no disponible",howYouCompare:"Tu comparación",compareSubtitle:"Tu descarga vs medias regionales.",yourResult:"Tu resultado",yourProvider:"tu proveedor",yourMeasuredDownload:"Tu descarga medida",countryAvg:"Media {country}",noValid:"Sin medición válida.",avgAbove:"<strong>{pct}</strong> por encima de la media {country} ({speed} vs {avg}).",avgBelow:"<strong>{pct}</strong> por debajo de la media {country} ({speed} vs {avg}).",avgNear:"Cerca de la media {country} ({speed} vs {avg}).",vsProvider:"vs. {name} (media {avg} Mbps): ",noRegionData:"Datos regionales no disponibles para {country}.",measuredIn:"Velocidad medida en {country}.",privacy:"Privacidad",footerSub:"Medición real Cloudflare Edge",disclaimer:'Medias basadas en datos públicos (<a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener">Cable.co.uk</a>, <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener">Ookla</a>, reguladores 2023–2024).',footerNotice:"Fasqoo es una plataforma independiente, no oficial de Cloudflare.",verifyTitle:"Verificación — datos reales",vlDownMB:"Total descargado (Mb)",vlUpMB:"Total subido (Mb)",vlDownStreams:"Flujos descarga",vlUpStreams:"Flujos subida",vlSamples:"Muestras",vlDuration:"Tiempo activo",vlAvgSpeed:"Media calculada",shareTitle:"Comparte",shareDownload:"Descargar imagen",shareText:"Mi test de velocidad en Fasqoo Lite — {down} | {up} | {ping} | {jitter}. Prueba:",feedbackTitle:"¿El servicio de {provider} cumple tus expectativas?",fbMuchWorse:"Mucho peor",fbExpected:"Como se esperaba",fbMuchBetter:"Mucho mejor",fbThanks:"¡Gracias!",liveChart:"Velocidad en vivo",bbUnit:"ms reposo → cargado",seo:{h2:"Sobre Fasqoo Lite",p1:"Fasqoo Lite es una <strong>prueba de velocidad</strong> gratuita.",h3Measure:"Qué mide Fasqoo",liDown:"<strong>Descarga (Mbps)</strong>.",liUp:"<strong>Subida (Mbps)</strong>.",liPing:"<strong>Ping (ms)</strong>.",liJitter:"<strong>Jitter (ms)</strong>.",h3How:"Cómo funciona",p2:"Se conecta al <strong>servidor Cloudflare Edge</strong> más cercano con motor multi-flujo adaptativo.",h3Good:"Buena velocidad",li5:"<strong>5–10 Mbps</strong> — navegación.",li6:"<strong>15–25 Mbps</strong> — HD.",li7:"<strong>50–100 Mbps</strong> — 4K, juegos.",li8:"<strong>200+ Mbps</strong> — teletrabajo.",li9:"<strong>500+ Mbps</strong> — fibra."}},
+  it:{installApp:"Installa app",history:"Cronologia",historyModalTitle:"Cronologia test",historyEmpty:"Ancora nessun test.",installModalTitle:"Fasqoo è meglio nell'app.",installModalText:"Vivi l'esperienza completa con la nostra app mobile.",installModalBtn:"Scarica app (APK)",startHint:"Tocca GO per iniziare",go:"GO",testAgain:"RIPROVA",phaseWarmup:"Preparazione…",phaseLatency:"Latenza…",phaseDownload:"Download…",phaseUpload:"Upload…",phaseComplete:"Completato",phaseFailed:"Fallito",phaseReady:"Pronto",ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",loss:"PERDITA PACCHETTI",bb:"BUFFERBLOAT",detecting:"Rilevamento provider...",cloudflareEdge:"Server Cloudflare Edge",cloudflareEndpoint:"Endpoint Cloudflare Edge",providerUnavailable:"Provider non disponibile",ipUnavailable:"IP non disponibile",locationUnavailable:"Posizione non disponibile",howYouCompare:"Il tuo confronto",compareSubtitle:"Download vs medie regionali.",yourResult:"Risultato",yourProvider:"tuo provider",yourMeasuredDownload:"Download misurato",countryAvg:"Media {country}",noValid:"Nessuna misurazione valida.",avgAbove:"<strong>{pct}</strong> sopra la media {country} ({speed} vs {avg}).",avgBelow:"<strong>{pct}</strong> sotto la media {country} ({speed} vs {avg}).",avgNear:"Vicino alla media {country} ({speed} vs {avg}).",vsProvider:"vs. {name} (media {avg} Mbps): ",noRegionData:"Dati regionali non disponibili per {country}.",measuredIn:"Velocità misurata in {country}.",privacy:"Privacy",footerSub:"Misurazione reale Cloudflare Edge",disclaimer:'Medie basate su dati pubblici (<a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener">Cable.co.uk</a>, <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener">Ookla</a>, autorità 2023–2024).',footerNotice:"Fasqoo è una piattaforma indipendente, non ufficiale di Cloudflare.",verifyTitle:"Verifica — dati reali",vlDownMB:"Totale scaricato (Mb)",vlUpMB:"Totale caricato (Mb)",vlDownStreams:"Stream download",vlUpStreams:"Stream upload",vlSamples:"Campioni",vlDuration:"Tempo attivo",vlAvgSpeed:"Media calcolata",shareTitle:"Condividi",shareDownload:"Scarica immagine",shareText:"Il mio speed test su Fasqoo Lite — {down} | {up} | {ping} | {jitter}. Prova:",feedbackTitle:"Il servizio clienti {provider} soddisfa le tue aspettative?",fbMuchWorse:"Molto peggio",fbExpected:"Come previsto",fbMuchBetter:"Molto meglio",fbThanks:"Grazie!",liveChart:"Velocità live",bbUnit:"ms riposo → carico",seo:{h2:"Informazioni su Fasqoo Lite",p1:"Fasqoo Lite è uno <strong>speed test</strong> gratuito.",h3Measure:"Cosa misura",liDown:"<strong>Download (Mbps)</strong>.",liUp:"<strong>Upload (Mbps)</strong>.",liPing:"<strong>Ping (ms)</strong>.",liJitter:"<strong>Jitter (ms)</strong>.",h3How:"Come funziona",p2:"Connessione al <strong>server Cloudflare Edge</strong> più vicino con motore multi-stream adattivo.",h3Good:"Buona velocità",li5:"<strong>5–10 Mbps</strong> — navigazione.",li6:"<strong>15–25 Mbps</strong> — HD.",li7:"<strong>50–100 Mbps</strong> — 4K, gaming.",li8:"<strong>200+ Mbps</strong> — lavoro da casa.",li9:"<strong>500+ Mbps</strong> — fibra."}},
+  pt:{installApp:"Instalar app",history:"Histórico",historyModalTitle:"Histórico",historyEmpty:"Ainda sem testes.",installModalTitle:"Fasqoo é melhor na app.",installModalText:"Tenha a experiência completa com a nossa app móvel.",installModalBtn:"Transferir app (APK)",startHint:"Toque em GO para iniciar",go:"GO",testAgain:"REPETIR",phaseWarmup:"Preparando…",phaseLatency:"Latência…",phaseDownload:"Transferência…",phaseUpload:"Envio…",phaseComplete:"Concluído",phaseFailed:"Falhou",phaseReady:"Pronto",ping:"PING",download:"TRANSFERÊNCIA",jitter:"JITTER",upload:"ENVIO",loss:"PERDA PACOTES",bb:"BUFFERBLOAT",detecting:"A detetar operadora...",cloudflareEdge:"Servidor Cloudflare Edge",cloudflareEndpoint:"Endpoint Cloudflare Edge",providerUnavailable:"Operadora indisponível",ipUnavailable:"IP indisponível",locationUnavailable:"Localização indisponível",howYouCompare:"A sua comparação",compareSubtitle:"Velocidade vs médias regionais.",yourResult:"Resultado",yourProvider:"operadora",yourMeasuredDownload:"Transferência medida",countryAvg:"Média {country}",noValid:"Sem medição válida.",avgAbove:"<strong>{pct}</strong> acima da média {country} ({speed} vs {avg}).",avgBelow:"<strong>{pct}</strong> abaixo da média {country} ({speed} vs {avg}).",avgNear:"Perto da média {country} ({speed} vs {avg}).",vsProvider:"vs. {name} (média {avg} Mbps): ",noRegionData:"Dados regionais indisponíveis para {country}.",measuredIn:"Velocidade medida em {country}.",privacy:"Privacidade",footerSub:"Medição real Cloudflare Edge",disclaimer:'Médias com base em dados públicos (<a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener">Cable.co.uk</a>, <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener">Ookla</a>, reguladores 2023–2024).',footerNotice:"Fasqoo é uma plataforma independente, não oficial da Cloudflare.",verifyTitle:"Verificação — dados reais",vlDownMB:"Total transferido (Mb)",vlUpMB:"Total enviado (Mb)",vlDownStreams:"Fluxos",vlUpStreams:"Fluxos envio",vlSamples:"Amostras",vlDuration:"Tempo ativo",vlAvgSpeed:"Média calculada",shareTitle:"Partilhar",shareDownload:"Transferir imagem",shareText:"O meu teste na Fasqoo Lite — {down} | {up} | {ping} | {jitter}. Teste:",feedbackTitle:"O apoio ao cliente da {provider} atende às suas expectativas?",fbMuchWorse:"Muito pior",fbExpected:"Como esperado",fbMuchBetter:"Muito melhor",fbThanks:"Obrigado!",liveChart:"Velocidade ao vivo",bbUnit:"ms repouso → carregado",seo:{h2:"Sobre Fasqoo Lite",p1:"Fasqoo Lite é um <strong>teste de velocidade</strong> gratuito.",h3Measure:"O que mede",liDown:"<strong>Transferência (Mbps)</strong>.",liUp:"<strong>Envio (Mbps)</strong>.",liPing:"<strong>Ping (ms)</strong>.",liJitter:"<strong>Jitter (ms)</strong>.",h3How:"Como funciona",p2:"Liga-se ao <strong>servidor Cloudflare Edge</strong> mais próximo com motor multi-fluxo adaptativo.",h3Good:"Boa velocidade",li5:"<strong>5–10 Mbps</strong> — navegação.",li6:"<strong>15–25 Mbps</strong> — HD.",li7:"<strong>50–100 Mbps</strong> — 4K, jogos.",li8:"<strong>200+ Mbps</strong> — teletrabalho.",li9:"<strong>500+ Mbps</strong> — fibra."}},
+  nl:{installApp:"App installeren",history:"Geschiedenis",historyModalTitle:"Testgeschiedenis",historyEmpty:"Nog geen tests.",installModalTitle:"Fasqoo is beter in de app.",installModalText:"Ervaar de volledige beleving met onze mobiele app.",installModalBtn:"App downloaden (APK)",startHint:"Tik op GO om te starten",go:"GO",testAgain:"OPNIEUW",phaseWarmup:"Opwarmen…",phaseLatency:"Latentie…",phaseDownload:"Download…",phaseUpload:"Upload…",phaseComplete:"Voltooid",phaseFailed:"Mislukt",phaseReady:"Gereed",ping:"PING",download:"DOWNLOAD",jitter:"JITTER",upload:"UPLOAD",loss:"PAKKETVERLIES",bb:"BUFFERBLOAT",detecting:"Provider detecteren...",cloudflareEdge:"Cloudflare Edge-server",cloudflareEndpoint:"Cloudflare Edge-endpoint",providerUnavailable:"Provider niet beschikbaar",ipUnavailable:"IP-info niet beschikbaar",locationUnavailable:"Locatie niet beschikbaar",howYouCompare:"Jouw vergelijking",compareSubtitle:"Snelheid vs regionale gemiddelden.",yourResult:"Resultaat",yourProvider:"provider",yourMeasuredDownload:"Gemeten download",countryAvg:"Gemiddelde {country}",noValid:"Geen geldige meting.",avgAbove:"<strong>{pct}</strong> boven gemiddelde {country} ({speed} vs {avg}).",avgBelow:"<strong>{pct}</strong> onder gemiddelde {country} ({speed} vs {avg}).",avgNear:"Rond gemiddelde {country} ({speed} vs {avg}).",vsProvider:"vs. {name} (gem. {avg} Mbps): ",noRegionData:"Regionale data niet beschikbaar voor {country}.",measuredIn:"Gemeten in {country}.",privacy:"Privacy",footerSub:"Echte Cloudflare Edge-meting",disclaimer:'Gemiddelden op basis van openbare data (<a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener">Cable.co.uk</a>, <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener">Ookla</a>, toezichthouders 2023–2024).',footerNotice:"Fasqoo is een onafhankelijk platform, geen officieel Cloudflare-product.",verifyTitle:"Verificatie — echte data",vlDownMB:"Totaal gedownload (Mb)",vlUpMB:"Totaal geüpload (Mb)",vlDownStreams:"Downloadstreams",vlUpStreams:"Uploadstreams",vlSamples:"Meetmonsters",vlDuration:"Actieve tijd",vlAvgSpeed:"Berekend gemiddelde",shareTitle:"Deel resultaat",shareDownload:"Afbeelding downloaden",shareText:"Mijn snelheidstest op Fasqoo Lite — {down} | {up} | {ping} | {jitter}. Test:",feedbackTitle:"Voldoet de klantenservice van {provider} aan je verwachtingen?",fbMuchWorse:"Veel slechter",fbExpected:"Zoals verwacht",fbMuchBetter:"Veel beter",fbThanks:"Bedankt!",liveChart:"Live snelheid",bbUnit:"ms rust → belast",seo:{h2:"Over Fasqoo Lite",p1:"Fasqoo Lite is een gratis <strong>internetsnelheidstest</strong>.",h3Measure:"Wat meet Fasqoo",liDown:"<strong>Downloadsnelheid (Mbps)</strong>.",liUp:"<strong>Uploadsnelheid (Mbps)</strong>.",liPing:"<strong>Ping (ms)</strong>.",liJitter:"<strong>Jitter (ms)</strong>.",h3How:"Hoe werkt het",p2:"Verbinding met dichtstbijzijnde <strong>Cloudflare Edge-server</strong> via adaptieve multi-stream engine.",h3Good:"Goede snelheid",li5:"<strong>5–10 Mbps</strong> — browsen.",li6:"<strong>15–25 Mbps</strong> — HD.",li7:"<strong>50–100 Mbps</strong> — 4K, gamen.",li8:"<strong>200+ Mbps</strong> — thuiswerken.",li9:"<strong>500+ Mbps</strong> — glasvezel."}},
+  tr:{installApp:"Uygulamayı Yükle",history:"Geçmiş",historyModalTitle:"Test Geçmişi",historyEmpty:"Henüz test yok.",installModalTitle:"Fasqoo uygulamada daha iyi.",installModalText:"Özel mobil uygulamamızla tam deneyimi yaşayın.",installModalBtn:"Uygulamayı indir (APK)",startHint:"GO'ya dokunarak başlayın",go:"GO",testAgain:"TEKRAR",phaseWarmup:"Hazırlanıyor…",phaseLatency:"Gecikme…",phaseDownload:"İndirme…",phaseUpload:"Yükleme…",phaseComplete:"Tamamlandı",phaseFailed:"Başarısız",phaseReady:"Hazır",ping:"PING",download:"İNDİRME",jitter:"JITTER",upload:"YÜKLEME",loss:"PAKET KAYBI",bb:"BUFFERBLOAT",detecting:"Sağlayıcı tespit ediliyor...",cloudflareEdge:"Cloudflare Edge Sunucusu",cloudflareEndpoint:"Cloudflare Edge uç noktası",providerUnavailable:"Sağlayıcı yok",ipUnavailable:"IP bilgisi yok",locationUnavailable:"Konum yok",howYouCompare:"Karşılaştırma",compareSubtitle:"Hızınız bölgesel ortalamalarla.",yourResult:"Sonuç",yourProvider:"sağlayıcı",yourMeasuredDownload:"Ölçülen indirme",countryAvg:"{country} ortalaması",noValid:"Geçerli ölçüm yok.",avgAbove:"{country} ortalamasının <strong>{pct}</strong> üzerinde ({speed} / {avg}).",avgBelow:"{country} ortalamasının <strong>{pct}</strong> altında ({speed} / {avg}).",avgNear:"{country} ortalamasına yakın ({speed} / {avg}).",vsProvider:"{name} (ort. {avg} Mbps): ",noRegionData:"{country} için veri yok.",measuredIn:"{country} içinde ölçüldü.",privacy:"Gizlilik",footerSub:"Gerçek Cloudflare Edge ölçümü",disclaimer:'Ortalamalar kamuya açık verilere dayanır (<a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener">Cable.co.uk</a>, <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener">Ookla</a>, düzenleyiciler 2023–2024).',footerNotice:"Fasqoo bağımsız bir platformdur, resmi Cloudflare ürünü değildir.",verifyTitle:"Doğrulama — gerçek veri",vlDownMB:"Toplam indirilen (Mb)",vlUpMB:"Toplam yüklenen (Mb)",vlDownStreams:"İndirme akışları",vlUpStreams:"Yükleme akışları",vlSamples:"Örnekler",vlDuration:"Aktif süre",vlAvgSpeed:"Hesaplanan ortalama",shareTitle:"Paylaş",shareDownload:"Resmi indir",shareText:"Fasqoo Lite hız testim — {down} | {up} | {ping} | {jitter}. Deneyin:",feedbackTitle:"{provider} müşteri hizmetleri beklentilerinizi karşılıyor mu?",fbMuchWorse:"Çok daha kötü",fbExpected:"Beklendiği gibi",fbMuchBetter:"Çok daha iyi",fbThanks:"Teşekkürler!",liveChart:"Canlı Hız",bbUnit:"ms boşta → yükte",seo:{h2:"Fasqoo Lite Hakkında",p1:"Fasqoo Lite ücretsiz <strong>internet hız testidir</strong>.",h3Measure:"Neyi ölçer",liDown:"<strong>İndirme (Mbps)</strong>.",liUp:"<strong>Yükleme (Mbps)</strong>.",liPing:"<strong>Ping (ms)</strong>.",liJitter:"<strong>Jitter (ms)</strong>.",h3How:"Nasıl çalışır",p2:"En yakın <strong>Cloudflare Edge sunucusuna</strong> bağlanır, uyarlanabilir çok akışlı motor kullanır.",h3Good:"İyi hız",li5:"<strong>5–10 Mbps</strong> — gezinme.",li6:"<strong>15–25 Mbps</strong> — HD.",li7:"<strong>50–100 Mbps</strong> — 4K, oyun.",li8:"<strong>200+ Mbps</strong> — evden çalışma.",li9:"<strong>500+ Mbps</strong> — fiber."}},
+  sq:{installApp:"Instalo aplikacionin",history:"Historiku",historyModalTitle:"Historiku i testeve",historyEmpty:"Ende pa teste.",installModalTitle:"Fasqoo është më i mirë në aplikacion.",installModalText:"Përjeto përvojën e plotë me aplikacionin tonë mobil.",installModalBtn:"Shkarko aplikacionin (APK)",startHint:"Trokitni GO për të nisur",go:"GO",testAgain:"TESTO PËRSËRI",phaseWarmup:"Përgatitja…",phaseLatency:"Latenca…",phaseDownload:"Shkarkimi…",phaseUpload:"Ngarkimi…",phaseComplete:"Përfundoi",phaseFailed:"Dështoi",phaseReady:"Gati",ping:"PING",download:"SHKARKIM",jitter:"JITTER",upload:"NGARKIM",loss:"HUMBJE PAKETASH",bb:"BUFFERBLOAT",detecting:"Zbulimi i ofruesit...",cloudflareEdge:"Serveri Cloudflare Edge",cloudflareEndpoint:"Pika Cloudflare Edge",providerUnavailable:"Ofruesi i padisponueshëm",ipUnavailable:"IP e padisponueshme",locationUnavailable:"Vendndodhja e padisponueshme",howYouCompare:"Krahasimi",compareSubtitle:"Shpejtësia vs mesatareve rajonale.",yourResult:"Rezultati",yourProvider:"ofruesi",yourMeasuredDownload:"Shkarkimi i matur",countryAvg:"Mesatarja e {country}",noValid:"Nuk ka matje të vlefshme.",avgAbove:"<strong>{pct}</strong> mbi mesataren e {country} ({speed} kundrejt {avg}).",avgBelow:"<strong>{pct}</strong> nën mesataren e {country} ({speed} kundrejt {avg}).",avgNear:"Afër mesatares së {country} ({speed} kundrejt {avg}).",vsProvider:"kundrejt {name} (mes. {avg} Mbps): ",noRegionData:"Të dhëna rajonale të padisponueshme për {country}.",measuredIn:"Shpejtësia e matur në {country}.",privacy:"Privatësia",footerSub:"Matje reale Cloudflare Edge",disclaimer:'Mesataret bazohen në të dhëna publike (<a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener">Cable.co.uk</a>, <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener">Ookla</a>, rregullatorë 2023–2024).',footerNotice:"Fasqoo është platformë e pavarur, jo produkt zyrtar i Cloudflare.",verifyTitle:"Verifikim — të dhëna reale",vlDownMB:"Totali i shkarkuar (Mb)",vlUpMB:"Totali i ngarkuar (Mb)",vlDownStreams:"Rrymat shkarkim",vlUpStreams:"Rrymat ngarkim",vlSamples:"Mostrat",vlDuration:"Koha aktive",vlAvgSpeed:"Mesatarja",shareTitle:"Shpërndaj",shareDownload:"Shkarko imazhin",shareText:"Testi im në Fasqoo Lite — {down} | {up} | {ping} | {jitter}. Provo:",feedbackTitle:"A i plotëson pritshmëritë tuaja shërbimi i {provider}?",fbMuchWorse:"Shumë më keq",fbExpected:"Si pritej",fbMuchBetter:"Shumë më mirë",fbThanks:"Faleminderit!",liveChart:"Shpejtësia live",bbUnit:"ms pushim → ngarkuar",seo:{h2:"Rreth Fasqoo Lite",p1:"Fasqoo Lite është <strong>test falas i shpejtësisë</strong>.",h3Measure:"Çfarë mat",liDown:"<strong>Shkarkimi (Mbps)</strong>.",liUp:"<strong>Ngarkimi (Mbps)</strong>.",liPing:"<strong>Ping (ms)</strong>.",liJitter:"<strong>Jitter (ms)</strong>.",h3How:"Si funksionon",p2:"Lidhet me <strong>serverin Cloudflare Edge</strong> më të afërt me motor adaptiv me shumë rryma.",h3Good:"Shpejtësi e mirë",li5:"<strong>5–10 Mbps</strong> — shfletim.",li6:"<strong>15–25 Mbps</strong> — HD.",li7:"<strong>50–100 Mbps</strong> — 4K, lojëra.",li8:"<strong>200+ Mbps</strong> — punë nga shtëpia.",li9:"<strong>500+ Mbps</strong> — fibër."}},
+  ar:{installApp:"ثبّت التطبيق",history:"السجل",historyModalTitle:"سجل الاختبارات",historyEmpty:"لا اختبارات بعد.",installModalTitle:"Fasqoo أفضل على التطبيق.",installModalText:"استمتع بالتجربة الكاملة مع تطبيقنا المخصص للجوال.",installModalBtn:"تحميل التطبيق (APK)",startHint:"اضغط GO للبدء",go:"GO",testAgain:"اختبار مرة أخرى",phaseWarmup:"جاري التجهيز…",phaseLatency:"قياس الاستجابة…",phaseDownload:"قياس التنزيل…",phaseUpload:"قياس الرفع…",phaseComplete:"اكتمل",phaseFailed:"فشل",phaseReady:"جاهز",ping:"البينغ",download:"التنزيل",jitter:"التذبذب",upload:"الرفع",loss:"فقدان الحزم",bb:"تضخم المخزن",detecting:"جاري اكتشاف المزود...",cloudflareEdge:"خادم Cloudflare Edge",cloudflareEndpoint:"نقطة Cloudflare Edge",providerUnavailable:"المزود غير متاح",ipUnavailable:"معلومات IP غير متاحة",locationUnavailable:"الموقع غير متاح",howYouCompare:"المقارنة",compareSubtitle:"سرعة التنزيل مقارنة بالمعدلات الإقليمية.",yourResult:"النتيجة",yourProvider:"مزودك",yourMeasuredDownload:"التنزيل المقاس",countryAvg:"متوسط {country}",noValid:"لا قياس صالح.",avgAbove:"<strong>{pct}</strong> فوق متوسط {country} ({speed} مقابل {avg}).",avgBelow:"<strong>{pct}</strong> أقل من متوسط {country} ({speed} مقابل {avg}).",avgNear:"قريب من متوسط {country} ({speed} مقابل {avg}).",vsProvider:"مقابل {name} (متوسط {avg} Mbps): ",noRegionData:"لا بيانات إقليمية لـ {country}.",measuredIn:"السرعة في {country}.",privacy:"الخصوصية",footerSub:"قياس حقيقي على Cloudflare Edge",disclaimer:'المتوسطات من بيانات عامة (<a href="https://www.cable.co.uk/broadband/speed/worldwide-speed-league/" target="_blank" rel="noopener">Cable.co.uk</a>، <a href="https://www.speedtest.net/global-index" target="_blank" rel="noopener">Ookla</a>، الجهات التنظيمية 2023–2024).',footerNotice:"Fasqoo منصة مستقلة وليست منتجًا رسميًا من Cloudflare.",verifyTitle:"التحقق — بيانات حقيقية",vlDownMB:"إجمالي التنزيل (Mb)",vlUpMB:"إجمالي الرفع (Mb)",vlDownStreams:"مسارات التنزيل",vlUpStreams:"مسارات الرفع",vlSamples:"العينات",vlDuration:"الوقت النشط",vlAvgSpeed:"المتوسط المحسوب",shareTitle:"شارك النتيجة",shareDownload:"تحميل الصورة",shareText:"اختباري على Fasqoo Lite — {down} | {up} | {ping} | {jitter}. جرّب:",feedbackTitle:"هل تلبي خدمة {provider} توقعاتك؟",fbMuchWorse:"أسوأ بكثير",fbExpected:"كما هو متوقع",fbMuchBetter:"أفضل بكثير",fbThanks:"شكرًا!",liveChart:"السرعة المباشرة",bbUnit:"ms خامل → محمّل",seo:{h2:"حول Fasqoo Lite",p1:"Fasqoo Lite <strong>اختبار سرعة إنترنت</strong> مجاني.",h3Measure:"ما يقيسه",liDown:"<strong>التنزيل (Mbps)</strong>.",liUp:"<strong>الرفع (Mbps)</strong>.",liPing:"<strong>البينغ (ms)</strong>.",liJitter:"<strong>التذبذب (ms)</strong>.",h3How:"كيف يعمل",p2:"يتصل بـ<strong>خادم Cloudflare Edge</strong> الأقرب بمحرك متعدد المسارات التكيفي.",h3Good:"سرعة جيدة",li5:"<strong>5–10 Mbps</strong> — تصفح.",li6:"<strong>15–25 Mbps</strong> — HD.",li7:"<strong>50–100 Mbps</strong> — 4K وألعاب.",li8:"<strong>200+ Mbps</strong> — عمل من المنزل.",li9:"<strong>500+ Mbps</strong> — ألياف."}}
 };
 
 let currentT = I18N.en;
@@ -897,20 +580,17 @@ function getBufferbloatGrade(increase){
   return "F";
 }
 
-// ============ STANDALONE MODE ============
 function checkStandaloneMode(){
   const isStandalone =
     window.matchMedia('(display-mode: standalone)').matches ||
     window.matchMedia('(display-mode: fullscreen)').matches ||
     window.matchMedia('(display-mode: minimal-ui)').matches ||
-    window.matchMedia('(display-mode: window-controls-overlay)').matches ||
     window.navigator.standalone === true;
   const btn = $("installBtn");
   if (btn) btn.style.display = isStandalone ? "none" : "";
   return isStandalone;
 }
 
-// ============ THEME ============
 function toggleTheme(){
   const html = document.documentElement;
   const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -925,7 +605,6 @@ function updateThemeIcon(theme){
   else { icon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>'; }
 }
 
-// ============ LANGUAGE ============
 function detectLang(){
   const urlLang = new URLSearchParams(location.search).get("lang");
   if (urlLang && I18N[urlLang]) return urlLang;
@@ -1009,7 +688,6 @@ function applyLanguage(code){
 }
 function setLanguage(code){ localStorage.setItem("fasqoo_lang", code); applyLanguage(code); $("langSelect").value = code; }
 
-// ============ LIVE CHART ============
 function initLiveChart(){
   chartData = [];
   chartMaxSpeed = 0;
@@ -1037,6 +715,11 @@ function drawLiveChart(){
   ctx.clearRect(0, 0, w, h);
   if (chartData.length < 2) return;
 
+  const dpr = window.devicePixelRatio || 1;
+  const padTop = 18 * dpr;
+  const padBot = 6 * dpr;
+  const usableH = h - padTop - padBot;
+
   const tStart = chartData[0].t;
   const tEnd = chartData[chartData.length-1].t;
   const tRange = Math.max(1000, tEnd - tStart);
@@ -1046,16 +729,17 @@ function drawLiveChart(){
   const fillTop = isUpload ? "rgba(16,185,129,0.35)" : "rgba(34,211,238,0.35)";
   const fillBot = isUpload ? "rgba(16,185,129,0)" : "rgba(34,211,238,0)";
 
-  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  const grad = ctx.createLinearGradient(0, padTop, 0, h);
   grad.addColorStop(0, fillTop);
   grad.addColorStop(1, fillBot);
+
+  const yFor = (v) => h - padBot - (v / vMax) * usableH;
 
   ctx.beginPath();
   ctx.moveTo(0, h);
   chartData.forEach((p) => {
     const x = ((p.t - tStart) / tRange) * w;
-    const y = h - (p.v / vMax) * (h * 0.85) - h * 0.05;
-    ctx.lineTo(x, y);
+    ctx.lineTo(x, yFor(p.v));
   });
   ctx.lineTo(w, h);
   ctx.closePath();
@@ -1065,18 +749,17 @@ function drawLiveChart(){
   ctx.beginPath();
   chartData.forEach((p, i) => {
     const x = ((p.t - tStart) / tRange) * w;
-    const y = h - (p.v / vMax) * (h * 0.85) - h * 0.05;
+    const y = yFor(p.v);
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
   ctx.strokeStyle = strokeColor;
-  ctx.lineWidth = 2 * (window.devicePixelRatio || 1);
+  ctx.lineWidth = 2 * dpr;
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
   ctx.stroke();
 }
 
-// ============ HISTORY ============
 function loadHistory(){
   try {
     const raw = localStorage.getItem(HISTORY_KEY);
@@ -1131,7 +814,6 @@ function closeHistoryModal(){
   document.body.style.overflow = "";
 }
 
-// ============ INSTALL MODAL ============
 function openInstallModal(){
   $("installModal").classList.add("active");
   document.body.style.overflow = "hidden";
@@ -1145,7 +827,7 @@ function triggerInstall(){
   installPWA();
 }
 async function installPWA(){
-  if (checkStandaloneMode()) { return; }
+  if (checkStandaloneMode()) return;
   if (deferredPrompt) {
     try {
       deferredPrompt.prompt();
@@ -1157,9 +839,9 @@ async function installPWA(){
   }
   const ua = (navigator.userAgent || '').toLowerCase();
   if (/iphone|ipad|ipod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
-    alert('Install on iPhone/iPad:\n\n1. Tap the Share icon at the bottom.\n2. Choose "Add to Home Screen".\n3. Tap "Add".');
+    alert('Install on iPhone/iPad:\n\n1. Tap the Share icon.\n2. Choose "Add to Home Screen".\n3. Tap "Add".');
   } else if (/firefox/.test(ua)) {
-    alert('Install in Firefox:\n\nOpen the menu (⋮) at the top right and choose "Install" or "Add to Home screen".');
+    alert('Install in Firefox:\n\nOpen the menu (⋮) and choose "Install".');
   } else {
     alert('Your browser does not support direct app installation. Open this page in Chrome, Edge or Samsung Internet and tap "Install App".');
   }
@@ -1173,14 +855,12 @@ if (window.matchMedia) {
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden) checkStandaloneMode(); });
 
-// ============ FEEDBACK ============
 function submitFeedback(rating, btnElement){
   document.querySelectorAll('.feedback-btn').forEach(btn => btn.classList.remove('selected'));
   btnElement.classList.add('selected');
   document.getElementById('feedbackThanks').style.display = 'block';
 }
 
-// ============ SERVICE WORKER ============
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(()=>{});
@@ -1234,9 +914,12 @@ async function fetchEdgeInfo(){
   } catch(e){ /* silent */ }
 }
 
-// ============ OOKLA-STYLE GAUGE ============
-// Arc: center (150,165), radius 120, from 150° to 390° (240° total)
-// Arc length = 2π * 120 * (240/360) = 502.65
+/* ============ OOKLA-STYLE GAUGE ============
+   Arc: center (150,165), radius 120, from 150° to 390° (=30°).
+   Arc length = 2π × 120 × 240/360 = 502.65.
+   Needle drawn in a group with translate(150,165); rotate(θ).
+   Needle points LEFT (180°) by default → angle 180 = 0 speed offset −30°.
+   ============================================ */
 const GAUGE_CIRCUMFERENCE = 502.65;
 const GAUGE_CENTER = { x: 150, y: 165 };
 const GAUGE_LABEL_RADIUS = 94;
@@ -1288,7 +971,8 @@ function renderGauge(val){
   const ratio = (angle - GAUGE_START_DEG) / GAUGE_ARC_DEG;
   const offset = GAUGE_CIRCUMFERENCE * (1 - ratio);
   $("gaugeProgress").style.strokeDashoffset = offset.toFixed(2);
-  $("needle").style.transform = `rotate(${(angle - 180).toFixed(2)}deg)`;
+  // rotate(angle - 180) because needle points LEFT (180°) initially
+  $("needleGroup").setAttribute("transform", `translate(150,165) rotate(${(angle - 180).toFixed(2)})`);
   $("speedNum").textContent = formatMbps(safe);
 }
 
@@ -1313,7 +997,6 @@ function setGaugePhase(phase){
   else gc.classList.remove("upload-phase");
 }
 
-// ============ PING TEST ============
 async function pingTest(){
   const vals = [];
   let attempts = 0;
@@ -1351,7 +1034,6 @@ async function pingTest(){
   return { ping, jitter, packetLoss };
 }
 
-// ============ BUFFERBLOAT TRACKER ============
 async function bufferbloatTracker(){
   bufferbloatPings = [];
   bufferbloatRunning = true;
@@ -1372,7 +1054,6 @@ async function bufferbloatTracker(){
 }
 function stopBufferbloatTracker(){ bufferbloatRunning = false; }
 
-// ============ DOWNLOAD ADAPTIVE ============
 async function downloadAdaptive(){
   let totalBytes = 0;
   let streamCount = 0;
@@ -1461,7 +1142,6 @@ async function downloadAdaptive(){
   return finalMbps;
 }
 
-// ============ UPLOAD ADAPTIVE ============
 async function uploadAdaptive(){
   const payload = new Uint8Array(UP_BYTES);
   const chunk = 64 * 1024;
@@ -1553,7 +1233,6 @@ async function uploadAdaptive(){
   return finalMbps;
 }
 
-// ============ COMPARISON ============
 function matchProvider(ispName, providers){
   if (!ispName) return null;
   const lower = ispName.toLowerCase();
@@ -1626,7 +1305,6 @@ function renderProviderComparison(measuredMbps){
   section.classList.add("active");
 }
 
-// ============ VERIFICATION ============
 function updateVerification(){
   const dMb = (verifyStats.downBytes / 1048576) * 8;
   const uMb = (verifyStats.upBytes / 1048576) * 8;
@@ -1642,7 +1320,6 @@ function updateVerification(){
   $("verifyPanel").classList.add("active");
 }
 
-// ============ SHARE ============
 function updateShareLinks(){
   const url = "https://lite.fasqoo.com/";
   const pingStr = lastResults.ping !== null ? lastResults.ping.toFixed(0) + " ms" : "n/a";
@@ -1719,7 +1396,6 @@ function downloadResults(){
   }, "image/png");
 }
 
-// ============ MAIN TEST ============
 async function startSpeedTest(){
   if (isRunning) return;
   isRunning = true;
